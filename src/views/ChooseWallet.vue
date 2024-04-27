@@ -20,7 +20,6 @@
 
 <script setup lang="ts">
 import { PROVIDER_ID, PROVIDER_ICONS } from '@/constants'
-import { onMounted } from 'vue'
 import IconChevronNext from '@/components/icons/IconChevronNext.vue'
 
 const emit = defineEmits(['wallet'])
