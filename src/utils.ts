@@ -1,4 +1,4 @@
-import algosdk, { ABIMethod, Transaction } from 'algosdk'
+import { ABIMethod } from 'algosdk'
 
 export function longToByteArray (long: number): Uint8Array
 export function longToByteArray (long: number, n = 32) {

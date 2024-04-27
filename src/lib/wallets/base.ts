@@ -1,5 +1,5 @@
 import type _algosdk from 'algosdk'
-import type { Wallet, ConfirmedTxn, RawTxnResponse } from '../types'
+import type { Wallet, ConfirmedTxn, RawTxnResponse } from '@/types'
 import { Transaction } from 'algosdk'
 
 abstract class BaseClient {

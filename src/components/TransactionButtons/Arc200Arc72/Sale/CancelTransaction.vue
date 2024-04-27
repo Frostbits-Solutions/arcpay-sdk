@@ -5,13 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import { useWeb3Store } from '@/stores/web3'
-import type { Account, AppCallObject, AppDeleteObject, CancelTransactionParameters } from '@/types'
-import { Transaction } from '@/transactions/transaction'
+import { useWalletStore } from '@/stores/walletStore'
+import type { Account, AppDeleteObject, CancelTransactionParameters } from '@/types'
+import { Transaction } from '@/transaction'
 import _algosdk from 'algosdk'
 import { TransactionType } from 'algosdk/src'
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 const props = defineProps<{
   account: Account,
   parameters: CancelTransactionParameters

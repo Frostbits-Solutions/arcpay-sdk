@@ -1,6 +1,6 @@
 import type _algosdk from 'algosdk'
-import type { AlgodClientOptions } from '../types'
-import { DEFAULT_NODE_BASEURL, DEFAULT_NODE_TOKEN, DEFAULT_NODE_PORT } from '../constants'
+import type { AlgodClientOptions } from '@/types'
+import { DEFAULT_NODE_BASEURL, DEFAULT_NODE_TOKEN, DEFAULT_NODE_PORT } from '@/constants'
 
 export const getAlgosdk = async () => {
   return (await import('algosdk')).default

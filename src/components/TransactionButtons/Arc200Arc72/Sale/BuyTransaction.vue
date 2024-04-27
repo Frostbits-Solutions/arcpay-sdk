@@ -9,15 +9,15 @@
  * ARC 200 -> ARC 72
  * ***/
 import type { Account, BuyWArc200TransactionParameters, AppCallObject } from '@/types'
-import { useWeb3Store } from '@/stores/web3'
-import { Transaction } from '@/transactions/transaction'
-import _algosdk, { AtomicTransactionComposer } from 'algosdk'
+import { useWalletStore } from '@/stores/walletStore'
+import { Transaction } from '@/transaction'
+import _algosdk from 'algosdk'
 import { TransactionType } from 'algosdk/src/types/transactions'
-import { encodeAppArgs, fromHexString, toHexString } from '@/transactions/utils'
-import arc200Schema from '@/transactions/abi/arc200'
+import { encodeAppArgs} from '@/utils'
+import arc200Schema from '@/lib/contracts/abi/arc200'
 
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 const props = defineProps<{
   account: Account,
   parameters: BuyWArc200TransactionParameters

@@ -25,7 +25,7 @@ import {
   VoiRwaSaleCancelTransaction,
   VoiRwaSaleCreateTransaction,
   VoiRwaSaleUpdateTransaction
-} from './TransactionButtons'
+} from '@/components/TransactionButtons'
 
 export enum TRANSACTION_TYPE {
   buy,

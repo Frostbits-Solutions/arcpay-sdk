@@ -73,11 +73,11 @@
 </template>
 
 <script setup lang="ts">
-import ChooseWallet from '@/transactions/component/ChooseWallet.vue'
-import ChooseAccount from '@/transactions/component/ChooseAccount.vue'
-import TransactionStepsPreview from '@/transactions/component/TransactionStepsPreview.vue'
-import DoneInformation from '@/transactions/component/DoneInformation.vue'
-import ErrorInformation from '@/transactions/component/ErrorInformation.vue'
+import ChooseWallet from '@/views/ChooseWallet.vue'
+import ChooseAccount from '@/views/ChooseAccount.vue'
+import TransactionStepsPreview from "@/components/Transaction/TransactionStepsPreview.vue";
+import DoneInformation from '@/views/DoneInformation.vue'
+import ErrorInformation from '@/views/ErrorInformation.vue'
 
 import type { PROVIDER_ID } from '@/constants'
 import type { Account } from '@/types'
@@ -85,13 +85,13 @@ import type { TransactionParameters } from '@/types/transactions'
 import type { Ref } from 'vue'
 
 import { computed, ref } from 'vue'
-import { useWeb3Store } from '@/stores/web3.js'
+import { useWalletStore } from '@/stores/walletStore'
 import {
   TRANSACTION_TYPE,
   CONVENTION_TYPE,
   TRANSACTIONS_BUTTONS,
   TRANSACTIONS_STEPS, CONTRACT_TYPE
-} from '@/transactions/constants'
+} from '@/constants'
 import { PROVIDER, PROVIDER_ICONS } from '@/constants'
 import IconChevronPrevious from '@/components/icons/IconChevronPrevious.vue'
 
@@ -102,7 +102,7 @@ const props = defineProps < {
   parameters: TransactionParameters
 }> ()
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 const reload = ref(0)
 const currentTransactionStep: Ref<null | number> = ref(null)
 const doneInformation: Ref<null | object> = ref(null)

@@ -1,6 +1,6 @@
 import type { BoxReference } from 'algosdk'
 import _algosdk from 'algosdk'
-import { SIMULATION_ERROR } from '@/transactions/constants'
+import { SIMULATION_ERROR } from '@/constants'
 import { TransactionType } from 'algosdk/src/types/transactions'
 import type {
   AppCallObject,

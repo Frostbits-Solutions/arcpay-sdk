@@ -6,16 +6,16 @@
 </template>
 
 <script setup lang="ts">
+import IntInput from '@/components/IntInput.vue'
 import type { Account, BidTransactionParameters } from '@/types'
-import { useWeb3Store } from '@/stores/web3'
-import { Transaction } from '@/transactions/transaction'
+import { useWalletStore } from '@/stores/walletStore'
+import { Transaction } from '@/transaction'
 import _algosdk from 'algosdk'
 import { TransactionType } from 'algosdk/src/types/transactions'
-import IntInput from '@/transactions/component/IntInput.vue'
 import { ref } from 'vue'
 
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 const props = defineProps<{
   account: Account,
   parameters: BidTransactionParameters

@@ -6,13 +6,13 @@
 
 <script setup lang="ts">
 import type { Account, BuyTransactionParameters } from '@/types'
-import { useWeb3Store } from '@/stores/web3'
-import { Transaction } from '@/transactions/transaction'
+import { useWalletStore } from '@/stores/walletStore'
+import { Transaction } from '@/transaction'
 import _algosdk from 'algosdk'
 import { TransactionType } from 'algosdk/src/types/transactions'
 
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 const props = defineProps<{
   account: Account,
   parameters: BuyTransactionParameters

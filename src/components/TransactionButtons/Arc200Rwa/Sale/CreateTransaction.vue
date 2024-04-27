@@ -9,20 +9,19 @@
 </template>
 
 <script setup lang="ts">
-import IntInput from '@/transactions/component/IntInput.vue'
+import IntInput from '@/components/IntInput.vue'
+import TextInput from '@/components/TextInput.vue'
 
-import type { Account, AppCallObject, AppCreateObject, CreateTransactionParameters, PaymentObject } from '@/types'
-import { useWeb3Store } from '@/stores/web3'
+import type { Account, AppCreateObject, CreateTransactionParameters, PaymentObject } from '@/types'
+import { useWalletStore } from '@/stores/walletStore'
 import { ref } from 'vue'
-import { base64ToArrayBuffer, encodeAppArgs, longToByteArray } from '@/transactions/utils'
-import { approvalProgram, clearProgram } from './contract'
-import { arc72Schema } from '@/transactions/abi/arc72'
-import { Transaction } from '@/transactions/transaction'
+import { base64ToArrayBuffer, longToByteArray } from '@/utils'
+import { saleApprovalProgram as approvalProgram, clearProgram } from '@/lib/contracts/Arc200RwaContract'
+import { Transaction } from '@/transaction'
 import _algosdk from 'algosdk'
 import { TransactionType } from 'algosdk/src/types/transactions'
-import TextInput from '@/transactions/component/TextInput.vue'
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 const props = defineProps<{
     account: Account,
     parameters: CreateTransactionParameters

@@ -19,21 +19,21 @@ import type {
 
 import type { Wallet, Account } from '@/types'
 import {
-  ARC_0027_CHANNEL_NAME, ARC_0027_PROVIDER_ID, ARC_0027_SIGN_TXNS_REQUEST, DEFAULT_REQUEST_TIMEOUT,
+  ARC_0027_CHANNEL_NAME, ARC_0027_PROVIDER_ID, DEFAULT_REQUEST_TIMEOUT,
   ICON,
   KIBISIS_NOT_INSTALLED, METHOD_TIMED_OUT_ERROR,
   NO_ALGO_WALLET_INSTALLED, UNKNOWN_ERROR
-} from '@/wallets/kibisis/constants'
+} from './constants'
 import { PROVIDER_ID } from '@/constants'
-import Algod from '@/algod'
+import Algod from '@/lib/algod'
 import type {
   ProviderMethods, RequestMessage,
   ResponseError,
   ResponseMessage,
   SendRequestWithTimeoutOptions,
-} from '@/wallets/kibisis/type'
-import { generateUuid } from '@/wallets/kibisis/utils'
-import { base64ToArrayBuffer } from '@/transactions/utils'
+} from './type'
+import { generateUuid } from './utils'
+import { base64ToArrayBuffer } from '@/utils'
 
 class Kibisis extends BaseClient {
   genesisHash: string|undefined

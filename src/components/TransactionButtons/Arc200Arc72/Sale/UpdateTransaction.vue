@@ -9,16 +9,16 @@
 /***
  * ARC 200 -> ARC 72
  * ***/
-import IntInput from '@/transactions/component/IntInput.vue'
-import { useWeb3Store } from '@/stores/web3'
-import { longToByteArray } from '@/transactions/utils'
+import IntInput from '@/components/IntInput.vue'
+import { useWalletStore } from '@/stores/walletStore'
+import { longToByteArray } from '@/utils'
 import { ref } from 'vue'
 import type { Account, AppCallObject, UpdateTransactionParameters } from '@/types'
-import { Transaction } from '@/transactions/transaction'
+import { Transaction } from '@/transaction'
 import _algosdk from 'algosdk'
 import { TransactionType } from 'algosdk/src'
 
-const web3Store = useWeb3Store()
+const web3Store = useWalletStore()
 
 const props = defineProps<{
   account: Account,

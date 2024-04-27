@@ -5,15 +5,16 @@ import type {
   WalletConnectModalSignSession } from '@walletconnect/modal-sign-html'
 
 import _algosdk, { assignGroupID, Transaction } from 'algosdk'
-import BaseClient from '@/wallets/base'
+import BaseClient from '../base'
 import { DEFAULT_NETWORK, ARC_PAY_METADA, PROVIDER_ID } from '@/constants'
 import { ALGORAND_CHAINS, ICON } from './constants'
-import type { WalletProvider } from '../../types'
+import type { WalletProvider } from '@/types'
 import { bytesToBase64 } from '@agoralabs-sh/algorand-provider'
-import { formatJsonRpcRequest } from '@/wallets/walletConnect/utils'
-import Algod from '@/algod'
+import { formatJsonRpcRequest } from './utils'
+import Algod from '@/lib/algod'
 import { Buffer } from 'buffer'
 
+// @ts-ignore
 let client;
 
 class WalletConnect extends BaseClient {

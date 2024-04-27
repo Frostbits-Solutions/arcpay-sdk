@@ -1,7 +1,7 @@
-import { ICON as iconKibisis } from '../wallets/kibisis/constants'
-import { ICON as iconWalletconnect } from '../wallets/walletConnect/constants'
-import Kibisis from '@/wallets/kibisis'
-import WalletConnect from '@/wallets/walletConnect'
+import { ICON as iconKibisis } from '@/lib/wallets/kibisis/constants'
+import { ICON as iconWalletconnect } from '@/lib/wallets/walletConnect/constants'
+import Kibisis from '@/lib/wallets/kibisis'
+import WalletConnect from '@/lib/wallets/walletConnect'
 
 export const PROVIDER = {
   'kibisis': Kibisis,
