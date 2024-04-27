@@ -53,3 +53,8 @@ export function concatUint8Array (a: Uint8Array, b: Uint8Array): Uint8Array {
   t.set(b, a.length)
   return t
 }
+
+export function getShortAddress (address: string): string {
+  return `${address.slice(0,4)}...${address.slice(address.length - 5, address.length - 1)}`
+}
+

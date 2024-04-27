@@ -19,10 +19,13 @@
 </template>
 
 <script setup lang="ts">
-import { PROVIDER_ID, PROVIDER_ICONS } from '@/constants'
+import {PROVIDER_ID, PROVIDER_ICONS, PROVIDER} from '@/constants'
 import IconChevronNext from '@/components/icons/IconChevronNext.vue'
+import {useWalletStore} from "@/stores/walletStore";
 
 const emit = defineEmits(['wallet'])
+
+const walletStore = useWalletStore()
 
 const providers =
   Object.values(PROVIDER_ID)
@@ -34,8 +37,15 @@ const providers =
       }
     }) ;
 
-function chooseWallet (wallet: string) {
-  emit('wallet', wallet)
+function chooseWallet (providerid: PROVIDER_ID) {
+  const provider = await PROVIDER[providerid].init()
+  const wallet = await provider.connect(() => {})
+  if (wallet.accounts.length === 0) {
+    throw { message: 'Wallet does not have any accounts'}
+  }
+  walletStore.wallet = wallet
+  walletStore.provider = provider
+  walletStore.walletId = providerid
 }
 </script>
 

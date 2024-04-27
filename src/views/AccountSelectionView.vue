@@ -27,24 +27,22 @@
 import type { Account } from '@/types'
 import { onMounted } from 'vue'
 import IconChevronNext from '@/components/icons/IconChevronNext.vue'
+import {useWalletStore} from "@/stores/walletStore";
 
-defineProps<{ accounts: Account[]}>()
-const emits = defineEmits(['account'])
+const props = defineProps<{ accounts: Account[]}>()
 
+const walletStore = useWalletStore()
 function getShortAddress (address: string) {
   return `${address.slice(0,10)}...${address.slice(address.length-3)}`
 }
 
 function chooseAccount (account: Account) {
-  localStorage.setItem('gemsPayAccount', JSON.stringify(account))
-  emits('account', account)
+  walletStore.account = account
 }
 
 function onMountedHook () {
-  const acc = localStorage.getItem('gemsPayAccount')
-  if (acc) {
-    const t = JSON.parse(acc)
-    emits('account', t)
+  if (props.accounts.length === 1) {
+    chooseAccount(props.accounts[0])
   }
 }
 

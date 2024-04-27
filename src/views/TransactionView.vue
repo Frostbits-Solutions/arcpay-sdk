@@ -1,6 +1,99 @@
 <script setup lang="ts">
 
-import { PROVIDER_ICONS } from '@/constants'
+import {CONTRACT_TYPE, CONVENTION_TYPE, PROVIDER_ICONS, TRANSACTION_TYPE} from '@/constants'
+import {useWalletStore} from "@/stores/walletStore";
+import {TransactionParameters} from "@/types";
+import {computed} from "vue";
+import {getShortAddress} from "@/utils";
+
+const walletStore = useWalletStore()
+function resetAddress () {
+  walletStore.account = null
+}
+
+function resetWallet () {
+  walletStore.walletId = null
+  resetAddress()
+}
+
+const props = defineProps < {
+  transactionType: TRANSACTION_TYPE,
+  conventionType: CONVENTION_TYPE,
+  contractType: CONTRACT_TYPE,
+  parameters: TransactionParameters
+}> ()
+
+const parameterArray = computed(() => {
+  const parameterKeys = [
+    'nftID',
+    'minPrice',
+    'price',
+    'seller',
+    'appIndex',
+    //'nftAppID',
+    //'arc200AppID',
+    'feesAddress',
+  ]
+  const pArray: Array<{key: string, value: string|number}> = []
+  for (const key of parameterKeys) {
+    if (props.parameters[key as keyof TransactionParameters]) {
+      pArray.push(formatParameters(key, props.parameters[key as keyof TransactionParameters]))
+    }
+  }
+
+  return pArray
+})
+
+
+function formatParameters (key: string, value: number|string) {
+  switch (key) {
+    case 'appIndex':
+      return {
+        key: 'Application ID',
+        value: value
+      }
+    case 'nftID':
+      return {
+        key: 'NFT ID',
+        value: value
+      }
+    case 'minPrice':
+      return {
+        key: 'Minimum bid price',
+        value: value
+      }
+    case 'price':
+      return {
+        key: 'Price',
+        value: value
+      }
+    case 'seller':
+      return {
+        key: 'NFT Seller',
+        value:getShortAddress(value as string)
+      }
+    case 'nftAppID':
+      return {
+        key: 'Sold NFT Application ID',
+        value: value
+      }
+    case 'arc200AppID':
+      return {
+        key: 'ARC 200 NFT Application ID',
+        value: value
+      }
+    case 'feesAddress':
+      return {
+        key: 'Fees address',
+        value:getShortAddress(value as string)
+      }
+    default:
+      return {
+        key,
+        value
+      }
+  }
+}
 </script>
 
 <template>
@@ -9,8 +102,8 @@ import { PROVIDER_ICONS } from '@/constants'
     <div class="grid grid-cols-2 gap-x-3">
       <img
         class="w-8 h-8 rounded-full justify-self-end"
-        :src="PROVIDER_ICONS[web3Store.account.providerId]">
-      <div class="text-left self-center">{{getShortAddress(web3Store.account.address)}}</div>
+        :src="PROVIDER_ICONS[walletStore.account.providerId]">
+      <div class="text-left self-center">{{getShortAddress(walletStore.account.address)}}</div>
       <template v-for="parameter of parameterArray" :key="`parameter-${parameter.key}`">
         <div class="text-right">
           {{parameter.key}}
@@ -23,11 +116,7 @@ import { PROVIDER_ICONS } from '@/constants'
     <h2 class="font-bold text-lg">Transaction input</h2>
     <router-view :parameters="parameters" />
 
-    <TransactionStepsPreview
-      :current-step="currentTransactionStep"
-      :steps="TRANSACTIONS_STEPS[transactionType]"
-      v-if="currentTransactionStep !== null"
-    />
+    <TransactionStepsPreview/>
 
     <div class="w-full border-t pt-8 dark:border-gray-700 flex justify-between">
       <button
