@@ -7,7 +7,7 @@ import Kibisis from '@/lib/wallets/kibisis'
 import WalletConnect from '@/lib/wallets/walletConnect'
 
 
-export const useWalletStore = defineStore('web3Store', () => {
+export const useWalletStore = defineStore('walletStore', () => {
   const walletId: Ref<PROVIDER_ID | null> = ref(null)
   const wallet: Ref<Wallet| null> = ref(null)
   const provider: Ref<Kibisis | WalletConnect | null> = ref(null)

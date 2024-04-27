@@ -11,12 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import ChooseWallet from '@/views/WalletSelectionView.vue'
-import ChooseAccount from '@/views/AccountSelectionView.vue'
-import TransactionStepsPreview from "@/components/Transaction/TransactionStepsPreview.vue";
-import DoneInformation from '@/views/SuccessView.vue'
-import ErrorInformation from '@/views/ErrorView.vue'
-
 import type { PROVIDER_ID } from '@/constants'
 import type { Account } from '@/types'
 import type { TransactionParameters } from '@/types/transactions'
