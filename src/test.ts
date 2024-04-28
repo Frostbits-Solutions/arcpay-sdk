@@ -16,7 +16,6 @@ const parameters = {
         nftAppID: 29105406,
         arc200AppID:40427782,
         price: 2,
-        feesAddress: 'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
         nftID: 602,
     },
     [TRANSACTION_TYPE.bid]: {
@@ -24,24 +23,18 @@ const parameters = {
         appIndex: 42034657,
         nftAppID: 29105406,
         minPrice: 1,
-        feesAddress: 'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
         nftID: 685,
     },
     [TRANSACTION_TYPE.cancel]: {
-        seller: 'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
         appIndex: 40427317,
         nftAppID: 29105406,
     },
     [TRANSACTION_TYPE.create]: {
         nftAppID: 29105406,
         nftID: 602,
-        feesAddress:
-            'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
     },
     [TRANSACTION_TYPE.update]: {
         appIndex: 42037609,
-        feesAddress:
-            'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
     },
 }
 
