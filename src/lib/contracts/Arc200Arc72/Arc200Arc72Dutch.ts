@@ -100,6 +100,8 @@ export async function Arc200Arc72DutchCreate(provider: Provider, account: Accoun
     const appIndex = Number(await new Transaction([appCreateObj])
         .getFutureAppId(algosdk, algodClient))
 
+
+
     const appAddr = algosdk.getApplicationAddress(appIndex)
     const fundingAmount = 300_000
 
