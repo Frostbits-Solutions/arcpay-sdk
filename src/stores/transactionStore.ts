@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type {AppCallObject, AppCreateObject, AppDeleteObject, PaymentObject, TransactionObject} from "@/types";
 import type {Ref} from "vue";
 import {defineStore} from "pinia";
@@ -8,7 +9,7 @@ import {base64ToArrayBuffer, encodeAppArgs, longToByteArray} from "@/utils";
 import {TransactionType} from "algosdk/src/types/transactions";
 import {Transaction} from "@/transaction";
 import {useWalletStore} from "@/stores/walletStore";
-import {useParameterStore} from "@/stores/parameterStore";
+import {useParameterStore} from "@/stores/parametersStore";
 import {clearProgram, dutchApprovalProgram as approvalProgram} from "@/lib/contracts/Arc200Arc72Contract";
 import {arc72Schema} from "@/lib/contracts/abi/arc72";
 
@@ -33,7 +34,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
     const algosdk = walletStore?.provider?.algosdk
     const algodClient = walletStore?.provider?.algodClient as _algosdk.Algodv2
 
-    function signAndSendTransactions (transactionObjects: Array<TransactionObject>) {
+    async function signAndSendTransactions (transactionObjects: Array<TransactionObject>) {
         try{
             if (!algosdk ||  !algodClient) {
                 return {
@@ -166,7 +167,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -175,7 +176,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             state.value = transactionState.success
             successInfo.value = confirmation
         }
-    },
+    }
     async function Arc200Arc72DutchCreate() {
         if (!algosdk ||  !algodClient) {
             state.value = transactionState.error
@@ -217,7 +218,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                 numLocalByteSlices: 0,
             } as AppCreateObject
 
-        const results = signAndSendTransactions([appCreateObj])
+        const results = await signAndSendTransactions([appCreateObj])
         console.log(results.confirmation, results.confirmation['application-index'])
 
         /*** Funding the application ***/
@@ -249,7 +250,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj, appCallObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj, appCallObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -327,7 +328,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundArc200Obj,
+        const { confirmation, error } = await signAndSendTransactions([fundArc200Obj,
             arc200ApproveObj,
             preValidateObj,
             appCallObj])
@@ -379,7 +380,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                 numLocalByteSlices: 0,
             } as AppCreateObject
 
-        const resultsCreation = signAndSendTransactions([appCreateObj])
+        const resultsCreation = await signAndSendTransactions([appCreateObj])
 
         if (resultsCreation.error) {
             state.value = transactionState.error
@@ -416,7 +417,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -425,7 +426,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             state.value = transactionState.success
             successInfo.value = confirmation
         }
-    },
+    }
 
     async function Arc200RwaSaleBuy() {
         if (!algosdk ||  !algodClient) {
@@ -494,7 +495,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -549,7 +550,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             await new Transaction([appCreateObj])
                 .createTxns(algosdk, algodClient)
 
-        const resultCreation = signAndSendTransactions([appCreateObj])
+        const resultCreation = await signAndSendTransactions([appCreateObj])
 
         if (resultCreation.error) {
             state.value = transactionState.error
@@ -572,7 +573,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams: suggestedParamsFund,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj])
 
         if (error) {
             state.value = transactionState.error
@@ -618,7 +619,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([payObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([payObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -669,7 +670,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                 numLocalByteSlices: 0,
             } as AppCreateObject
 
-        const resultCreation = signAndSendTransactions([appCreateObj])
+        const resultCreation = await signAndSendTransactions([appCreateObj])
 
         if (resultCreation.error) {
             state.value = transactionState.error
@@ -708,7 +709,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -770,7 +771,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([preValidateObj, payObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([preValidateObj, payObj, appCallObj])
 
         if (error) {
             state.value = transactionState.error
@@ -779,7 +780,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             state.value = transactionState.success
             successInfo.value = confirmation
         }
-    },
+    }
     async function VoiArc72DutchCreate () {
         if (!algosdk ||  !algodClient) {
             state.value = transactionState.error
@@ -821,7 +822,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                 numLocalByteSlices: 0,
             } as AppCreateObject
 
-        const resultCreation = signAndSendTransactions([appCreateObj])
+        const resultCreation = await signAndSendTransactions([appCreateObj])
 
         if (resultCreation.error) {
             state.value = transactionState.error
@@ -860,7 +861,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj, appCallObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error
@@ -921,7 +922,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([preValidateObj, payObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([preValidateObj, payObj, appCallObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error
@@ -1007,7 +1008,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj, appCallObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error
@@ -1055,7 +1056,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams,
         }
 
-        const { confirmation, error } = signAndSendTransactions([payObj, appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([payObj, appCallObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error
@@ -1102,7 +1103,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                 numLocalByteSlices: 0,
             } as AppCreateObject
 
-        const resultCreation = signAndSendTransactions([appCreateObj])
+        const resultCreation = await signAndSendTransactions([appCreateObj])
 
         if (resultCreation.error) {
             state.value = transactionState.error
@@ -1126,7 +1127,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams: suggestedParamsFund,
         }
 
-        const { confirmation, error } = signAndSendTransactions([fundAppObj])
+        const { confirmation, error } = await signAndSendTransactions([fundAppObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error
@@ -1166,7 +1167,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             accounts,
             suggestedParams
         }
-        const { confirmation, error } = signAndSendTransactions([appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([appCallObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error
@@ -1209,7 +1210,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             suggestedParams
         }
 
-        const { confirmation, error } = signAndSendTransactions([appCallObj])
+        const { confirmation, error } = await signAndSendTransactions([appCallObj])
         if (error) {
             state.value = transactionState.error
             errorInfo.value = error

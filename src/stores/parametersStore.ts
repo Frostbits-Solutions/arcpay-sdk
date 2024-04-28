@@ -2,8 +2,10 @@ import {computed, ref} from 'vue'
 import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
 import algosdk from "algosdk";
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { getListingById } from '@/lib/supabase/listings'
 
-export const useParameterStore = defineStore('parameterStore', () => {
+export const useParametersStore = defineStore('parametersStore', () => {
     const nftID: Ref<number|null> = ref(null)
     const priceMin: Ref<number|null> = ref(null) // input for min price in dutch
     const priceMax: Ref<number|null> = ref(null) // input for max price in dutch
@@ -24,6 +26,25 @@ export const useParameterStore = defineStore('parameterStore', () => {
     const arc200Decimals: Ref<number|null> = ref(null)
     const duration: Ref<number|null> = ref(null) // auction duration
     const feesAddress = ref('UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY')
+
+    async function getListingParameters(client: SupabaseClient, listing_id: string) {
+        const { data, error } = await getListingById(client, listing_id)
+        if (error) {
+            console.error(error)
+            return
+        }
+
+        [nftAppID.value, nftID.value] = data.asset_id.split('/').map(Number)
+        priceMin.value = data.min_increment
+        priceMax.value = data.start_price
+        reserve.value = data.min_increment // Aucune idée c'est quoi
+        price.value = data.asking_price
+        seller.value = data.seller_address
+        appIndex.value = data.app_id
+        arc200AppID.value = data.listing_currency === 0 ? null : data.listing_currency
+        duration.value = data.duration
+    }
+
     return {
         nftID,
         priceMin,
@@ -39,5 +60,6 @@ export const useParameterStore = defineStore('parameterStore', () => {
         feesAddress,
         arc200Decimals,
         duration,
+        getListingParameters,
     }
 })

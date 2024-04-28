@@ -18,15 +18,23 @@ app.mount(`#arcpay-${id}`)
 
 import { getListings, getListingById } from '@/lib/supabase/listings'
 import { useModalsStore } from '@/stores/modalsStore'
+import { useParametersStore } from '@/stores/parametersStore'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 const createClient = createSupabaseClient;
 const createListing = () => {}
 const updateListing = () => {}
 const deleteListing = () => {}
-const buy = () => {
+
+const buy = async (client: SupabaseClient, listing_id: string) => {
   const modals = useModalsStore()
   modals.showModal('root')
+
+  const params = useParametersStore()
+  await params.getListingParameters(client, listing_id)
+  console.log(params)
 }
+
 const bid = () => {}
 
 export {
