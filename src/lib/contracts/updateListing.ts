@@ -11,7 +11,7 @@ export async function updateListing (provider: Provider, account: Account, param
 
     const suggestedParams = await algodClient.getTransactionParams().do()
 
-    const _price = parameters.price * 1_000_000
+    const _price = parameters.arc200AppID ? parameters.price : parameters.price * 1_000_000
     const appArgs = [
         new TextEncoder().encode('update_price'),
         longToByteArray(_price, 8)]
