@@ -11,12 +11,18 @@ const transactionStore = useTransactionStore()
 
 
 function resetAddress () {
-  walletStore.account = null
+  walletStore.$patch({
+    account:null
+  })
 }
 
 function resetWallet () {
-  walletStore.wallet = null
-  resetAddress()
+  walletStore.$patch({
+    wallet: null,
+    walletId: null,
+    provider: null,
+    account:null
+  })
 }
 // const parameterArray = computed(() => {
 //   const parameterKeys = [

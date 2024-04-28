@@ -36,7 +36,9 @@ function getShortAddress (address: string) {
 }
 
 function chooseAccount (account: Account) {
-  walletStore.account = account
+  walletStore.$patch({
+    account
+  })
 }
 
 function onMountedHook () {

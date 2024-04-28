@@ -43,9 +43,11 @@ async function chooseWallet (providerid: PROVIDER_ID) {
   if (wallet.accounts.length === 0) {
     throw { message: 'Wallet does not have any accounts'}
   }
-  walletStore.wallet = wallet
-  walletStore.provider = provider
-  walletStore.walletId = providerid
+  walletStore.$patch({
+    wallet,
+    provider,
+    walletId: providerid
+  })
 }
 </script>
 
