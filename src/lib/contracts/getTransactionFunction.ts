@@ -9,6 +9,7 @@ import {VoiArc72AuctionBid, VoiArc72AuctionCreate} from "@/lib/contracts/VoiArc7
 import {cancelListing} from "@/lib/contracts/cancelListing";
 import {updateListing} from "@/lib/contracts/updateListing";
 import {Arc200Arc72AuctionBid, Arc200Arc72AuctionCreate} from "@/lib/contracts/Arc200Arc72/Arc200Arc72Auction";
+import {closeListing} from "@/lib/contracts/closeListing";
 
 export function getTransactionFunction (
     transactionType: TRANSACTION_TYPE,
@@ -115,6 +116,8 @@ export function getTransactionFunction (
             }
         case TRANSACTION_TYPE.cancel:
             return cancelListing
+        case TRANSACTION_TYPE.close:
+            return closeListing
         case TRANSACTION_TYPE.update:
             return updateListing
         default:

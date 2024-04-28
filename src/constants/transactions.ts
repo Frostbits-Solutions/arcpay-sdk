@@ -13,7 +13,8 @@ export enum TRANSACTION_TYPE {
   create,
   cancel,
   update,
-  bid
+  bid,
+  close
 }
 
 export enum CONVENTION_TYPE {
@@ -51,6 +52,11 @@ export const TRANSACTIONS_STEPS = {
     'Initiating cancellation transaction, awaiting signature',
     'Processing cancellation request',
     'Cancellation complete, listing removed'
+  ],
+  [TRANSACTION_TYPE.close]: [
+    'Initiating closing transaction, awaiting signature',
+    'Processing closing request',
+    'Close complete, listing closed'
   ],
   [TRANSACTION_TYPE.update]: [
     'Enter new listing price', //This may be irrelevant because price is entered before clicking the button

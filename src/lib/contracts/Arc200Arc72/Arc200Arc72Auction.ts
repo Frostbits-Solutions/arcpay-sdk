@@ -67,7 +67,7 @@ export async function Arc200Arc72AuctionCreate (provider: Provider, account: Acc
         longToByteArray(parameters.nftAppID, 8),
         longToByteArray(parameters.nftID, 32),
         longToByteArray(startPrice, 8),
-        longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8),
+        longToByteArray((Date.now() + parameters.duration * 600_000) / 1_000, 8),
         longToByteArray(parameters.arc200AppID, 8),
         algosdk.decodeAddress(parameters.arc200AppAddress).publicKey
     ]

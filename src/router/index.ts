@@ -14,6 +14,7 @@ import UpdateButton from "@/components/Transaction/UpdateButton.vue";
 import CreateAuctionButton from "@/components/Transaction/CreateAuctionButton.vue";
 import CreateDutchButton from "@/components/Transaction/CreateDutchButton.vue";
 import CreateSaleButton from "@/components/Transaction/CreateSaleButton.vue";
+import CloseButton from "@/components/Transaction/CloseButton.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -54,6 +55,10 @@ const router = createRouter({
         {
           path: 'cancel',
           component: CancelButton,
+        },
+        {
+          path: 'close',
+          component: CloseButton,
         },
         {
           path: 'update',
@@ -99,6 +104,9 @@ export function routerListenStores () {
           break
         case TRANSACTION_TYPE.cancel:
           router.push('/transaction/cancel')
+          break
+        case TRANSACTION_TYPE.close:
+          router.push('/transaction/close')
           break
         case TRANSACTION_TYPE.create:
           switch (transactionStore.contractType) {
