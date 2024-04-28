@@ -5,6 +5,7 @@ import {base64ToArrayBuffer, longToByteArray} from "@/utils";
 import type {Account, AppCreateObject, PaymentObject, Provider, TransactionParameters} from "@/types";
 import {Transaction} from "@/transaction";
 import {clearProgram, saleApprovalProgram} from "@/lib/contracts/VoiRwa/VoiRwaContract";
+import type {AppCallObject} from "@/types";
 
 export async function VoiRwaSaleBuy (provider: Provider, account: Account, parameters: TransactionParameters) {
 
@@ -67,12 +68,10 @@ export async function VoiRwaSaleCreate (provider: Provider, account: Account, pa
             numLocalByteSlices: 0,
         } as AppCreateObject
 
-    const appId = await new Transaction([appCreateObj])
-        .getFutureAppId(algosdk, algodClient)
+    const appIndex = Number(await new Transaction([appCreateObj])
+        .getFutureAppId(algosdk, algodClient))
 
-    // @ts-ignore
-    const appAddr = algosdk.getApplicationAddress(appId)
-    const suggestedParamsFund = await algodClient.getTransactionParams().do()
+    const appAddr = algosdk.getApplicationAddress(appIndex)
     const fundingAmount = 100_000 + 10_000
 
     const fundAppObj: PaymentObject = {
@@ -80,8 +79,17 @@ export async function VoiRwaSaleCreate (provider: Provider, account: Account, pa
         from: account.address,
         to: appAddr,
         amount: fundingAmount,
-        suggestedParams: suggestedParamsFund,
+        suggestedParams,
     }
 
-    return [appCreateObj, fundAppObj]
+    const fundAppCallObj: AppCallObject = {
+        type: TransactionType.appl,
+        appIndex,
+        from: account.address,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        appArgs: [new TextEncoder().encode('fund')],
+        suggestedParams,
+    }
+
+    return [appCreateObj, fundAppObj, fundAppCallObj]
 }

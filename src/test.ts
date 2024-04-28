@@ -5,7 +5,7 @@ import {useTransactionStore} from "@/stores/transactionStore";
 import {CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_TYPE} from "@/constants";
 import {routerListenStores} from "@/router";
 
-const transactionType = TRANSACTION_TYPE.buy
+const transactionType = TRANSACTION_TYPE.create
 const contractType = CONTRACT_TYPE.Sale
 const conventionType = CONVENTION_TYPE.VoiArc72
 

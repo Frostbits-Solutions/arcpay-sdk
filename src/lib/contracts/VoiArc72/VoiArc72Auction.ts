@@ -53,7 +53,7 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
         longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8)
     ]
 
-    const appCreateObj =
+    const appCreateObj: AppCreateObject =
         {
             type: TransactionType.appl,
             from: account.address,
@@ -66,14 +66,12 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
             numGlobalByteSlices: 7,
             numLocalInts: 0,
             numLocalByteSlices: 0,
-        } as AppCreateObject
+        }
 
-    const appId = await new Transaction([appCreateObj])
-        .getFutureAppId(algosdk, algodClient)
+    const appIndex = Number(await new Transaction([appCreateObj])
+        .getFutureAppId(algosdk, algodClient))
 
-    // @ts-ignore
-    const appAddr = algosdk.getApplicationAddress(appId)
-    const suggestedParamsFund = await algodClient.getTransactionParams().do()
+    const appAddr = algosdk.getApplicationAddress(appIndex)
     const fundingAmount = 100_000 + 10_000
 
     const fundAppObj: PaymentObject = {
@@ -81,7 +79,7 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
         from: account.address,
         to: appAddr,
         amount: fundingAmount,
-        suggestedParams: suggestedParamsFund,
+        suggestedParams,
     }
 
     const abi = new algosdk.ABIContract(arc72Schema)
@@ -91,7 +89,7 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
 
     const appCallObj: AppCallObject = {
         type: TransactionType.appl,
-        suggestedParams: suggestedParams,
+        suggestedParams,
         from: account.address,
         appIndex: parameters.nftAppID,
         appArgs: appArgsFund,
@@ -99,5 +97,13 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
     }
 
-    return [appCreateObj, fundAppObj, appCallObj]
+    const fundAppCallObj: AppCallObject = {
+        type: TransactionType.appl,
+        appIndex: appIndex,
+        from: account.address,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        appArgs: [new TextEncoder().encode('fund')],
+        suggestedParams,
+    }
+    return [appCreateObj, fundAppObj, appCallObj, fundAppCallObj]
 }

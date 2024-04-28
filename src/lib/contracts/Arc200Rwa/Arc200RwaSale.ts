@@ -100,16 +100,10 @@ export async function Arc200RwaSaleCreate(provider: Provider, account: Account, 
             numLocalByteSlices: 0,
         } as AppCreateObject
 
-    const txns =
-        await new Transaction([appCreateObj])
-            .createTxns(algosdk, algodClient)
+    const appIndex = Number(await new Transaction([appCreateObj])
+        .getFutureAppId(algosdk, algodClient))
 
-    const appId = await new Transaction([appCreateObj])
-        .getFutureAppId(algosdk, algodClient)
-
-    // @ts-ignore
-    const appAddr = algosdk.getApplicationAddress(appId)
-    const suggestedParamsFund = await algodClient.getTransactionParams().do()
+    const appAddr = algosdk.getApplicationAddress(appIndex)
     const fundingAmount = 300_000 + 10_000
 
     const fundAppObj: PaymentObject = {
@@ -117,8 +111,16 @@ export async function Arc200RwaSaleCreate(provider: Provider, account: Account, 
         from: account.address,
         to: appAddr,
         amount: fundingAmount,
-        suggestedParams: suggestedParamsFund,
+        suggestedParams,
     }
 
-    return [appCreateObj, fundAppObj]
+    const fundAppCallObj: AppCallObject = {
+        type: TransactionType.appl,
+        appIndex: appIndex,
+        from: account.address,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        appArgs: [new TextEncoder().encode('fund')],
+        suggestedParams,
+    }
+    return [appCreateObj, fundAppObj, fundAppCallObj]
 }

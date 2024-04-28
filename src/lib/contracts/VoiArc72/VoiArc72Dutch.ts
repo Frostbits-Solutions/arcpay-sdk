@@ -85,12 +85,10 @@ export async function VoiArc72DutchCreate (provider: Provider, account: Account,
             numLocalByteSlices: 0,
         } as AppCreateObject
 
-    const appId = await new Transaction([appCreateObj])
-        .getFutureAppId(algosdk, algodClient)
+    const appIndex = Number(await new Transaction([appCreateObj])
+        .getFutureAppId(algosdk, algodClient))
 
-    // @ts-ignore
-    const appAddr = algosdk.getApplicationAddress(appId)
-    const suggestedParamsFund = await algodClient.getTransactionParams().do()
+    const appAddr = algosdk.getApplicationAddress(appIndex)
     const fundingAmount = 100_000 + 10_000
 
     const fundAppObj: PaymentObject = {
@@ -98,7 +96,7 @@ export async function VoiArc72DutchCreate (provider: Provider, account: Account,
         from: account.address,
         to: appAddr,
         amount: fundingAmount,
-        suggestedParams: suggestedParamsFund,
+        suggestedParams,
     }
 
     const abi = new algosdk.ABIContract(arc72Schema)
@@ -116,5 +114,14 @@ export async function VoiArc72DutchCreate (provider: Provider, account: Account,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
     }
 
-    return [appCreateObj, fundAppObj, appCallObj]
+    const fundAppCallObj: AppCallObject = {
+        type: TransactionType.appl,
+        appIndex: appIndex,
+        from: account.address,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        appArgs: [new TextEncoder().encode('fund')],
+        suggestedParams,
+    }
+
+    return [appCreateObj, fundAppObj, appCallObj, fundAppCallObj]
 }

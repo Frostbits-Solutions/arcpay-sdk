@@ -103,12 +103,10 @@ export async function Arc200Arc72SaleCreate(provider: Provider, account: Account
                 numLocalByteSlices: 0,
             } as AppCreateObject
 
-        const appId = await new Transaction([appCreateObj])
-            .getFutureAppId(algosdk, algodClient)
+        const appIndex = Number(await new Transaction([appCreateObj])
+            .getFutureAppId(algosdk, algodClient))
 
-        // @ts-ignore
-        const appAddr = algosdk.getApplicationAddress(appId)
-        const suggestedParamsFund = await algodClient.getTransactionParams().do()
+        const appAddr = algosdk.getApplicationAddress(appIndex)
         const fundingAmount = 300_000
 
         const fundAppObj: PaymentObject = {
@@ -116,7 +114,7 @@ export async function Arc200Arc72SaleCreate(provider: Provider, account: Account
             from: account.address,
             to: appAddr,
             amount: fundingAmount,
-            suggestedParams: suggestedParamsFund,
+            suggestedParams,
         }
 
         const abi = new algosdk.ABIContract(arc72Schema)
@@ -126,7 +124,7 @@ export async function Arc200Arc72SaleCreate(provider: Provider, account: Account
 
         const appCallObj: AppCallObject = {
             type: TransactionType.appl,
-            suggestedParams: suggestedParams,
+            suggestedParams,
             from: account.address,
             appIndex: parameters.nftAppID,
             appArgs: appArgsFund,
@@ -134,7 +132,16 @@ export async function Arc200Arc72SaleCreate(provider: Provider, account: Account
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
         }
 
-        return [appCreateObj, fundAppObj, appCallObj]
+        const fundAppCallObj: AppCallObject = {
+            type: TransactionType.appl,
+            appIndex: appIndex,
+            from: account.address,
+            onComplete: algosdk.OnApplicationComplete.NoOpOC,
+            appArgs: [new TextEncoder().encode('fund')],
+            suggestedParams,
+        }
+
+        return [appCreateObj, fundAppObj, appCallObj, fundAppCallObj]
     } catch (e) {
         console.log(e)
         throw {
