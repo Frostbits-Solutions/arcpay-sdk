@@ -151,9 +151,10 @@ export type Database = {
           created_at: string
           duration: number
           id: number
+          increment: number
           listing_id: string
-          min_increment: number
-          start_price: number
+          max_price: number | null
+          min_price: number
           type: Database["public"]["Enums"]["auctions_type"]
           updated_at: string | null
         }
@@ -161,9 +162,10 @@ export type Database = {
           created_at?: string
           duration: number
           id?: number
+          increment: number
           listing_id: string
-          min_increment: number
-          start_price: number
+          max_price?: number | null
+          min_price: number
           type: Database["public"]["Enums"]["auctions_type"]
           updated_at?: string | null
         }
@@ -171,9 +173,10 @@ export type Database = {
           created_at?: string
           duration?: number
           id?: number
+          increment?: number
           listing_id?: string
-          min_increment?: number
-          start_price?: number
+          max_price?: number | null
+          min_price?: number
           type?: Database["public"]["Enums"]["auctions_type"]
           updated_at?: string | null
         }
@@ -366,35 +369,38 @@ export type Database = {
       }
       transactions: {
         Row: {
-          amount: number
+          amount: number | null
           app_id: number
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
-          currency: string
+          currency: string | null
           from_address: string
+          group_id: string | null
           id: string
           note: string | null
           type: Database["public"]["Enums"]["transaction_type"]
           listings: unknown | null
         }
         Insert: {
-          amount: number
+          amount?: number | null
           app_id: number
           chain: Database["public"]["Enums"]["chains"]
           created_at?: string
-          currency: string
+          currency?: string | null
           from_address: string
+          group_id?: string | null
           id: string
           note?: string | null
           type: Database["public"]["Enums"]["transaction_type"]
         }
         Update: {
-          amount?: number
+          amount?: number | null
           app_id?: number
           chain?: Database["public"]["Enums"]["chains"]
           created_at?: string
-          currency?: string
+          currency?: string | null
           from_address?: string
+          group_id?: string | null
           id?: string
           note?: string | null
           type?: Database["public"]["Enums"]["transaction_type"]
@@ -460,12 +466,13 @@ export type Database = {
           "": unknown
         }
         Returns: {
-          amount: number
+          amount: number | null
           app_id: number
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
-          currency: string
+          currency: string | null
           from_address: string
+          group_id: string | null
           id: string
           note: string | null
           type: Database["public"]["Enums"]["transaction_type"]
@@ -506,8 +513,9 @@ export type Database = {
         asset_qty: number | null
         asset_creator: string | null
         tags: string | null
-        start_price: number | null
-        min_increment: number | null
+        min_price: number | null
+        max_price: number | null
+        increment: number | null
         duration: number | null
         type: Database["public"]["Enums"]["auctions_type"] | null
         asking_price: number | null
