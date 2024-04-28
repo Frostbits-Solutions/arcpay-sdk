@@ -1,8 +1,23 @@
 {
   "name": "arcpay-sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
+  "files": ["dist"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatijaNovosel/tri-state-checkbox.git"
+  },
+  "keywords": ["voi","arc","pay","sdk"],
+  "main": "./dist/arcpay-sdk.umd.cjs",
+  "module": "./dist/arcpay-sdk.js",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/arcpay-sdk.js",
+      "require": "./dist/arcpay-sdk.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -22,6 +37,7 @@
     "algosdk": "^2.7.0",
     "buffer": "^6.0.3",
     "pinia": "^2.1.7",
+    "uuid": "^9.0.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
@@ -47,6 +63,7 @@
     "tailwindcss": "^3.4.3",
     "typescript": "~5.4.0",
     "vite": "^5.2.8",
+    "vite-plugin-dts": "^3.9.0",
     "vitest": "^1.4.0",
     "vue-tsc": "^2.0.11"
   }

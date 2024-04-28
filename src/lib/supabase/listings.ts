@@ -1,13 +1,20 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/supabase/database.types'
 
-export async function getListingById(supabase: SupabaseClient, listing_id: string) {
-  const { data, error } = await supabase.rpc('get_listing_by_id', { listing_id })
+export async function getListings(client: SupabaseClient) {
+  const { data, error } = await client
+    .from('listings')
+    .select('*, auctions(*), sales(*)')
+  return { data, error }
+}
+
+export async function getListingById(client: SupabaseClient, listing_id: string) {
+  const { data, error } = await client.rpc('get_listing_by_id', { listing_id })
   return { data, error }
 }
 
 export async function createAuction(
-    supabase: SupabaseClient,
+    client: SupabaseClient,
     account_id: Database["public"]["Tables"]["listings"]["Row"]["account_id"],
     app_id: Database["public"]["Tables"]["listings"]["Row"]["app_id"],
     asset_creator: Database["public"]["Tables"]["listings"]["Row"]["asset_creator"],
@@ -25,7 +32,7 @@ export async function createAuction(
     start_price: Database["public"]["Tables"]["auctions"]["Row"]["start_price"],
     type: Database["public"]["Enums"]["auctions_type"]
 ) {
-    const { data: listingData, error: listingError } = await supabase
+    const { data: listingData, error: listingError } = await client
         .from('listings')
         .insert({
             account_id,
@@ -48,7 +55,7 @@ export async function createAuction(
     const listingId = listingData?.[0].id
     if (listingError || !listingId) return { data: null, listingError }
 
-    const { data, error } = await supabase
+    const { data, error } = await client
         .from('auctions')
         .insert({
             listing_id: listingId,
@@ -62,7 +69,7 @@ export async function createAuction(
 }
 
 export async function createSale(
-    supabase: SupabaseClient,
+    client: SupabaseClient,
     account_id: Database["public"]["Tables"]["listings"]["Row"]["account_id"],
     app_id: Database["public"]["Tables"]["listings"]["Row"]["app_id"],
     asset_creator: Database["public"]["Tables"]["listings"]["Row"]["asset_creator"],
@@ -77,7 +84,7 @@ export async function createSale(
     tags: Database["public"]["Tables"]["listings"]["Row"]["tags"],
     asking_price: Database["public"]["Tables"]["sales"]["Row"]["asking_price"]
 ) {
-    const { data: listingData, error: listingError } = await supabase
+    const { data: listingData, error: listingError } = await client
         .from('listings')
         .insert({
             account_id,
@@ -100,7 +107,7 @@ export async function createSale(
     const listingId = listingData?.[0].id
     if (listingError || !listingId) return { data: null, listingError }
 
-    const { data, error } = await supabase
+    const { data, error } = await client
         .from('sales')
         .insert({
             listing_id: listingId,
