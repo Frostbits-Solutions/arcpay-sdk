@@ -28,6 +28,9 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const feesAddress = ref('UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY')
     const rwaId: Ref<string|null> = ref(null)
     const rwaName: Ref<string|null> = ref(null)
+    const assetType: Ref<string|null> = ref(null)
+    const auctionType: Ref<string|null> = ref(null)
+    const listingType: Ref<string|null> = ref(null)
 
     async function getListingParameters(client: SupabaseClient, listing_id: string) {
         const { data, error } = await getListingById(client, listing_id)
@@ -46,6 +49,9 @@ export const useParametersStore = defineStore('parametersStore', () => {
         duration.value = Number(data.duration)
         rwaId.value = data.asset_id
         rwaName.value = data.listing_name
+        assetType.value = data.asset_type
+        listingType.value = data.listing_type
+        auctionType.value = data.auction_type
     }
 
     return {
@@ -64,6 +70,9 @@ export const useParametersStore = defineStore('parametersStore', () => {
         duration,
         rwaId,
         rwaName,
+        assetType,
+        listingType,
+        auctionType,
         getListingParameters,
     }
 })
