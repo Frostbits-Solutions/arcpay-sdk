@@ -1,4 +1,4 @@
-import {computed, ref} from 'vue'
+import { computed, ref } from 'vue'
 import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
 import algosdk from "algosdk";
@@ -37,8 +37,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         }
 
         [nftAppID.value, nftID.value] = data.asset_id.split('/').map(Number)
-        priceMin.value = Number(data.min_increment)
-        priceMax.value = Number(data.start_price)
+        priceMin.value = Number(data.min_price)
+        priceMax.value = Number(data.max_price)
         price.value = Number(data.asking_price)
         seller.value = data.seller_address
         appIndex.value = Number(data.app_id)
