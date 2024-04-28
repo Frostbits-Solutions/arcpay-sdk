@@ -64,7 +64,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                       parameterStore.value.price
                     )
                     if (error) {
-                        throw error
+                        console.error(error)
                     }
                 } else  {
                     const {data, error} = await createAuction(
@@ -88,7 +88,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                       contractType.value === CONTRACT_TYPE.Dutch ? 'dutch' : 'english'
                     )
                     if (error) {
-                        throw error
+                        console.error(error)
                     }
                 }
             }
