@@ -52,10 +52,48 @@ export class Client {
   }
 
   public async updateListing() {
+    const modals = useModalsStore()
+    modals.showModal('root')
+    const params = useParametersStore()
+
+    const walletStore = useWalletStore()
+    const transactionStore = useTransactionStore()
+    // @ts-ignore
+    transactionStore.walletStore = walletStore
+    // @ts-ignore
+    transactionStore.parameterStore = params
+    transactionStore.transactionType = TRANSACTION_TYPE.update
+    routerListenStores()
   }
 
   public async cancelListing() {
-    
+    const modals = useModalsStore()
+    modals.showModal('root')
+    const params = useParametersStore()
+
+    const walletStore = useWalletStore()
+    const transactionStore = useTransactionStore()
+    // @ts-ignore
+    transactionStore.walletStore = walletStore
+    // @ts-ignore
+    transactionStore.parameterStore = params
+    transactionStore.transactionType = TRANSACTION_TYPE.cancel
+    routerListenStores()
+  }
+
+  public async closeListing() {
+    const modals = useModalsStore()
+    modals.showModal('root')
+    const params = useParametersStore()
+
+    const walletStore = useWalletStore()
+    const transactionStore = useTransactionStore()
+    // @ts-ignore
+    transactionStore.walletStore = walletStore
+    // @ts-ignore
+    transactionStore.parameterStore = params
+    transactionStore.transactionType = TRANSACTION_TYPE.close
+    routerListenStores()
   }
 
   public async buy (listing_id: string) {
