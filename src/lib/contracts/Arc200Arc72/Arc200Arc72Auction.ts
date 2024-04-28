@@ -6,6 +6,7 @@ import type {Account, AppCallObject, AppCreateObject, PaymentObject, Provider, T
 import {arc72Schema} from "@/lib/contracts/abi/arc72";
 import {Transaction} from "@/transaction";
 import {auctionApprovalProgram, clearProgram} from "./Arc200Arc72Contract";
+import arc200Schema from "@/lib/contracts/abi/arc200";
 
 export async function Arc200Arc72AuctionBid (provider: Provider, account: Account, parameters: TransactionParameters) {
 
@@ -16,15 +17,33 @@ export async function Arc200Arc72AuctionBid (provider: Provider, account: Accoun
 
     const appAddress = algosdk.getApplicationAddress(parameters.appIndex)
 
-    const payObj = {
+    const abi = new algosdk.ABIContract(arc200Schema)
+    const abiMethod = abi.getMethodByName('arc200_transfer')
+    const args = [parameters.appAddress, parameters.price]
+    const arc200AppArgs = encodeAppArgs(abiMethod, args)
+
+    const fundArc200Obj: PaymentObject = {
         type: TransactionType.pay,
         from: account.address,
-        to: appAddress,
-        amount: parameters.price * 1_000_000,
+        to: parameters.arc200AppAddress,
+        amount: 28500,
         suggestedParams
     }
 
-    const appArgs = [new TextEncoder().encode('bid')]
+    const arc200ApproveObj: AppCallObject = {
+        type: TransactionType.appl,
+        suggestedParams: suggestedParams,
+        from: account.address,
+        appIndex: parameters.arc200AppID,
+        appArgs: arc200AppArgs,
+        foreignApps: [parameters.arc200AppID],
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+    }
+
+    const appArgs = [
+        new TextEncoder().encode('bid'),
+        longToByteArray(parameters.price, 8),
+    ]
     const appCallObj = {
         type: TransactionType.appl,
         from: account.address,
@@ -34,7 +53,7 @@ export async function Arc200Arc72AuctionBid (provider: Provider, account: Accoun
         suggestedParams,
     }
 
-    return [payObj, appCallObj]
+    return [fundArc200Obj, arc200ApproveObj, appCallObj]
 }
 export async function Arc200Arc72AuctionCreate (provider: Provider, account: Account, parameters: TransactionParameters) {
     const algosdk = provider.algosdk
@@ -42,7 +61,7 @@ export async function Arc200Arc72AuctionCreate (provider: Provider, account: Acc
     console.log(parameters.priceMin)
 
     /*** Creation of the application ***/
-    const startPrice = parameters.priceMin * 1_000_000
+    const startPrice = parameters.priceMin
     const suggestedParams = await algodClient.getTransactionParams().do()
     const appArgs = [
         longToByteArray(parameters.nftAppID, 8),
