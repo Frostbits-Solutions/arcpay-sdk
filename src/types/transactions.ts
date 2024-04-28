@@ -139,6 +139,6 @@ export interface TransactionParameters {
     arc200Decimals: number
     duration: number // auction duration
     feesAddress: string
+    rwaId: string
     rwaName: string
-    rwaDescription: string
 }

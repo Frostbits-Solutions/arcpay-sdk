@@ -2,7 +2,7 @@
   <div class="ap-w-full ap-grid ap-grid-cols-2 ap-gap-x-4">
     <label
       v-if="label"
-      for="`int-input-${label}`"
+      :for="`int-input-${label}`"
       class="ap-self-center ap-text-sm ap-font-medium ap-text-right ap-text-gray-900 dark:ap-text-white">
       {{label}}
     </label>

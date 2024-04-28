@@ -5,7 +5,7 @@ import {useTransactionStore} from "@/stores/transactionStore";
 import {CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_TYPE} from "@/constants";
 import {routerListenStores} from "@/router";
 
-const transactionType = TRANSACTION_TYPE.bid
+const transactionType = TRANSACTION_TYPE.create
 const contractType = CONTRACT_TYPE.Auction
 const conventionType = CONVENTION_TYPE.VoiArc72
 
@@ -29,7 +29,7 @@ const parameters = {
         appIndex: 42039020,
     },
     [TRANSACTION_TYPE.close]: {
-        appIndex: 42039119,
+        appIndex: 42039157,
     },
     [TRANSACTION_TYPE.create]: {
         nftAppID: 29105406,

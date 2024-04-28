@@ -49,8 +49,8 @@ export async function VoiRwaSaleCreate (provider: Provider, account: Account, pa
     const appArgs = [
         longToByteArray(_price, 8),
         algosdk.decodeAddress(parameters.feesAddress).publicKey,
-        new TextEncoder().encode(parameters.rwaName),
-        new TextEncoder().encode(parameters.rwaDescription)
+        new TextEncoder().encode(parameters.rwaId),
+        new TextEncoder().encode(parameters.rwaName)
     ]
 
     const appCreateObj =

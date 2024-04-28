@@ -62,8 +62,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         feesAddress,
         arc200Decimals,
         duration,
-        rwaName: rwaId,
-        rwaDescription: rwaName,
+        rwaId,
+        rwaName,
         getListingParameters,
     }
 })

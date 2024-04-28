@@ -79,8 +79,8 @@ export async function Arc200RwaSaleCreate(provider: Provider, account: Account, 
     const suggestedParams = await algodClient.getTransactionParams().do()
     const appArgs = [
         longToByteArray(_price, 8),
+        new TextEncoder().encode(parameters.rwaId),
         new TextEncoder().encode(parameters.rwaName),
-        new TextEncoder().encode(parameters.rwaDescription),
         longToByteArray(parameters.arc200AppID, 8),
         algosdk.decodeAddress(parameters.arc200AppAddress).publicKey,
     ]
