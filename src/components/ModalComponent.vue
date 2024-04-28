@@ -21,15 +21,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="modalName && modals.states[modalName]" tabindex="-1" class="overflow-y-auto overflow-x-hidden flex justify-center items-center fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-full backdrop-blur-sm bg-gray-300/50 dark:bg-gray-900/80 animate-blur">
-    <div class="relative p-4 w-full max-w-md max-h-full">
+  <div v-if="modalName && modals.states[modalName]" tabindex="-1" class="ap-overflow-y-auto ap-overflow-x-hidden ap-flex ap-justify-center ap-items-center ap-fixed ap-top-0 ap-right-0 ap-left-0 ap-z-50 ap-w-full md:ap-inset-0 ap-h-full ap-backdrop-blur-sm ap-bg-gray-300/50 dark:ap-bg-gray-900/80 ap-animate-blur">
+    <div class="ap-relative ap-p-4 ap-w-full ap-max-w-3xl ap-max-h-full">
       <!-- Modal content -->
-      <div ref="modalRef" class="relative bg-white rounded-lg shadow dark:bg-gray-700 animate-modal">
+      <div ref="modalRef" class="ap-relative ap-bg-white ap-rounded-lg ap-shadow ap-dark:bg-gray-700 ap-animate-modal">
         <!-- Modal header -->
-        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+        <div class="ap-flex ap-items-center ap-justify-between ap-p-4 ap-md:p-5 ap-border-b ap-rounded-t ap-dark:border-gray-600">
           <slot name="header"></slot>
-          <button @click="hide" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <button @click="hide" type="button" class="ap-text-gray-400 ap-bg-transparent hover:ap-bg-gray-200 hover:ap-text-gray-900 ap-rounded-lg ap-text-sm ap-w-8 ap-h-8 ap-ms-auto ap-inline-flex ap-justify-center ap-items-center dark:ap-hover:bg-gray-600 dark:hover:ap-text-white">
+            <svg class="ap-w-3 ap-h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
             </svg>
             <span class="sr-only">Close modal</span>

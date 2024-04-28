@@ -46,6 +46,7 @@
     "buffer": "^6.0.3",
     "pinia": "^2.1.7",
     "uuid": "^9.0.1",
+    "vite-plugin-css-injected-by-js": "^3.5.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
