@@ -86,23 +86,23 @@ export type Database = {
         Row: {
           account_id: number
           created_at: string
-          domain: string
           key: string
           name: string | null
+          origin: string
         }
         Insert: {
           account_id: number
           created_at?: string
-          domain: string
           key?: string
           name?: string | null
+          origin: string
         }
         Update: {
           account_id?: number
           created_at?: string
-          domain?: string
           key?: string
           name?: string | null
+          origin?: string
         }
         Relationships: [
           {
@@ -375,6 +375,7 @@ export type Database = {
           id: string
           note: string | null
           type: Database["public"]["Enums"]["transaction_type"]
+          listings: unknown | null
         }
         Insert: {
           amount: number
@@ -411,6 +412,13 @@ export type Database = {
         }
         Returns: number[]
       }
+      get_key_account_id: {
+        Args: {
+          key: string
+          origin: string
+        }
+        Returns: number
+      }
       get_listing_by_id: {
         Args: {
           listing_id: string
@@ -422,6 +430,30 @@ export type Database = {
           user_email: string
         }
         Returns: number[]
+      }
+      listings: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          account_id: number
+          app_id: number
+          asset_creator: string | null
+          asset_id: string
+          asset_qty: number
+          asset_thumbnail: string | null
+          asset_type: Database["public"]["Enums"]["assets_types"]
+          chain: Database["public"]["Enums"]["chains"]
+          created_at: string
+          id: string
+          listing_currency: string
+          listing_name: string
+          listing_type: Database["public"]["Enums"]["listings_types"]
+          seller_address: string
+          status: Database["public"]["Enums"]["listings_statuses"]
+          tags: string | null
+          updated_at: string | null
+        }[]
       }
       transactions: {
         Args: {
@@ -488,23 +520,23 @@ type PublicSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+      | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+      Database[PublicTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+    Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
   : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
+      PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+      PublicSchema["Views"])[PublicTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -513,7 +545,7 @@ export type Tables<
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+      | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
@@ -534,7 +566,7 @@ export type TablesInsert<
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+      | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
@@ -555,7 +587,7 @@ export type TablesUpdate<
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+      | keyof PublicSchema["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
