@@ -3,7 +3,7 @@
   <h2 class="font-bold text-lg">Account to use</h2>
   <button
     class="flex items-center w-full hover:bg-gray-100 p-2 rounded"
-    v-for="account of accounts"
+    v-for="account of walletStore.wallet.accounts"
     @click="() => chooseAccount(account)"
     :key="account.address"
   >
@@ -29,9 +29,8 @@ import { onMounted } from 'vue'
 import IconChevronNext from '@/components/icons/IconChevronNext.vue'
 import {useWalletStore} from "@/stores/walletStore";
 
-const props = defineProps<{ accounts: Account[]}>()
-
 const walletStore = useWalletStore()
+
 function getShortAddress (address: string) {
   return `${address.slice(0,10)}...${address.slice(address.length-3)}`
 }
@@ -41,8 +40,8 @@ function chooseAccount (account: Account) {
 }
 
 function onMountedHook () {
-  if (props.accounts.length === 1) {
-    chooseAccount(props.accounts[0])
+  if (walletStore?.wallet?.accounts.length === 1) {
+    chooseAccount(walletStore.wallet.accounts[0])
   }
 }
 

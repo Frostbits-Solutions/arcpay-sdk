@@ -16,12 +16,11 @@
 
 <script setup lang="ts">
 import IconExclamationCircle from '@/components/icons/IconExclamationCircle.vue'
+import {useTransactionStore} from "@/stores/transactionStore";
+import {computed} from "vue";
 
-const p = defineProps < {
-  information: object
-} > ()
-
-console.error(p.information)
+const transactionStore = useTransactionStore()
+const information = computed(() =>transactionStore.errorInfo)
 </script>
 
 <style scoped>

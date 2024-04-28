@@ -11,11 +11,11 @@
 
 import IconCheckCircle from '@/components/icons/IconCheckCircle.vue'
 import IconArrowRightCorner from '@/components/icons/IconArrowRightCorner.vue'
+import {useTransactionStore} from "@/stores/transactionStore";
+import {computed} from "vue";
 
-defineProps < {
-  information: object
- } > ()
-
+const transactionStore = useTransactionStore()
+const information = computed(() =>transactionStore.successInfo)
 </script>
 
 <style scoped>

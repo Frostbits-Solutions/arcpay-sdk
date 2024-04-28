@@ -11,12 +11,16 @@ import type {
   AppObject, AppDeleteObject
 } from '@/types'
 import { OnApplicationComplete } from 'algosdk/src/types/transactions/base'
+import type {Provider} from "@/types";
+import type {Transaction as _Transaction} from "algosdk";
 
 export class Transaction {
 
   objs: TransactionObject[]
+  txns: _Transaction[]
   constructor (transactionsObjs: TransactionObject[]) {
     this.objs = transactionsObjs
+    this.txns = []
   }
 
   async createTxns (algosdk: typeof _algosdk, algodClient: _algosdk.Algodv2) {
@@ -89,13 +93,11 @@ export class Transaction {
       }
     }
     const txns = this.objs.map(this._getTxn)
-
     return txns
   }
 
 
   async simulateTxn (algosdk: typeof _algosdk, algodClient: _algosdk.Algodv2) {
-
     const txns = this.objs.map(this._getTxn)
     console.log(txns)
     const txngroup = algosdk.assignGroupID(txns);
@@ -120,6 +122,17 @@ export class Transaction {
 
     console.log(txns, stxns, response)
     return response
+  }
+
+  async getFutureAppId (algosdk: typeof _algosdk, algodClient: _algosdk.Algodv2) {
+    const results = await this.simulateTxn(algosdk, algodClient)
+    if (results?.txnGroups[0]?.failureMessage) {
+      throw {
+        code: SIMULATION_ERROR,
+        message: results?.txnGroups[0]?.failureMessage
+      }
+    }
+    return results.txnGroups[0].txnResults[0].txnResult.applicationIndex
   }
 
   _getTxn (obj: TransactionObject) {

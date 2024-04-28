@@ -1,4 +1,8 @@
 import { PROVIDER_ID } from '@/constants'
+import Kibisis from "@/lib/wallets/kibisis";
+import WalletConnect from "@/lib/wallets/walletConnect";
+
+export type Provider  = Kibisis | WalletConnect
 
 export interface Account {
   providerId: PROVIDER_ID

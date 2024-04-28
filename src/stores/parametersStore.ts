@@ -20,12 +20,15 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const nftAppID: Ref<number|null> = ref(null)
     const arc200AppID: Ref<number|null> = ref(null)
     const arc200AppAddress: Ref<string|null> = computed(() => {
+        console.log(arc200AppID.value)
         if (arc200AppID.value) return algosdk.getApplicationAddress(arc200AppID.value)
         else return null
     })
     const arc200Decimals: Ref<number|null> = ref(null)
     const duration: Ref<number|null> = ref(null) // auction duration
     const feesAddress = ref('UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY')
+    const rwaName: Ref<string|null> = ref(null)
+    const rwaDescription: Ref<string|null> = ref(null)
 
     async function getListingParameters(client: SupabaseClient, listing_id: string) {
         const { data, error } = await getListingById(client, listing_id)
@@ -35,14 +38,14 @@ export const useParametersStore = defineStore('parametersStore', () => {
         }
 
         [nftAppID.value, nftID.value] = data.asset_id.split('/').map(Number)
-        priceMin.value = data.min_increment
-        priceMax.value = data.start_price
-        reserve.value = data.min_increment // Aucune idée c'est quoi
-        price.value = data.asking_price
+        priceMin.value = Number(data.min_increment)
+        priceMax.value = Number(data.start_price)
+        reserve.value = Number(data.min_increment) // Aucune idée c'est quoi
+        price.value = Number(data.asking_price)
         seller.value = data.seller_address
-        appIndex.value = data.app_id
-        arc200AppID.value = data.listing_currency === 0 ? null : data.listing_currency
-        duration.value = data.duration
+        appIndex.value = Number(data.app_id)
+        arc200AppID.value = data.listing_currency === 0 ? null : Number(data.listing_currency)
+        duration.value = Number(data.duration)
     }
 
     return {
@@ -60,6 +63,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         feesAddress,
         arc200Decimals,
         duration,
+        rwaName,
+        rwaDescription,
         getListingParameters,
     }
 })

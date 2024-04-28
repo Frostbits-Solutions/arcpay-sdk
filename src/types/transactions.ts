@@ -41,14 +41,6 @@ export interface UpdateTransactionParameters {
   feesAddress: string,
 }
 
-export type TransactionParameters =
-  BuyTransactionParameters |
-  BuyWArc200TransactionParameters |
-  BidTransactionParameters |
-  CancelTransactionParameters |
-  CreateTransactionParameters |
-  UpdateTransactionParameters
-
 export type PaymentObject = {
   type: TransactionType; // TransactionType.pay
   from: string;
@@ -131,3 +123,22 @@ export type AppDeleteObject =
 
 export type AppObject = AppCallObject | AppCreateObject | AppDeleteObject
 export type TransactionObject = AppCallObject|AppCreateObject|PaymentObject|TransfertObject
+
+export interface TransactionParameters {
+    nftID: number
+    priceMin: number // input for min price in dutch
+    priceMax: number // input for max price in dutch
+    reserve: number // input for reserve in auction
+    price: number
+    seller: string
+    appIndex: number
+    appAddress: string
+    nftAppID: number
+    arc200AppID: number
+    arc200AppAddress: string
+    arc200Decimals: number
+    duration: number // auction duration
+    feesAddress: string
+    rwaName: string
+    rwaDescription: string
+}

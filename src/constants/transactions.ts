@@ -1,3 +1,13 @@
+
+export const enum TRANSACTION_STATE {
+  idle,
+  initiatingTransaction,
+  signingTransaction,
+  sendingTransaction,
+  error,
+  success,
+}
+
 export enum TRANSACTION_TYPE {
   buy,
   create,
