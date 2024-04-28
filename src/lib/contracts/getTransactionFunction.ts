@@ -8,6 +8,7 @@ import {VoiRwaSaleBuy, VoiRwaSaleCreate} from "@/lib/contracts/VoiRwa/VoiRwaSale
 import {VoiArc72AuctionBid, VoiArc72AuctionCreate} from "@/lib/contracts/VoiArc72/VoiArc72Auction";
 import {cancelListing} from "@/lib/contracts/cancelListing";
 import {updateListing} from "@/lib/contracts/updateListing";
+import {Arc200Arc72AuctionBid, Arc200Arc72AuctionCreate} from "@/lib/contracts/Arc200Arc72/Arc200Arc72Auction";
 
 export function getTransactionFunction (
     transactionType: TRANSACTION_TYPE,
@@ -52,9 +53,8 @@ export function getTransactionFunction (
             break
         case TRANSACTION_TYPE.bid:
             switch (conventionType) {
-                // case CONVENTION_TYPE.Arc200Arc72:
-                //     return Arc200Arc72AuctionBid
-                //     break
+                case CONVENTION_TYPE.Arc200Arc72:
+                    return Arc200Arc72AuctionBid
                 case CONVENTION_TYPE.VoiArc72:
                     return VoiArc72AuctionBid
                 default:
@@ -70,6 +70,8 @@ export function getTransactionFunction (
                             return Arc200Arc72SaleCreate
                         case CONTRACT_TYPE.Dutch:
                             return Arc200Arc72DutchCreate
+                        case CONTRACT_TYPE.Auction:
+                            return Arc200Arc72AuctionCreate
                         default:
                             throw {
                                 message: `Unkown contract type ${contractType}`

@@ -34,7 +34,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                     conventionType.value,
                     contractType.value
                 )
-            const txnObjs = await transactionFunction(walletStore.value.provider, walletStore.value.account, parameterStore)
+            const txnObjs = await transactionFunction(walletStore.value.provider, walletStore.value.account, parameterStore.value)
             const transaction = new Transaction(txnObjs)
             const txns = await transaction.createTxns(walletStore.value.provider.algosdk, walletStore.value.provider.algodClient)
 

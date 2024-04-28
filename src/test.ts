@@ -6,8 +6,8 @@ import {CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_TYPE} from "@/constants";
 import {routerListenStores} from "@/router";
 
 const transactionType = TRANSACTION_TYPE.create
-const contractType = CONTRACT_TYPE.Sale
-const conventionType = CONVENTION_TYPE.VoiArc72
+const contractType = CONTRACT_TYPE.Auction
+const conventionType = CONVENTION_TYPE.Arc200Arc72
 
 const parameters = {
     [TRANSACTION_TYPE.buy]: {
@@ -32,6 +32,9 @@ const parameters = {
     [TRANSACTION_TYPE.create]: {
         nftAppID: 29105406,
         nftID: 602,
+        arc200AppID: 40427782,
+        priceMin: 1,
+        duration: 1,
     },
     [TRANSACTION_TYPE.update]: {
         appIndex: 42037609,
