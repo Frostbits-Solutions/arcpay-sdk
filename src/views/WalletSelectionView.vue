@@ -37,7 +37,7 @@ const providers =
       }
     }) ;
 
-function chooseWallet (providerid: PROVIDER_ID) {
+async function chooseWallet (providerid: PROVIDER_ID) {
   const provider = await PROVIDER[providerid].init()
   const wallet = await provider.connect(() => {})
   if (wallet.accounts.length === 0) {

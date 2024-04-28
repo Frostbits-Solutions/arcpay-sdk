@@ -7,8 +7,7 @@ import * as path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
-    dts()
+    vue()
   ],
   resolve: {
     alias: {
@@ -20,6 +19,14 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/main.ts"),
       name: "arcpay-sdk",
       fileName: "arcpay-sdk"
+    },
+    rollupOptions: {
+      external: ["vue"],
+      output: {
+        globals: {
+          vue: "Vue"
+        }
+      }
     }
   },
 })

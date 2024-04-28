@@ -3,12 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MatijaNovosel/tri-state-checkbox.git"
   },
-  "keywords": ["voi","arc","pay","sdk"],
+  "keywords": [
+    "voi",
+    "arc",
+    "pay",
+    "sdk"
+  ],
   "main": "./dist/arcpay-sdk.umd.cjs",
   "module": "./dist/arcpay-sdk.js",
   "types": "./dist/main.d.ts",
@@ -32,6 +39,7 @@
   "dependencies": {
     "@agoralabs-sh/algorand-provider": "^1.1.0",
     "@supabase/supabase-js": "^2.42.7",
+    "@vueuse/core": "^10.9.0",
     "@walletconnect/modal-sign-html": "^2.6.2",
     "@walletconnect/web3wallet": "^1.11.2",
     "algosdk": "^2.7.0",

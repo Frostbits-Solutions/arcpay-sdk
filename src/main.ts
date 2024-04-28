@@ -17,12 +17,16 @@ document.body.insertAdjacentHTML('beforeend', `<div id="arcpay-${id}"></div>`);
 app.mount(`#arcpay-${id}`)
 
 import { getListings, getListingById } from '@/lib/supabase/listings'
+import { useModalsStore } from '@/stores/modalsStore'
 
 const createClient = createSupabaseClient;
 const createListing = () => {}
 const updateListing = () => {}
 const deleteListing = () => {}
-const buy = () => {}
+const buy = () => {
+  const modals = useModalsStore()
+  modals.showModal('root')
+}
 const bid = () => {}
 
 export {
