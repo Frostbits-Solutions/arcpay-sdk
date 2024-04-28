@@ -1,11 +1,13 @@
 <template>
   <IntInput
     v-model="parameterStore.arc200AppID"
-    v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 || CONVENTION_TYPE.Arc200Rwa"
+    v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
+    transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa"
   />
 
   <template
-    v-if="transactionStore.conventionType === CONVENTION_TYPE.VoiRwa || CONVENTION_TYPE.Arc200Rwa">
+    v-if="transactionStore.conventionType === CONVENTION_TYPE.VoiRwa ||
+          transactionStore.conventionType ===CONVENTION_TYPE.Arc200Rwa">
     <TextInput
       v-model="parameterStore.rwaName"
     />

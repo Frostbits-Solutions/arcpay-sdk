@@ -2,7 +2,8 @@
   <IntInput
     v-model="parameterStore.arc200AppID"
     label="Arc200 application id"
-    v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 || CONVENTION_TYPE.Arc200Rwa"/>
+    v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
+    transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa"/>
   <IntInput v-model="parameterStore.priceMin" :max="parameterStore.priceMax - 1" label="Minimum price"/>
   <IntInput v-model="parameterStore.priceMax" :min="parameterStore.priceMin + 1" label="Maximum price"/>
   <IntInput v-model="parameterStore.duration" label="Duration (in hours)"/>

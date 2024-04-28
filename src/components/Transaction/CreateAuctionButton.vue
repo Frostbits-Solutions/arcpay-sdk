@@ -2,7 +2,9 @@
   <IntInput
     v-model="parameterStore.arc200AppID"
     label="Arc200 application id"
-    v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 || CONVENTION_TYPE.Arc200Rwa"/>
+    v-if="
+    transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
+    transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa"/>
   <IntInput v-model="parameterStore.priceMin" label="min price"/>
   <IntInput v-model="parameterStore.duration" label="Duration (in hours)"/>
   <button @click="transactionStore.doTransaction()">Create</button>

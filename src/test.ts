@@ -5,9 +5,9 @@ import {useTransactionStore} from "@/stores/transactionStore";
 import {CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_TYPE} from "@/constants";
 import {routerListenStores} from "@/router";
 
-const transactionType = TRANSACTION_TYPE.close
+const transactionType = TRANSACTION_TYPE.bid
 const contractType = CONTRACT_TYPE.Auction
-const conventionType = CONVENTION_TYPE.Arc200Arc72
+const conventionType = CONVENTION_TYPE.VoiArc72
 
 const parameters = {
     [TRANSACTION_TYPE.buy]: {
@@ -16,15 +16,14 @@ const parameters = {
         nftAppID: 29105406,
         arc200AppID:40427782,
         price: 2,
-        nftID: 602,
+        nftID: 605,
     },
     [TRANSACTION_TYPE.bid]: {
-        seller: 'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
-        appIndex: 42039119,
+        appIndex: 42039157,
         nftAppID: 29105406,
         arc200AppID: 40427782,
-        price: 3,
-        nftID: 602,
+        price: 2,
+        nftID: 605,
     },
     [TRANSACTION_TYPE.cancel]: {
         appIndex: 42039020,
@@ -34,7 +33,7 @@ const parameters = {
     },
     [TRANSACTION_TYPE.create]: {
         nftAppID: 29105406,
-        nftID: 602,
+        nftID: 605,
         arc200AppID: 40427782,
         priceMin: 1,
         duration: 1,
