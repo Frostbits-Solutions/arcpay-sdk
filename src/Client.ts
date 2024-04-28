@@ -55,7 +55,7 @@ export class Client {
   }
 
   public async cancelListing() {
-
+    
   }
 
   public async buy (listing_id: string) {
@@ -107,9 +107,6 @@ export class Client {
 
     await params.getListingParameters(this._client, listing_id)
     if (params.listingType === 'auction') {
-      transactionStore.transactionType = TRANSACTION_TYPE.bid
-      transactionStore.contractType = CONTRACT_TYPE.Auction
-
       if (params.auctionType === 'dutch') {
         transactionStore.transactionType = TRANSACTION_TYPE.buy
         transactionStore.contractType = CONTRACT_TYPE.Dutch
