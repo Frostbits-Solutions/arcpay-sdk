@@ -1,5 +1,5 @@
 <template>
-  <IntInput v-model="parameterStore.reserve"/>
+  <IntInput v-model="parameterStore.priceMin"/>
   <IntInput v-model="parameterStore.duration"/>
   <button @click="transactionStore.doTransaction()">Create</button>
 </template>
