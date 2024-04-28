@@ -93,6 +93,7 @@ export class Client {
     // @ts-ignore
     transactionStore.parameterStore = params
     transactionStore.transactionType = TRANSACTION_TYPE.close
+    transactionStore.contractType = CONTRACT_TYPE.Auction
     routerListenStores()
   }
 
