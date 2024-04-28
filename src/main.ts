@@ -61,6 +61,7 @@ const buy = async (client: SupabaseClient, listing_id: string) => {
   transactionStore.parameterStore = params
   transactionStore.transactionType = TRANSACTION_TYPE.buy
   transactionStore.contractType = CONTRACT_TYPE.Sale
+  transactionStore.conventionType = CONVENTION_TYPE.VoiArc72
 
   await params.getListingParameters(client, listing_id)
   console.log(params)

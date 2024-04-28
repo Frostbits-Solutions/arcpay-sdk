@@ -9,7 +9,6 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const nftID: Ref<number|null> = ref(null)
     const priceMin: Ref<number|null> = ref(null) // input for min price in dutch
     const priceMax: Ref<number|null> = ref(null) // input for max price in dutch
-    const reserve: Ref<number|null> = ref(null) // input for reserve in auction
     const price: Ref<number|null> = ref(null)
     const seller: Ref<string|null> = ref(null)
     const appIndex: Ref<number|null> = ref(null)
@@ -27,8 +26,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const arc200Decimals: Ref<number|null> = ref(null)
     const duration: Ref<number|null> = ref(null) // auction duration
     const feesAddress = ref('UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY')
+    const rwaId: Ref<string|null> = ref(null)
     const rwaName: Ref<string|null> = ref(null)
-    const rwaDescription: Ref<string|null> = ref(null)
 
     async function getListingParameters(client: SupabaseClient, listing_id: string) {
         const { data, error } = await getListingById(client, listing_id)
@@ -40,19 +39,19 @@ export const useParametersStore = defineStore('parametersStore', () => {
         [nftAppID.value, nftID.value] = data.asset_id.split('/').map(Number)
         priceMin.value = Number(data.min_increment)
         priceMax.value = Number(data.start_price)
-        reserve.value = Number(data.min_increment) // Aucune idée c'est quoi
         price.value = Number(data.asking_price)
         seller.value = data.seller_address
         appIndex.value = Number(data.app_id)
         arc200AppID.value = data.listing_currency === 0 ? null : Number(data.listing_currency)
         duration.value = Number(data.duration)
+        rwaId.value = data.asset_id
+        rwaName.value = data.listing_name
     }
 
     return {
         nftID,
         priceMin,
         priceMax,
-        reserve,
         price,
         seller,
         appIndex,
@@ -63,8 +62,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         feesAddress,
         arc200Decimals,
         duration,
-        rwaName,
-        rwaDescription,
+        rwaName: rwaId,
+        rwaDescription: rwaName,
         getListingParameters,
     }
 })

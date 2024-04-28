@@ -44,12 +44,12 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
 
 
     /*** Creation of the application ***/
-    const _reserve = parameters.reserve * 1_000_000
+    const startPrice = parameters.priceMin * 1_000_000
     const suggestedParams = await algodClient.getTransactionParams().do()
     const appArgs = [
         longToByteArray(parameters.nftAppID, 8),
         longToByteArray(parameters.nftID, 32),
-        longToByteArray(_reserve, 8),
+        longToByteArray(startPrice, 8),
         longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8)
     ]
 
