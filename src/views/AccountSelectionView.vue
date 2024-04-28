@@ -1,8 +1,8 @@
 <template>
-<div class="border-t pt-8 dark:border-gray-700 text-center text-gray-700 dark:text-gray-200">
-  <h2 class="font-bold text-lg">Account to use</h2>
+<div class="ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
+  <h2 class="ap-font-bold ap-text-lg">Account to use</h2>
   <button
-    class="flex items-center w-full hover:bg-gray-100 p-2 rounded"
+    class="ap-flex ap-items-center ap-w-full hover:ap-bg-gray-100 ap-p-2 ap-rounded"
     v-for="account of walletStore.wallet.accounts"
     @click="() => chooseAccount(account)"
     :key="account.address"
@@ -10,7 +10,7 @@
     <span>
       <template v-if="account.name">
         <b>{{account.name}}</b>
-        <span class="text-gray-500 dark:text-gray-100 text-sm ml-2">
+        <span class="ap-text-gray-500 dark:ap-text-gray-100 ap-text-sm ap-ml-2">
           {{getShortAddress(account.address)}}
         </span>
       </template>
@@ -18,7 +18,7 @@
         <b>{{getShortAddress(account.address)}}</b>
       </template>
     </span>
-    <IconChevronNext class="inline-block ml-auto"/>
+    <IconChevronNext class="ap-inline-block ap-ml-auto"/>
   </button>
 </div>
 </template>

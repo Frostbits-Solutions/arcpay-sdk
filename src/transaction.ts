@@ -132,6 +132,7 @@ export class Transaction {
         message: results?.txnGroups[0]?.failureMessage
       }
     }
+    console.log(results.txnGroups[0].txnResults[0].txnResult.applicationIndex)
     return results.txnGroups[0].txnResults[0].txnResult.applicationIndex
   }
 

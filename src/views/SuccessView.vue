@@ -1,9 +1,9 @@
-<template>
-<div class="space-y-6 border-t pt-8 dark:border-gray-700 text-center text-gray-700 dark:text-gray-200">
-  <IconCheckCircle class="block m-auto fill-green-500 w-14 h-14 mb-4"/>
-  Tx id: <span class="break-words">{{information.txId}}</span><br>
+ap-<template>
+<div class="ap-space-y-6 ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
+  <IconCheckCircle class="ap-block ap-m-auto ap-fill-green-500 ap-w-14 ap-h-14 ap-mb-4"/>
+  Tx id: <span class="ap-break-words">{{information.txId}}</span><br>
   Confirmed round: {{information['confirmed-round']}}<br>
-  <a :href="`https://voi.observer/explorer/transaction/${information.txId}`">VOI explorer <IconArrowRightCorner class="inline-block w-4 h-4"/></a>
+  <a :href="`https://voi.observer/explorer/transaction/${information.txId}`">VOI explorer <IconArrowRightCorner class="ap-inline-block ap-w-4 ap-h-4"/></a>
 </div>
 </template>
 

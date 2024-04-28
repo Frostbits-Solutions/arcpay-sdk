@@ -1,18 +1,18 @@
 <template>
-<div class="border-t pt-8 dark:border-gray-700 text-center text-gray-700 dark:text-gray-200">
-  <h2 class="font-bold text-lg">VOI Wallet</h2>
-  <div class="mx-auto w-fit">
+<div class="ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
+  <h2 class="ap-font-bold ap-text-lg">VOI Wallet</h2>
+  <div class="ap-mx-auto ap-w-fit">
     <button
-      class="flex items-center w-full hover:bg-gray-100 p-2 rounded"
+      class="ap-flex ap-items-center ap-w-full hover:ap-bg-gray-100 ap-p-2 rounded"
       v-for="provider of providers"
       @click="() => chooseWallet(provider.providerId)"
       :key="provider.name"
     >
       <img
-        class="mr-2 w-8 h-8 rounded-full"
+        class="ap-mr-2 ap-w-8 ap-h-8 ap-rounded-full"
         :src="provider.icon">
       {{provider.name}}
-      <IconChevronNext class="inline-block ml-auto"/>
+      <IconChevronNext class="ap-inline-block ap-ml-auto"/>
     </button>
   </div>
 </div>

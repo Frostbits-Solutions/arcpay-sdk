@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import {PROVIDER_ICONS} from '@/constants'
+import {PROVIDER_ICONS, TRANSACTIONS_STEPS} from '@/constants'
 import {useWalletStore} from "@/stores/walletStore";
 import {getShortAddress} from "@/utils";
 import IconChevronPrevious from "@/components/icons/IconChevronPrevious.vue";
+import TransactionStepsPreview from "@/components/Transaction/TransactionStepsPreview.vue";
+import {useTransactionStore} from "@/stores/transactionStore";
 
 const walletStore = useWalletStore()
+const transactionStore = useTransactionStore()
 
 
 function resetAddress () {
@@ -12,7 +15,7 @@ function resetAddress () {
 }
 
 function resetWallet () {
-  walletStore.walletId = null
+  walletStore.wallet = null
   resetAddress()
 }
 // const parameterArray = computed(() => {
@@ -89,37 +92,37 @@ function resetWallet () {
 </script>
 
 <template>
-  <div class="space-y-6 border-t pt-8 dark:border-gray-700 text-center text-gray-700 dark:text-gray-200 flex flex-col items-center">
-    <h2 class="font-bold text-lg">Transaction overview</h2>
-    <div class="grid grid-cols-2 gap-x-3">
+  <div class="ap-space-y-6 ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200 ap-flex ap-flex-col ap-items-center">
+    <h2 class="ap-font-bold ap-text-lg">Transaction overview</h2>
+    <div class="ap-grid ap-grid-cols-2 ap-gap-x-3">
       <img
-        class="w-8 h-8 rounded-full justify-self-end"
+        class="ap-w-8 ap-h-8 ap-rounded-full ap-justify-self-end"
         :src="PROVIDER_ICONS[walletStore.account.providerId]">
-      <div class="text-left self-center">{{getShortAddress(walletStore.account.address)}}</div>
+      <div class="ap-text-left ap-self-center">{{getShortAddress(walletStore.account.address)}}</div>
       <!--
       <template v-for="parameter of parameterArray" :key="`parameter-${parameter.key}`" v-if="false">
-        <div class="text-right">
+        <div class="ap-text-right">
           {{parameter.key}}
         </div>
-        <div class="text-left">
+        <div class="ap-text-left">
           {{parameter.value}}
         </div>
       </template>
     -->
     </div>
-    <h2 class="font-bold text-lg">Transaction input</h2>
+    <h2 class="ap-font-bold ap-text-lg">Transaction input</h2>
     <router-view/>
 
-    <TransactionStepsPreview/>
+    <TransactionStepsPreview v-if="transactionStore.state !== 0"/>
 
-    <div class="w-full border-t pt-8 dark:border-gray-700 flex justify-between">
+    <div class="ap-w-full ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-flex ap-justify-between">
       <button
-        class="flex items-center justify-center w-[48%] rounded-lg bg-blue-200 px-5 py-2.5 text-center text-sm font-medium hover:bg-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        class="ap-flex ap-items-center ap-justify-center ap-w-[48%] ap-rounded-lg ap-bg-blue-200 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium hover:ap-bg-blue-400 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:hover:ap-bg-blue-700 dark:focus:ap-ring-blue-800"
         @click="resetWallet">
         <IconChevronPrevious/> Wallet
       </button>
       <button
-        class="flex items-center justify-center w-[48%] rounded-lg bg-blue-200 px-5 py-2.5 text-center text-sm font-medium hover:bg-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        class="ap-flex ap-items-center ap-justify-center ap-w-[48%] ap-rounded-lg ap-bg-blue-200 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium hover:ap-bg-blue-400 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:ap-hover:bg-blue-700 dark:focus:ap-ring-blue-800"
         @click="resetAddress"><IconChevronPrevious/> Account</button>
     </div>
   </div>
