@@ -68,10 +68,11 @@ const buy = async (client: SupabaseClient, listing_id: string) => {
   routerListenStores()
 }
 
-createListing(createSupabaseClient(import.meta.env.VITE_SUPABASE_ANON_KEY), "a4db1c1a-02ea-420e-8b25-f0ccfca31149")
-    .then(console.log)
-
 const bid = () => {}
+
+import {test} from './test'
+test()
+
 
 export {
   createClient,
