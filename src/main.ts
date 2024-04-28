@@ -22,9 +22,6 @@ app.mount(`#arcpay-${id}`)
 
 const modal:Modal = new Modal(app, `arcpay-${id}`)
 
-import { test } from './test'
-test()
-
 export {
   Client,
   modal

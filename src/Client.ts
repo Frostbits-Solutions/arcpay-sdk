@@ -15,6 +15,7 @@ interface ArcpayClientOptions {
 
 export class Client {
   private readonly _client: SupabaseClient
+  private readonly _apiKey: string | undefined
 
   constructor(options: ArcpayClientOptions) {
     if (options.client) {
@@ -22,13 +23,35 @@ export class Client {
     } else {
       if (!options.apiKey) throw new Error('API key is required')
       this._client = createSupabaseClient(options.apiKey)
+      this._apiKey = options.apiKey
     }
   }
 
-  public async createListing() {
+  private async _deriveAccountIdFromKey() {
+    if (this._apiKey) {
+      return this._client.rpc('get_key_account_id', {
+        key: this._apiKey,
+        origin: window.location.origin
+      })
+    }
+    return { data: null, error: 'Missing API Key' }
+  }
+
+  public async createListing(account_id?: number) {
     const modals = useModalsStore()
     modals.showModal('root')
     const params = useParametersStore()
+
+    if (typeof account_id === 'undefined') {
+      const {data, error} = await this._deriveAccountIdFromKey()
+      if (error) {
+        console.error(error)
+        return
+      }
+      account_id = data
+    }
+
+    params.account_id = account_id || null
 
     const walletStore = useWalletStore()
     const transactionStore = useTransactionStore()
@@ -39,6 +62,7 @@ export class Client {
     transactionStore.transactionType = TRANSACTION_TYPE.create
     transactionStore.contractType = CONTRACT_TYPE.Sale
     transactionStore.conventionType = CONVENTION_TYPE.VoiArc72
+    transactionStore.client = this._client
 
     routerListenStores()
   }

@@ -31,6 +31,7 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const assetType: Ref<string|null> = ref(null)
     const auctionType: Ref<string|null> = ref(null)
     const listingType: Ref<string|null> = ref(null)
+    const account_id: Ref<number|null> = ref(null)
 
     async function getListingParameters(client: SupabaseClient, listing_id: string) {
         const { data, error } = await getListingById(client, listing_id)
@@ -73,6 +74,7 @@ export const useParametersStore = defineStore('parametersStore', () => {
         assetType,
         listingType,
         auctionType,
+        account_id,
         getListingParameters,
     }
 })
