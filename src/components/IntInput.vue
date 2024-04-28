@@ -12,7 +12,7 @@
       :value="modelValue"
       :min="min || 0"
       :max="max || Infinity"
-      @input="emit('update:modelValue', $event.target.value)"
+      @input="emit('update:modelValue', Number($event.target.value))"
       class="ap-rounded-lg ap-border ap-border-gray-300 ap-bg-gray-50 ap-p-2.5 ap-text-sm ap-text-gray-900 focus:ap-border-blue-500 focus:ap-ring-blue-500 dark:ap-border-gray-500 dark:ap-bg-gray-600 dark:ap-text-white dark:ap-placeholder-gray-400"
       />
   </div>
