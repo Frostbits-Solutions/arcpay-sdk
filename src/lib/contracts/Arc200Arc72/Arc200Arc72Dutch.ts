@@ -8,6 +8,7 @@ import {dutchApprovalProgram, clearProgram} from "./Arc200Arc72Contract";
 import {Transaction} from "@/transaction";
 
 export async function Arc200Arc72DutchBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
+    console.log(parameters)
     const algosdk = provider.algosdk
     const algodClient = provider.algodClient as _algosdk.Algodv2
 
