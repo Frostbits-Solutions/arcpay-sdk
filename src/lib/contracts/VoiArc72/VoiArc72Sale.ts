@@ -49,16 +49,10 @@ export async function VoiArc72SaleBuy (provider: Provider, account: Account, par
 
     return [preValidateObj, payObj, appCallObj]
 }
-export async function VoiArc72SaleCreate (provider: Provider, account: Account, _parameters: TransactionParameters) {
+export async function VoiArc72SaleCreate (provider: Provider, account: Account, parameters: TransactionParameters) {
     try {
         const algosdk = provider.algosdk
         const algodClient = provider.algodClient as _algosdk.Algodv2
-        const parameters = {
-            nftAppID: 29105406,
-            nftID: 602,
-            feesAddress: 'UVGMQYP246NIXHWFSLBNPFVXJ77HSXNLU3AFP3JQEUVJSTGZIMGJ3JFFZY',
-            price: 1
-        }
         /*** Creation of the application ***/
         const _price = parameters.price * 1_000_000
         const suggestedParams = await algodClient.getTransactionParams().do()
