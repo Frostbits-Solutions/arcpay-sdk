@@ -1,5 +1,5 @@
 <template>
-  <div class="ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200 ap-break-words">
+  <div class="ap-pt-8 ap-text-center ap-text-gray-700 dark:ap-text-gray-200 ap-break-words">
     <IconExclamationCircle class="ap-block ap-m-auto ap-fill-red-600 ap-w-14 ap-h-14"/>
     <h2 class="ap-font-bold ap-text-lg ap-text-red-600 ap-mb-4">Error</h2>
     <template v-if="information.message">

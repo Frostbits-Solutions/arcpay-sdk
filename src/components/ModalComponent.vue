@@ -23,7 +23,7 @@ onMounted(() => {
       <!-- Modal content -->
       <div ref="modalRef" class="ap-relative ap-bg-white ap-rounded-lg ap-shadow dark:ap-bg-gray-700 ap-animate-modal">
         <!-- Modal header -->
-        <div class="ap-flex ap-items-center ap-justify-between ap-p-4 ap-md:p-5 ap-border-b ap-rounded-t dark:ap-border-gray-600">
+        <div class="ap-flex ap-items-center ap-justify-between ap-p-4 ap-md:p-5 ap-rounded-t">
           <slot name="header"></slot>
           <button @click="hide" type="button" class="ap-text-gray-400 ap-bg-transparent hover:ap-bg-gray-200 hover:ap-text-gray-900 ap-rounded-lg ap-text-sm ap-w-8 ap-h-8 ap-ms-auto ap-inline-flex ap-justify-center ap-items-center dark:hover:ap-bg-gray-600 dark:hover:ap-text-white">
             <svg class="ap-w-3 ap-h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -34,6 +34,14 @@ onMounted(() => {
         </div>
         <!-- Modal body -->
         <slot name="body" @close="hide"></slot>
+
+        <div class="ap-mt-10 ap-border-t ap-pt-4 dark:ap-border-gray-700 ap-pb-2 ap-w-[50%] ap-m-auto ap-text-center">
+          <div class="ap-font-['Apple_Chancery'] ap-relative ap-left-[-30px]">Powered by</div>
+          <div class="ap-m-auto ap-w-fit ap-flex ap-items-center ap-relative ap-left-[20px]">
+            <img class="ap-w-8 ap-h-8" src="/src/assets/logo.png" >
+            <h1 class="ap-ml-2 text-4xl ml-2 dark:text-white">Arcpay</h1>
+          </div>
+        </div>
       </div>
     </div>
   </div>

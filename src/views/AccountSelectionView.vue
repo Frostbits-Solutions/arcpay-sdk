@@ -1,5 +1,5 @@
 <template>
-<div class="ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
+<div class="ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
   <h2 class="ap-font-bold ap-text-lg">Account to use</h2>
   <button
     class="ap-flex ap-items-center ap-w-full hover:ap-bg-gray-100 ap-p-2 ap-rounded"

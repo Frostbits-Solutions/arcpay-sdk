@@ -1,5 +1,5 @@
 ap-<template>
-<div class="ap-space-y-6 ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
+<div class="ap-space-y-6 ap-pt-8 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
   <IconCheckCircle class="ap-block ap-m-auto ap-fill-green-500 ap-w-14 ap-h-14 ap-mb-4"/>
   Tx id: <span class="ap-break-words">{{information.txId}}</span><br>
   Confirmed round: {{information['confirmed-round']}}<br>

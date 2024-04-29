@@ -98,9 +98,8 @@ function resetWallet () {
 </script>
 
 <template>
-  <div class="ap-space-y-6 ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-text-center ap-text-gray-700 dark:ap-text-gray-200 ap-flex ap-flex-col ap-items-center">
-    <h2 class="ap-font-bold ap-text-lg">Transaction overview</h2>
-    <div class="ap-grid ap-grid-cols-2 ap-gap-x-3">
+  <div class="ap-space-y-6 ap-pt-8 ap-text-center ap-text-gray-700 dark:ap-text-gray-200 ap-flex ap-flex-col ap-items-center">
+    <div class="ap-flex ap-flex-col ap-items-center">
       <img
         class="ap-w-8 ap-h-8 ap-rounded-full ap-justify-self-end"
         :src="PROVIDER_ICONS[walletStore.account.providerId]">
@@ -121,14 +120,14 @@ function resetWallet () {
 
     <TransactionStepsPreview v-if="transactionStore.state !== 0"/>
 
-    <div class="ap-w-full ap-border-t ap-pt-8 dark:ap-border-gray-700 ap-flex ap-justify-between">
+    <div class="ap-w-[400px] ap-pt-8 ap-flex ap-justify-between">
       <button
-        class="ap-flex ap-items-center ap-justify-center ap-w-[48%] ap-rounded-lg ap-bg-blue-200 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium hover:ap-bg-blue-400 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:hover:ap-bg-blue-700 dark:focus:ap-ring-blue-800"
+        class="ap-flex ap-items-center ap-justify-center ap-w-[150px] ap-rounded-lg ap-bg-blue-700 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium ap-text-white hover:ap-bg-blue-800 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:ap-hover:bg-blue-700 dark:focus:ap-ring-blue-800"
         @click="resetWallet">
         <IconChevronPrevious/> Wallet
       </button>
       <button
-        class="ap-flex ap-items-center ap-justify-center ap-w-[48%] ap-rounded-lg ap-bg-blue-200 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium hover:ap-bg-blue-400 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:ap-hover:bg-blue-700 dark:focus:ap-ring-blue-800"
+        class="ap-flex ap-items-center ap-justify-center ap-w-[150px] ap-rounded-lg ap-bg-blue-700 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium ap-text-white hover:ap-bg-blue-800 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:ap-hover:bg-blue-700 dark:focus:ap-ring-blue-800"
         @click="resetAddress"><IconChevronPrevious/> Account</button>
     </div>
   </div>

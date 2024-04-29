@@ -1,14 +1,37 @@
 <template>
-  <select v-model="transactionStore.conventionType">
+  <SelectInput
+    :model-value="transactionStore.conventionType"
+    @update:model-value="(d) => transactionStore.conventionType = Number(d)"
+    label="Convention"
+    :options="[
+      {name: 'Voi → Arc72', value: CONVENTION_TYPE.VoiArc72},
+      {name: 'Voi → Rwa', value: CONVENTION_TYPE.VoiRwa},
+      {name: 'Arc200 → Arc72', value: CONVENTION_TYPE.Arc200Arc72},
+      {name: 'Arc200 → Rwa', value: CONVENTION_TYPE.Arc200Rwa},
+    ]"/>
+
+  <SelectInput
+    :model-value="transactionStore.contractType"
+    @update:model-value="(d) => transactionStore.contractType = Number(d)"
+    label="Contract"
+    :options="possibleContract"/>
+
+  <!--
+  <select
+    class="ap-rounded-lg ap-border ap-border-gray-300 ap-bg-gray-50 ap-p-2.5 ap-text-sm ap-text-gray-900 focus:ap-border-blue-500 focus:ap-ring-blue-500 dark:ap-border-gray-500 dark:ap-bg-gray-600 dark:ap-text-white dark:ap-placeholder-gray-400"
+    v-model="transactionStore.conventionType">
     <option :value="CONVENTION_TYPE.VoiArc72">Voi -> Arc72</option>
     <option :value="CONVENTION_TYPE.VoiRwa">Voi -> Rwa</option>
     <option :value="CONVENTION_TYPE.Arc200Arc72">Arc200 -> Arc72</option>
     <option :value="CONVENTION_TYPE.Arc200Rwa">Arc200 -> Rwa</option>
   </select>
 
-  <select v-model="transactionStore.contractType">
+  <select
+    class="ap-rounded-lg ap-border ap-border-gray-300 ap-bg-gray-50 ap-p-2.5 ap-text-sm ap-text-gray-900 focus:ap-border-blue-500 focus:ap-ring-blue-500 dark:ap-border-gray-500 dark:ap-bg-gray-600 dark:ap-text-white dark:ap-placeholder-gray-400"
+    v-model="transactionStore.contractType">
     <option v-for="contract of possibleContract" :key="contract.value" :value="contract.value">{{contract.name}}</option>
   </select>
+  -->
 
   <IntInput
     label="Arc200 appID"
@@ -46,10 +69,11 @@
           transactionStore.conventionType ===CONVENTION_TYPE.Arc200Rwa">
       <TextInput
         v-model="parameterStore.rwaId"
-        label=""
+        label="RWA ID"
       />
       <TextInput
         v-model="parameterStore.rwaName"
+        label="RWA Name"
       />
     </template>
 
@@ -57,7 +81,9 @@
       label="Sell price"
       v-model="parameterStore.price"/>
   </template>
-  <button @click="transactionStore.doTransaction()">Create</button>
+  <button
+    class="ap-flex ap-items-center ap-justify-center ap-w-[150px] ap-rounded-lg ap-bg-blue-700 ap-px-5 ap-py-2.5 ap-text-center ap-text-sm ap-font-medium ap-text-white hover:ap-bg-blue-800 focus:ap-outline-none focus:ap-ring-4 focus:ap-ring-blue-300 dark:ap-bg-blue-600 dark:ap-hover:bg-blue-700 dark:focus:ap-ring-blue-800"
+    @click="transactionStore.doTransaction()">Create</button>
 </template>
 
 <script setup>
@@ -67,6 +93,7 @@ import IntInput from '@/components/IntInput.vue'
 import {CONTRACT_TYPE, CONVENTION_TYPE} from '@/constants/index'
 import TextInput from '@/components/TextInput.vue'
 import {computed} from 'vue'
+import SelectInput from '@/components/SelectInput.vue'
 
 const transactionStore = useTransactionStore()
 const parameterStore = useParametersStore()
