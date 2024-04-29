@@ -137,6 +137,6 @@ export async function Arc200Arc72DutchCreate(provider: Provider, account: Accoun
         suggestedParams,
     }
 
-    return [appCreateObj, fundAppObj, appCallObj, appCallObj, fundAppCallObj]
+    return [appCreateObj, fundAppObj, appCallObj, fundAppCallObj]
 
 }
