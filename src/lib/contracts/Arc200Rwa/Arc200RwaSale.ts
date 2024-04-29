@@ -9,6 +9,7 @@ import {clearProgram, saleApprovalProgram} from "@/lib/contracts/Arc200Rwa/Arc20
 
 export async function Arc200RwaSaleBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
 
+    console.log(parameters)
     const algosdk = provider.algosdk
     const algodClient = provider.algodClient as _algosdk.Algodv2
 
@@ -69,6 +70,7 @@ export async function Arc200RwaSaleBuy(provider: Provider, account: Account, par
     return [fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj]
 }
 export async function Arc200RwaSaleCreate(provider: Provider, account: Account, parameters: TransactionParameters) {
+    console.log(parameters)
 
     const algosdk = provider.algosdk
     const algodClient = provider.algodClient as _algosdk.Algodv2

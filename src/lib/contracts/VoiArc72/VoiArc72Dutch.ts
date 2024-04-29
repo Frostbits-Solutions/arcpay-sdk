@@ -5,7 +5,7 @@ import {TransactionType} from "algosdk/src/types/transactions";
 import {base64ToArrayBuffer, encodeAppArgs, longToByteArray} from "@/utils";
 import {arc72Schema} from "@/lib/contracts/abi/arc72";
 import {Transaction} from "@/transaction";
-import {clearProgram, dutchApprovalProgram} from "@/lib/contracts/VoiArc72/VoiArc72Contract";
+import {clearProgram, dutchApprovalProgram} from "./VoiArc72Contract";
 
 export async function VoiArc72DutchBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
 
@@ -57,7 +57,7 @@ export async function VoiArc72DutchCreate (provider: Provider, account: Account,
     const algosdk = provider.algosdk
     const algodClient = provider.algodClient as _algosdk.Algodv2
 
-
+console.log(parameters)
     /*** Creation of the application ***/
     const _priceMin = parameters.priceMin * 1_000_000
     const _priceMax = parameters.priceMax * 1_000_000
