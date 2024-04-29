@@ -31,14 +31,12 @@
   </template>
 
 
-  <template v-if="transactionStore.contractType === CONTRACT_TYPE.Auction">
-    <IntInput v-model="parameterStore.priceMin" label="min price"/>
-    <IntInput v-model="parameterStore.duration" label="Duration (in hours)"/>
-  </template>
-
-  <template v-if="transactionStore.contractType === CONTRACT_TYPE.Dutch">
-    <IntInput v-model="parameterStore.priceMin" :max="parameterStore.priceMax - 1" label="Minimum price"/>
-    <IntInput v-model="parameterStore.priceMax" :min="parameterStore.priceMin + 1" label="Maximum price"/>
+  <template
+    v-if="transactionStore.contractType === CONTRACT_TYPE.Auction ||
+          transactionStore.contractType === CONTRACT_TYPE.Dutch"
+  >
+    <IntInput v-model="parameterStore.priceMin" label="Minimum price"/>
+    <IntInput v-model="parameterStore.priceMax" :min="parameterStore.priceMin + 1" label="Maximum price" v-if="transactionStore.contractType === CONTRACT_TYPE.Dutch"/>
     <IntInput v-model="parameterStore.duration" label="Duration (in hours)"/>
   </template>
 
