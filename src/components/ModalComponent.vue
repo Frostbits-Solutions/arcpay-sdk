@@ -36,7 +36,6 @@ onMounted(() => {
         <slot name="body" @close="hide"></slot>
 
         <div class="ap-mt-10 ap-border-t ap-pt-4 dark:ap-border-gray-700 ap-pb-2 ap-w-[50%] ap-m-auto ap-text-center">
-          <div class="ap-font-['Apple_Chancery'] ap-relative ap-left-[-30px]">Powered by</div>
           <div class="ap-m-auto ap-w-fit ap-flex ap-items-center ap-relative ap-left-[20px]">
             <img class="ap-w-8 ap-h-8" src="/src/assets/logo.png" >
             <h1 class="ap-ml-2 text-4xl ml-2 dark:text-white">Arcpay</h1>
