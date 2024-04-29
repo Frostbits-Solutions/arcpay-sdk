@@ -17,17 +17,15 @@ export async function closeListing (provider: Provider, account: Account, parame
 
     const obj: Array<AppCallObject> = []
 
-    if (parameters.arc200AppID) {
-        const preValidateAppCallObj: AppCallObject = {
-            type: TransactionType.appl,
-            from: account.address,
-            appIndex: parameters.appIndex,
-            onComplete: algosdk.OnApplicationComplete.NoOpOC,
-            appArgs: [new TextEncoder().encode('pre_validate')],
-            suggestedParams
-        }
-        obj.push(preValidateAppCallObj)
+    const preValidateAppCallObj: AppCallObject = {
+        type: TransactionType.appl,
+        from: account.address,
+        appIndex: parameters.appIndex,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        appArgs: [new TextEncoder().encode('pre_validate')],
+        suggestedParams
     }
+    obj.push(preValidateAppCallObj)
 
     const appArgs = [new TextEncoder().encode('close')]
     const appCallObj: AppCallObject = {
