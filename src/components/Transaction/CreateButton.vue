@@ -11,10 +11,25 @@
   </select>
 
   <IntInput
+    label="Arc200 appID"
     v-model="parameterStore.arc200AppID"
     v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
     transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa"
   />
+
+  <template
+    v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
+          transactionStore.conventionType ===CONVENTION_TYPE.VoiArc72">
+    <IntInput
+      label="Arc72 id"
+      v-model="parameterStore.nftID"
+    />
+    <IntInput
+      label="Arc72 appID"
+      v-model="parameterStore.nftAppID"
+    />
+  </template>
+
 
   <template v-if="transactionStore.contractType === CONTRACT_TYPE.Auction">
     <IntInput v-model="parameterStore.priceMin" label="min price"/>
