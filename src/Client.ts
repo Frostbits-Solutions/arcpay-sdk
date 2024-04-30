@@ -40,10 +40,11 @@ export class Client {
   public async createListing(account_id?: number) {
     const modals = useModalsStore()
     modals.showModal('root')
+
     const params = useParametersStore()
 
     if (typeof account_id === 'undefined') {
-      const {data, error} = await this._deriveAccountIdFromKey()
+      const { data, error } = await this._deriveAccountIdFromKey()
       if (error) {
         console.error(error)
         return
@@ -51,7 +52,9 @@ export class Client {
       account_id = data
     }
 
-    params.account_id = account_id || null
+    if(typeof account_id !== 'undefined') {
+      params.account_id = account_id
+    }
 
     const walletStore = useWalletStore()
     const transactionStore = useTransactionStore()

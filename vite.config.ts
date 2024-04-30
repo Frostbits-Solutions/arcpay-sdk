@@ -23,12 +23,13 @@ export default defineConfig({
       fileName: "arcpay-sdk"
     },
     rollupOptions: {
-      external: ["vue"],
+      external: ["vue", "algosdk"],
       output: {
         manualChunks: undefined,
         globals: {
-          vue: "Vue"
-        }
+          vue: 'Vue',
+          algosdk: '_algosdk'
+        },
       }
     }
   },

@@ -45,56 +45,60 @@ export const useTransactionStore = defineStore('transactionStore', () => {
             state.value = TRANSACTION_STATE.signingTransaction
             const signedTxn = await walletStore.value.provider.signTransactions(txns, true)
 
-            if (transactionType.value === TRANSACTION_TYPE.create && client.value) {
-                if (contractType.value === CONTRACT_TYPE.Sale) {
-                    const {data, error} = await createSale(
-                      client,
-                      parameterStore.value.account_id,
-                      txnObjs[txnObjs.length - 1].appIndex,
-                      "Unknown",
-                      parameterStore.value.nftId ? `${parameterStore.value.nftAppID}/${parameterStore.value.nftID}` : parameterStore.value.rwaId,
-                      1,
-                      `https://prod.cdn.highforge.io/t/${parameterStore.value.nftAppID}/${parameterStore.value.nftID}.webp`,
-                      conventionType.value < 1 ? 'ARC72' : 'OFFCHAIN',
-                      'voi:testnet',
-                      parameterStore.value.arc200AppID ? parameterStore.value.arc200AppID :0,
-                      conventionType.value < 1 ? 'ARC72 NFT' : 'OFFCHAIN Asset',
-                      parameterStore.value.seller,
-                      null,
-                      parameterStore.value.price
-                    )
-                    if (error) {
-                        console.error(error)
-                    }
-                } else  {
-                    const {data, error} = await createAuction(
-                      client,
-                      parameterStore.value.account_id,
-                      txnObjs[txnObjs.length - 1].appIndex,
-                      "Unknown",
-                      parameterStore.value.nftId ? `${parameterStore.value.nftAppID}/${parameterStore.value.nftID}` : parameterStore.value.rwaId,
-                      1,
-                      `https://prod.cdn.highforge.io/t/${parameterStore.value.nftAppID}/${parameterStore.value.nftID}.webp`,
-                      conventionType.value < 1 ? 'ARC72' : 'OFFCHAIN',
-                      'voi:testnet',
-                      parameterStore.value.arc200AppID ? parameterStore.value.arc200AppID :0,
-                      conventionType.value < 1 ? 'ARC72 NFT' : 'OFFCHAIN Asset',
-                      parameterStore.value.seller,
-                      null,
-                      parameterStore.value.duration,
-                      parameterStore.value.priceMin,
-                      parameterStore.value.priceMax,
-                      10,
-                      contractType.value === CONTRACT_TYPE.Dutch ? 'dutch' : 'english'
-                    )
-                    if (error) {
-                        console.error(error)
-                    }
-                }
-            }
-
             state.value = TRANSACTION_STATE.sendingTransaction
             const confirmation = await walletStore.value.provider.sendRawTransactions(signedTxn)
+
+            if (transactionType.value === TRANSACTION_TYPE.create) {
+                if (client.value) {
+                    if (contractType.value === CONTRACT_TYPE.Sale) {
+                        const { data, error } = await createSale(
+                          client.value,
+                          parameterStore.value.account_id,
+                          txnObjs[txnObjs.length - 1].appIndex,
+                          "Unknown",
+                          parameterStore.value.nftID ? `${parameterStore.value.nftAppID}/${parameterStore.value.nftID}` : parameterStore.value.rwaId,
+                          1,
+                          `https://prod.cdn.highforge.io/t/${parameterStore.value.nftAppID}/${parameterStore.value.nftID}.webp`,
+                          conventionType.value < 1 ? 'ARC72' : 'OFFCHAIN',
+                          'voi:testnet',
+                          parameterStore.value.arc200AppID ? parameterStore.value.arc200AppID : 0,
+                          conventionType.value < 1 ? 'ARC72 NFT' : 'OFFCHAIN Asset',
+                          walletStore.value.account.address,
+                          null,
+                          parameterStore.value.price
+                        )
+                        if (error) {
+                            throw new Error("Unable to create Sale", error.message)
+                        }
+                    } else {
+                        const { data, error } = await createAuction(
+                          client.value,
+                          parameterStore.value.account_id,
+                          txnObjs[txnObjs.length - 1].appIndex,
+                          "Unknown",
+                          parameterStore.value.nftID ? `${parameterStore.value.nftAppID}/${parameterStore.value.nftID}` : parameterStore.value.rwaId,
+                          1,
+                          `https://prod.cdn.highforge.io/t/${parameterStore.value.nftAppID}/${parameterStore.value.nftID}.webp`,
+                          conventionType.value < 1 ? 'ARC72' : 'OFFCHAIN',
+                          'voi:testnet',
+                          parameterStore.value.arc200AppID ? parameterStore.value.arc200AppID : 0,
+                          conventionType.value < 1 ? 'ARC72 NFT' : 'OFFCHAIN Asset',
+                          walletStore.value.account.address,
+                          null,
+                          parameterStore.value.duration,
+                          parameterStore.value.priceMin,
+                          parameterStore.value.priceMax,
+                          10,
+                          contractType.value === CONTRACT_TYPE.Dutch ? 'dutch' : 'english'
+                        )
+                        if (error) {
+                            throw new Error("Unable to create Auction", error.message)
+                        }
+                    }
+                } else {
+                    throw new Error('No client')
+                }
+            }
 
             state.value = TRANSACTION_STATE.success
             successInfo.value = confirmation
