@@ -7,8 +7,8 @@
 
 <script setup>
 import {useTransactionStore} from '@/stores/transactionStore'
-import {CONTRACT_TYPE} from '@/constants/index.js'
-import {useParametersStore} from '@/stores/parametersStore.js'
+import {CONTRACT_TYPE} from '@/constants/index'
+import {useParametersStore} from '@/stores/parametersStore'
 import IntInput from '@/components/IntInput.vue'
 
 const transactionStore = useTransactionStore()
