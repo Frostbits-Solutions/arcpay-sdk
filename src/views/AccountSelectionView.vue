@@ -1,6 +1,12 @@
 <template>
 <div class="ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
-  <h2 class="ap-font-bold ap-text-lg">Account to use</h2>
+  <div class="ap-border-b ap-mb-8 ap-pb-4 dark:ap-border-gray-700 ap-w-72 ap-m-auto ap-text-center">
+    <div class="ap-m-auto ap-w-fit ap-flex ap-items-center ap-relative ap-left-[20px]">
+      <img class="ap-w-8 ap-h-8" src="/src/assets/logo.png" >
+      <h1 class="ap-ml-2 ap-text-2xl ml-2 dark:text-white">Arcpay</h1>
+    </div>
+  </div>
+  <h2 class="ap-font-bold ap-text-lg ap-mb-4">Account to use</h2>
   <button
     class="ap-flex ap-items-center ap-w-full hover:ap-bg-gray-100 ap-p-2 ap-rounded"
     v-for="account of walletStore.wallet.accounts"

@@ -19,9 +19,9 @@ onMounted(() => {
 
 <template>
   <div v-if="modalName && modals.states[modalName]" @click="hide" tabindex="-1" class="ap-overflow-y-auto ap-overflow-x-hidden ap-flex ap-justify-center ap-items-center ap-fixed ap-top-0 ap-right-0 ap-left-0 ap-z-50 ap-w-full md:ap-inset-0 ap-h-full ap-backdrop-blur-sm ap-bg-gray-300/50 dark:ap-bg-gray-900/80 ap-animate-blur">
-    <div @click.stop="" class="ap-relative ap-p-4 ap-w-full ap-max-w-3xl ap-max-h-full">
+    <div @click.stop="" class="ap-relative ap-w-full ap-max-w-md ap-max-h-full">
       <!-- Modal content -->
-      <div ref="modalRef" class="ap-relative ap-bg-white ap-rounded-lg ap-shadow dark:ap-bg-gray-700 ap-animate-modal">
+      <div ref="modalRef" class="ap-relative ap-bg-white ap-rounded-lg ap-shadow dark:ap-bg-gray-700 ap-animate-modal ap-pb-8 ">
         <!-- Modal header -->
         <div class="ap-flex ap-items-center ap-justify-between ap-p-4 ap-md:p-5 ap-rounded-t">
           <slot name="header"></slot>
@@ -33,13 +33,8 @@ onMounted(() => {
           </button>
         </div>
         <!-- Modal body -->
-        <slot name="body" @close="hide"></slot>
-
-        <div class="ap-mt-10 ap-border-t ap-pt-4 dark:ap-border-gray-700 ap-pb-2 ap-w-[50%] ap-m-auto ap-text-center">
-          <div class="ap-m-auto ap-w-fit ap-flex ap-items-center ap-relative ap-left-[20px]">
-            <img class="ap-w-8 ap-h-8" src="/src/assets/logo.png" >
-            <h1 class="ap-ml-2 text-4xl ml-2 dark:text-white">Arcpay</h1>
-          </div>
+        <div class="ap-px-8">
+          <slot name="body" @close="hide"></slot>
         </div>
       </div>
     </div>

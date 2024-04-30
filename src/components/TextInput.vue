@@ -1,5 +1,5 @@
 <template>
-  <div class="ap-w-[60%] ap-grid ap-grid-cols-[150px_auto] ap-gap-x-4">
+  <div class="ap-grid ap-grid-cols-[150px_auto] ap-gap-x-4">
     <label
       v-if="label"
       :for="`text-input-${label}`"
