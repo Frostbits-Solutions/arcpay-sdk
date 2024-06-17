@@ -6,8 +6,7 @@ const getPayloadId = (): number => {
   return date + extra
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const formatJsonRpcRequest = <T = any>(method: string, params: T): JsonRpcRequest => {
+export const formatJsonRpcRequest = <T>(method: string, params: T): JsonRpcRequest<T> => {
   return {
     id: getPayloadId(),
     jsonrpc: '2.0',

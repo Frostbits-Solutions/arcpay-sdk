@@ -66,10 +66,7 @@ export async function Arc200Arc72SaleBuy(provider: Provider, account: Account, p
         suggestedParams,
     }
 
-    return [fundArc200Obj,
-        arc200ApproveObj,
-        preValidateObj,
-        appCallObj]
+    return [fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj]
 }
 export async function Arc200Arc72SaleCreate(provider: Provider, account: Account, parameters: TransactionParameters) {
     try {

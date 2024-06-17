@@ -1,82 +1,58 @@
-import {
-  WalletConnectModalSign
-} from '@walletconnect/modal-sign-html'
-import type {
-  WalletConnectModalSignSession } from '@walletconnect/modal-sign-html'
+import { WalletConnectModalSign } from '@walletconnect/modal-sign-html'
+import type { WalletConnectModalSignSession } from '@walletconnect/modal-sign-html'
 
-import _algosdk, { assignGroupID, Transaction } from 'algosdk'
-import BaseClient from '../base'
-import { DEFAULT_NETWORK, ARC_PAY_METADA, PROVIDER_ID } from '@/constants'
-import { ALGORAND_CHAINS, ICON } from './constants'
-import type { WalletProvider } from '@/types'
+import { assignGroupID, Transaction } from 'algosdk'
+import Wallet from '../Wallet'
+import { ARCPAY_METADATA, ICON } from './constants'
 import { bytesToBase64 } from '@agoralabs-sh/algorand-provider'
 import { formatJsonRpcRequest } from './utils'
-import Algod from '@/lib/algod'
 import { Buffer } from 'buffer'
+import type { AlgodClient } from '@/lib/algod/AlgodClient'
+import type { Account } from '@/lib/wallets/types'
 
-// @ts-ignore
-let client;
 
-class WalletConnect extends BaseClient {
-  client: WalletConnectModalSign
-  metadata: WalletProvider
-  chain: string
+class WalletConnect extends Wallet {
+  private readonly _client: WalletConnectModalSign
+  private readonly _chain: string = ''
 
-  static async init () {
-    const algoD = await Algod.init()
-    return new WalletConnect(algoD.algosdk, algoD.algodClient)
-  }
-  constructor(
-    algosdk: typeof _algosdk,
-    algodClient: _algosdk.Algodv2
-  ) {
-    super(algosdk, algodClient)
-    this.client = new WalletConnectModalSign(  {
+  constructor(algod: AlgodClient) {
+    super(algod, 'walletconnect', ICON)
+    this._client = new WalletConnectModalSign(  {
         projectId: import.meta.env.VITE_WC_PROJECT_ID,
-        metadata: ARC_PAY_METADA
-      })
-    client = this.client
-    this.metadata = {
-      id: PROVIDER_ID.WALLETCONNECT,
-      name: PROVIDER_ID.WALLETCONNECT.toUpperCase(),
-      icon: ICON,
-      isWalletConnect: false,
-    }
-    // @ts-ignore
-    console.log(ALGORAND_CHAINS[DEFAULT_NETWORK])
-    // @ts-ignore
-    this.chain = ALGORAND_CHAINS[DEFAULT_NETWORK]
+        metadata: ARCPAY_METADATA
+    })
+
+    this._chain = this._algod.config.blockchainId
   }
 
+  #mapAccounts(accounts: string[]): Account[] {
+    return accounts.map((accountStr, index) => ({
+      name: `WalletConnect ${index + 1}`,
+      address: accountStr.split(':').pop() as string,
+      providerId: this._id
+    }))
+  }
 
-  async connect(onDisconnect: () => void, args?: any) {
+  async connect(onDisconnect: () => void): Promise<Wallet>{
     const requiredNamespaces = {
       algorand: {
-        chains: [this.chain],
+        chains: [this._chain],
         methods: ['algo_signTxn'],
         events: []
       }
     }
 
-    const session = await this.client.connect({
-      requiredNamespaces
-    })
+    const session = await this._client.connect({ requiredNamespaces })
     const { accounts } = session.namespaces.algorand
-    console.log(accounts)
-    return {
-      ...this.metadata,
-      accounts: this.#mapAccounts(accounts)
-    }
+    this._accounts = this.#mapAccounts(accounts)
+
+    return this as Wallet
   }
 
   async disconnect() {
-    try {
-      const session = await this.client.getSession()
-      if (typeof session === 'undefined') {
-        throw new Error('Session is not connected')
-      }
-
-      await this.client.disconnect({
+    const session = await this._client.getSession()
+    if (session) {
+      await this._client.disconnect({
         topic: session.topic,
         // replicates getSdkError('USER_DISCONNECTED') from @walletconnect/utils
         reason: {
@@ -84,28 +60,23 @@ class WalletConnect extends BaseClient {
           code: 6000
         }
       })
-    } catch (error) {
-      console.error('Error disconnecting', error)
     }
   }
 
   async reconnect(onDisconnect: () => void) {
-    const session: WalletConnectModalSignSession | undefined = await this.client.getSession()
+    const session: WalletConnectModalSignSession | undefined = await this._client.getSession()
+
     if (typeof session === 'undefined') {
       return null
     }
 
     const { accounts } = session.namespaces.algorand
-    console.log(accounts)
-    return {
-      ...this.metadata,
-      accounts: this.#mapAccounts(accounts)
-    }
+    this._accounts = this.#mapAccounts(accounts)
+
+    return this as Wallet
   }
 
   async signTransactions(transactions: Transaction[], isAtomicTransactions: Boolean) {
-    // @ts-ignore
-    console.log(this, client)
     if (isAtomicTransactions) {
       assignGroupID(transactions);
     }
@@ -119,18 +90,15 @@ class WalletConnect extends BaseClient {
     }
 
     const request = formatJsonRpcRequest('algo_signTxn', [txns])
-// @ts-ignore
-    const session = await client.getSession()
-    if (typeof session === 'undefined') {
-      throw new Error('Session is not connected')
-    }
-// @ts-ignore
-    const response = await client.request<Array<string | null>>({
-      chainId: this.chain,
+    const session = await this._client.getSession()
+
+    if (!session) throw new Error('Session is not connected')
+
+    const response = await this._client.request<Array<string | null>>({
+      chainId: this._chain,
       topic: session.topic,
       request
     })
-    console.log(response)
 
     const signedTransactionBytes: Uint8Array[] = []
     for (const stxn of response) {
@@ -138,24 +106,8 @@ class WalletConnect extends BaseClient {
         signedTransactionBytes.push(new Uint8Array(Buffer.from(stxn, 'base64')))
       }
     }
-    console.log(signedTransactionBytes)
+
     return signedTransactionBytes
-  }
-
-  // async #getSession() {
-  //   const session: WalletConnectModalSignSession | undefined = await this.client.getSession()
-  //   if (typeof session === 'undefined') {
-  //     throw new Error('Session is not connected')
-  //   }
-  //   return session
-  // }
-
-  #mapAccounts(accounts: string[]) {
-    return accounts.map((accountStr, index) => ({
-      name: `WalletConnect ${index + 1}`,
-      address: accountStr.split(':').pop() as string,
-      providerId: PROVIDER_ID.WALLETCONNECT
-    }))
   }
 }
 

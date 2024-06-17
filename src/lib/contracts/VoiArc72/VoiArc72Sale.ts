@@ -91,7 +91,6 @@ export async function VoiArc72SaleCreate (provider: Provider, account: Account, 
             amount: fundingAmount,
             suggestedParams,
         }
-
         const abi = new algosdk.ABIContract(arc72Schema)
         const abiMethod = abi.getMethodByName('arc72_approve')
         const args = [appAddr, parameters.nftID]

@@ -1,8 +1,14 @@
-import type algosdk from 'algosdk'
+import Kibisis from "@/lib/wallets/kibisis";
+import WalletConnect from "@/lib/wallets/walletConnect";
 
-export type PublicNetwork = 'betanet' | 'testnet' | 'mainnet'
+export type Provider  = Kibisis | WalletConnect
+export type ProviderId = 'kibisis' | 'walletconnect'
 
-export type Network = PublicNetwork | string
+export interface Account {
+  providerId: ProviderId
+  address: string
+  name: string
+}
 
 export type Txn = {
   apaa: Uint8Array
@@ -49,4 +55,6 @@ export type DecodedSignedTransaction = {
   txn: DecodedTransaction
 }
 
-export type AlgodClientOptions = ConstructorParameters<typeof algosdk.Algodv2>
+export type RawTxnResponse = {
+  txId: string
+}

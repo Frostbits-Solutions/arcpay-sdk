@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface JsonRpcRequest<T = any> {
+export interface JsonRpcRequest<T> {
   id: number
   jsonrpc: string
   method: string
