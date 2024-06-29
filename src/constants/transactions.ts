@@ -17,6 +17,15 @@ export enum TRANSACTION_TYPE {
   close
 }
 
+export enum CURRENCY_TYPE {
+  VOI,
+  ARC200
+}
+export enum SELLING_OBJECT_TYPE {
+  RWA,
+  ARC72
+}
+
 export enum CONVENTION_TYPE {
   VoiArc72,
   Arc200Arc72,

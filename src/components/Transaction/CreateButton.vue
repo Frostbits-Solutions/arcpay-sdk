@@ -1,37 +1,19 @@
 <template>
-  <SelectInput
-    :model-value="transactionStore.conventionType"
-    @update:model-value="(d) => transactionStore.conventionType = Number(d)"
-    label="Convention"
-    :options="[
-      {name: 'Voi → Arc72', value: CONVENTION_TYPE.VoiArc72},
-      {name: 'Voi → Rwa', value: CONVENTION_TYPE.VoiRwa},
-      {name: 'Arc200 → Arc72', value: CONVENTION_TYPE.Arc200Arc72},
-      {name: 'Arc200 → Rwa', value: CONVENTION_TYPE.Arc200Rwa},
-    ]"/>
-
+  <h2>Contract information</h2>
   <SelectInput
     :model-value="transactionStore.contractType"
     @update:model-value="(d) => transactionStore.contractType = Number(d)"
     label="Contract"
     :options="possibleContract"/>
 
-  <!--
-  <select
-    class="ap-rounded-lg ap-border ap-border-gray-300 ap-bg-gray-50 ap-p-2.5 ap-text-sm ap-text-gray-900 focus:ap-border-blue-500 focus:ap-ring-blue-500 dark:ap-border-gray-500 dark:ap-bg-gray-600 dark:ap-text-white dark:ap-placeholder-gray-400"
-    v-model="transactionStore.conventionType">
-    <option :value="CONVENTION_TYPE.VoiArc72">Voi -> Arc72</option>
-    <option :value="CONVENTION_TYPE.VoiRwa">Voi -> Rwa</option>
-    <option :value="CONVENTION_TYPE.Arc200Arc72">Arc200 -> Arc72</option>
-    <option :value="CONVENTION_TYPE.Arc200Rwa">Arc200 -> Rwa</option>
-  </select>
-
-  <select
-    class="ap-rounded-lg ap-border ap-border-gray-300 ap-bg-gray-50 ap-p-2.5 ap-text-sm ap-text-gray-900 focus:ap-border-blue-500 focus:ap-ring-blue-500 dark:ap-border-gray-500 dark:ap-bg-gray-600 dark:ap-text-white dark:ap-placeholder-gray-400"
-    v-model="transactionStore.contractType">
-    <option v-for="contract of possibleContract" :key="contract.value" :value="contract.value">{{contract.name}}</option>
-  </select>
-  -->
+  <SelectInput
+    v-model="currency_type"
+    @update:model-value="updateConvention"
+    label="Currency type"
+    :options="[
+      {name: 'Voi', value: CURRENCY_TYPE.VOI},
+      {name: 'ARC200', value: CURRENCY_TYPE.ARC200},
+    ]"/>
 
   <IntInput
     label="Arc200 appID"
@@ -40,16 +22,38 @@
     transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa"
   />
 
+  <SelectInput
+    v-model="selling_object_type"
+    @update:model-value="updateConvention"
+    label="Selling object type"
+    :options="[
+      {name: 'ARC72', value: SELLING_OBJECT_TYPE.ARC72},
+      {name: 'RWA', value: SELLING_OBJECT_TYPE.RWA},
+    ]"/>
+
+  <br>
+
   <template
     v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
           transactionStore.conventionType ===CONVENTION_TYPE.VoiArc72">
-    <IntInput
-      label="Arc72 id"
-      v-model="parameterStore.nftID"
-    />
-    <IntInput
-      label="Arc72 appID"
-      v-model="parameterStore.nftAppID"
+    <h2>ARC 72 Token</h2>
+    <div class="ap-grid ap-grid-cols-[150px_auto] ap-gap-x-4">
+      <span class="ap-self-center ap-text-sm ap-font-medium ap-text-right ap-text-gray-900 dark:ap-text-white">Token id</span>
+      <span class="ap-self-center ap-text-sm ap-font-medium ap-text-left ap-text-gray-900 dark:ap-text-white">
+        <template v-if="parameterStore.nftID">
+          {{parameterStore.nftID}}
+        </template>
+        <template v-else>
+          Please, select a token below
+        </template>
+      </span>
+    </div>
+
+    <Arc72Input
+      @input="(nft) => {
+        parameterStore.nftID = nft.nftID
+        parameterStore.nftAppID = nft.nftAppID
+      }"
     />
   </template>
 
@@ -58,6 +62,7 @@
     v-if="transactionStore.contractType === CONTRACT_TYPE.Auction ||
           transactionStore.contractType === CONTRACT_TYPE.Dutch"
   >
+    <h2>Auction information</h2>
     <IntInput v-model="parameterStore.priceMin" label="Minimum price"/>
     <IntInput v-model="parameterStore.priceMax" :min="parameterStore.priceMin + 1" label="Maximum price" v-if="transactionStore.contractType === CONTRACT_TYPE.Dutch"/>
     <IntInput v-model="parameterStore.duration" label="Duration (in hours)"/>
@@ -67,6 +72,7 @@
     <template
       v-if="transactionStore.conventionType === CONVENTION_TYPE.VoiRwa ||
           transactionStore.conventionType ===CONVENTION_TYPE.Arc200Rwa">
+      <h2>RWA information</h2>
       <TextInput
         v-model="parameterStore.rwaId"
         label="RWA ID"
@@ -76,7 +82,7 @@
         label="RWA Name"
       />
     </template>
-
+    <h2>Sale information</h2>
     <IntInput
       label="Sell price"
       v-model="parameterStore.price"/>
@@ -86,17 +92,21 @@
     @click="transactionStore.doTransaction()">Create</button>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import {useTransactionStore} from '@/stores/transactionStore'
 import {useParametersStore} from '@/stores/parametersStore'
 import IntInput from '@/components/IntInput.vue'
-import {CONTRACT_TYPE, CONVENTION_TYPE} from '@/constants/index'
+import {CONTRACT_TYPE, CONVENTION_TYPE, CURRENCY_TYPE, SELLING_OBJECT_TYPE} from '@/constants/index'
 import TextInput from '@/components/TextInput.vue'
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import SelectInput from '@/components/SelectInput.vue'
+import Arc72Input from "@/components/Arc72Input.vue";
 
 const transactionStore = useTransactionStore()
 const parameterStore = useParametersStore()
+
+const currency_type = ref(CURRENCY_TYPE.VOI)
+const selling_object_type = ref(SELLING_OBJECT_TYPE.ARC72)
 
 const possibleContract = computed(() => {
   let t
@@ -114,9 +124,37 @@ const possibleContract = computed(() => {
         {name: 'Sale', value: CONTRACT_TYPE.Sale}]
       break
   }
-  transactionStore.contractType = t[0].value
   return t
 })
+
+function updateConvention () {
+  let convention
+  switch (Number(currency_type.value)) {
+    case CURRENCY_TYPE.ARC200:
+      switch (Number(selling_object_type.value)) {
+        case SELLING_OBJECT_TYPE.ARC72:
+          convention = CONVENTION_TYPE.Arc200Arc72
+          break
+        case SELLING_OBJECT_TYPE.RWA:
+          convention = CONVENTION_TYPE.Arc200Rwa
+          break
+      }
+      break
+    case CURRENCY_TYPE.VOI:
+      switch (Number(selling_object_type.value)) {
+        case SELLING_OBJECT_TYPE.ARC72:
+          convention = CONVENTION_TYPE.VoiArc72
+          break
+        case SELLING_OBJECT_TYPE.RWA:
+          convention = CONVENTION_TYPE.VoiRwa
+          break
+      }
+  }
+  console.log(transactionStore.conventionType, convention, currency_type.value, selling_object_type.value)
+  transactionStore.conventionType = convention
+  //@ts-ignore
+  transactionStore.contractType = possibleContract.value[0].value
+}
 </script>
 
 <style scoped>
