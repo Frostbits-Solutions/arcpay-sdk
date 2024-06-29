@@ -32,6 +32,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const auctionType: Ref<string|null> = ref(null)
     const listingType: Ref<string|null> = ref(null)
     const account_id: Ref<number|null> = ref(null)
+    const minimumBid: Ref<number|null> = ref(null)
+    const endDate: Ref<number|null> = ref(null)
 
     async function getListingParameters(client: SupabaseClient, listing_id: string) {
         const { data, error } = await getListingById(client, listing_id)
@@ -53,6 +55,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         assetType.value = data.asset_type
         listingType.value = data.listing_type
         auctionType.value = data.auction_type
+        minimumBid.value = data.minimum_bid
+        endDate.value = data.end_date
     }
 
     return {
@@ -75,6 +79,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         listingType,
         auctionType,
         account_id,
+        minimumBid,
+        endDate,
         getListingParameters,
     }
 })
