@@ -15,12 +15,26 @@
       {name: 'ARC200', value: CURRENCY_TYPE.ARC200},
     ]"/>
 
-  <IntInput
-    label="Arc200 appID"
-    v-model="parameterStore.arc200AppID"
+  <template
     v-if="transactionStore.conventionType === CONVENTION_TYPE.Arc200Arc72 ||
-    transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa"
-  />
+      transactionStore.conventionType === CONVENTION_TYPE.Arc200Rwa">
+    <h2>ARC 200 Token</h2>
+    <div class="ap-grid ap-grid-cols-[150px_auto] ap-gap-x-4">
+      <span class="ap-self-center ap-text-sm ap-font-medium ap-text-right ap-text-gray-900 dark:ap-text-white">Application id</span>
+      <span class="ap-self-center ap-text-sm ap-font-medium ap-text-left ap-text-gray-900 dark:ap-text-white">
+        <template v-if="parameterStore.arc200AppID">
+          {{parameterStore.arc200AppID}}
+        </template>
+        <template v-else>
+          Please, select a token below
+        </template>
+      </span>
+    </div>
+
+    <Arc200Input
+      v-model="parameterStore.arc200AppID"
+    />
+  </template>
 
   <SelectInput
     v-model="selling_object_type"
@@ -101,6 +115,7 @@ import TextInput from '@/components/TextInput.vue'
 import {computed, ref} from 'vue'
 import SelectInput from '@/components/SelectInput.vue'
 import Arc72Input from "@/components/Arc72Input.vue";
+import Arc200Input from "@/components/Arc200Input.vue";
 
 const transactionStore = useTransactionStore()
 const parameterStore = useParametersStore()
@@ -128,7 +143,7 @@ const possibleContract = computed(() => {
 })
 
 function updateConvention () {
-  let convention
+  let convention = null
   switch (Number(currency_type.value)) {
     case CURRENCY_TYPE.ARC200:
       switch (Number(selling_object_type.value)) {
@@ -150,7 +165,6 @@ function updateConvention () {
           break
       }
   }
-  console.log(transactionStore.conventionType, convention, currency_type.value, selling_object_type.value)
   transactionStore.conventionType = convention
   //@ts-ignore
   transactionStore.contractType = possibleContract.value[0].value

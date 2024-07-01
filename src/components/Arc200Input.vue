@@ -1,8 +1,8 @@
 <template>
-<div class="arc72-input-container">
+<div class="arc200-input-container">
   <template v-if="nfts.length > 0">
     <TextInput
-      label="Search Arc72"
+      label="Search Arc200"
       placeholder="id or name"
       v-model="searchString"
     />
@@ -10,23 +10,19 @@
       <li
         v-for="nft of displayedNFTS"
         @click="() => selectNFT(nft)"
-        :key="nft.tokenId"
-        @class="selectedNFT.tokenId === nft.tokenId ? 'selected' : ''"
+        :key="nft.contractId"
+        @class="props.modelValue === nft.contractId ? 'selected' : ''"
       >
-        <img :src="JSON.parse(nft.metadata).image">
-        <span><b>{{JSON.parse(nft.metadata).name}}</b></span>
-        <span>{{JSON.parse(nft.metadata).description.slice(0,25)}}...</span>
+        <span><b>{{nft.name}}</b></span>
+        <span>{{nft.contractId}}</span>
       </li>
     </ul>
   </template>
   <template v-else-if="error">
     {{error}}
   </template>
-  <template v-else-if="loaded">
-    <span>You do not have any ARC72 NFTs</span>
-  </template>
   <template v-else>
-    <span>Fetching your ARC72 NFTs...</span>
+    <span>Fetching ARC200 NFTs...</span>
   </template>
 </div>
 </template>
@@ -37,20 +33,23 @@ import {computed, onMounted, ref} from 'vue'
 import {useWalletStore} from '@/stores/walletStore'
 import TextInput from "@/components/TextInput.vue";
 
-const emit = defineEmits(['input'])
+const props = defineProps<{
+  modelValue: String,
+}>()
+const emit = defineEmits(['update:modelValue'])
+
 const walletStore = useWalletStore()
 
 const loaded = ref(false)
 const error: Ref<null|String> = ref(null)
 const nfts = ref([])
 const searchString = ref('')
-const selectedNFT = ref(null)
 
 const displayedNFTS = computed (() => {
   if (searchString.value.length > 0)
     return nfts.value.filter(nft => {
-      return nft.tokenId.toString().includes(searchString.value) ||
-      nft.metadata.toLowerCase().includes(searchString.value.toLowerCase())}
+      return nft.contractId.toString().includes(searchString.value) ||
+      nft.name.toLowerCase().includes(searchString.value.toLowerCase())}
     )
   else {
     return nfts.value
@@ -59,7 +58,7 @@ const displayedNFTS = computed (() => {
 
 
 async function getData() {
-  const url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens?owner=${walletStore.account.address}`
+  const url = 'https://arc72-idx.nautilus.sh/nft-indexer/v1/arc200/tokens'
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -76,24 +75,17 @@ async function getData() {
 }
 
 function selectNFT (nft) {
-  selectedNFT.value = nft
-  emit('input', {nftAppID: nft.contractId, nftID: nft.tokenId})
+  console.log(nft)
+  emit('update:modelValue', nft.contractId)
 }
 
 onMounted(getData)
 </script>
 
 <style scoped>
-.arc72-input-container {
+.arc200-input-container {
   width: 100%;
   box-sizing: border-box;
-}
-
-img {
-  width: 50px;
-  height: 50px;
-  grid-area: img;
-  object-fit: contain;
 }
 
 ul {
@@ -106,17 +98,15 @@ ul {
 
 li {
   display: grid;
-  grid-template-columns: 50px auto;
+  grid-template-columns: auto 150px;
   grid-column-gap: 5px;
-  grid-template-areas:
-    'img name'
-    'img description';
   text-align: left;
   margin-bottom: 10px;
 }
 
 li:hover {
   background: lightgrey;
+  cursor: pointer;
 }
 
 li.selected {
