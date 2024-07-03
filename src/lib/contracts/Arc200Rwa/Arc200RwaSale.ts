@@ -6,6 +6,7 @@ import type {Account, AppCallObject, AppCreateObject, PaymentObject, Provider, T
 import {TransactionType} from "algosdk/src/types/transactions";
 import {Transaction} from "@/transaction";
 import {clearProgram, saleApprovalProgram} from "@/lib/contracts/Arc200Rwa/Arc200RwaContract";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID} from "@/constants";
 
 export async function Arc200RwaSaleBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
 
@@ -65,6 +66,8 @@ export async function Arc200RwaSaleBuy(provider: Provider, account: Account, par
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: appArgs,
         suggestedParams,
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID, 54881300],
     }
 
     return [fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj]
@@ -85,6 +88,8 @@ export async function Arc200RwaSaleCreate(provider: Provider, account: Account, 
         new TextEncoder().encode(parameters.rwaName),
         longToByteArray(parameters.arc200AppID, 8),
         algosdk.decodeAddress(parameters.arc200AppAddress).publicKey,
+        algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+        longToByteArray(parameters.counterPartyFees, 8),
     ]
 
     const appCreateObj =
@@ -106,7 +111,7 @@ export async function Arc200RwaSaleCreate(provider: Provider, account: Account, 
         .getFutureAppId(algosdk, algodClient))
 
     const appAddr = algosdk.getApplicationAddress(appIndex)
-    const fundingAmount = 300_000 + 10_000
+    const fundingAmount = 700_000 + 10_000
 
     const fundAppObj: PaymentObject = {
         type: TransactionType.pay,
