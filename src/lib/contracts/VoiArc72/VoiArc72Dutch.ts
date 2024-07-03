@@ -81,7 +81,7 @@ console.log(parameters)
             appArgs,
             approvalProgram: base64ToArrayBuffer(dutchApprovalProgram),
             clearProgram: base64ToArrayBuffer(clearProgram),
-            numGlobalInts: 7,
+            numGlobalInts: 8,
             numGlobalByteSlices: 7,
             numLocalInts: 0,
             numLocalByteSlices: 0,
