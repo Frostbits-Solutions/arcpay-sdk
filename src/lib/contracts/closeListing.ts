@@ -1,6 +1,7 @@
 import _algosdk from "algosdk";
 import type {Account, AppCallObject, AppDeleteObject, Provider, TransactionParameters} from "@/types";
 import {TransactionType} from "algosdk/src/types/transactions";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID} from "@/constants";
 
 export async function closeListing (provider: Provider, account: Account, parameters: TransactionParameters) {
     console.log(parameters)
@@ -23,6 +24,8 @@ export async function closeListing (provider: Provider, account: Account, parame
         appIndex: parameters.appIndex,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: [new TextEncoder().encode('pre_validate')],
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID],
         suggestedParams
     }
     obj.push(preValidateAppCallObj)

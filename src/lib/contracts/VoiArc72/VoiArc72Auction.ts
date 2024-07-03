@@ -50,7 +50,9 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
         longToByteArray(parameters.nftAppID, 8),
         longToByteArray(parameters.nftID, 32),
         longToByteArray(startPrice, 8),
-        longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8)
+        longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8),
+        algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+        longToByteArray(parameters.counterPartyFees, 8),
     ]
 
     const appCreateObj: AppCreateObject =
@@ -62,7 +64,7 @@ export async function VoiArc72AuctionCreate (provider: Provider, account: Accoun
             appArgs,
             approvalProgram: base64ToArrayBuffer(auctionApprovalProgram),
             clearProgram: base64ToArrayBuffer(clearProgram),
-            numGlobalInts: 7,
+            numGlobalInts: 8,
             numGlobalByteSlices: 7,
             numLocalInts: 0,
             numLocalByteSlices: 0,
