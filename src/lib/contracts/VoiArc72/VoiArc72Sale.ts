@@ -5,6 +5,8 @@ import {base64ToArrayBuffer, encodeAppArgs, longToByteArray} from "@/utils";
 import {arc72Schema} from "@/lib/contracts/abi/arc72";
 import {saleApprovalProgram, clearProgram} from "./VoiArc72Contract";
 import {Transaction} from "@/transaction";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID} from "@/constants";
+
 
 export async function VoiArc72SaleBuy (provider: Provider, account: Account, parameters: TransactionParameters) {
     const algosdk = provider.algosdk
@@ -45,6 +47,8 @@ export async function VoiArc72SaleBuy (provider: Provider, account: Account, par
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: appArgs,
         suggestedParams,
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID],
     }
 
     return [preValidateObj, payObj, appCallObj]
@@ -59,7 +63,9 @@ export async function VoiArc72SaleCreate (provider: Provider, account: Account, 
         const appArgs = [
             longToByteArray(parameters.nftAppID, 8),
             longToByteArray(parameters.nftID, 32),
-            longToByteArray(_price, 8)
+            longToByteArray(_price, 8),
+            algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+            longToByteArray(parameters.counterPartyFees, 8),
         ]
 
         const appCreateObj =
