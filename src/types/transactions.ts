@@ -141,4 +141,6 @@ export interface TransactionParameters {
     feesAddress: string
     rwaId: string
     rwaName: string
+    counterPartyAddress: string
+    counterPartyFees: number
 }

@@ -32,6 +32,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
     const auctionType: Ref<string|null> = ref(null)
     const listingType: Ref<string|null> = ref(null)
     const account_id: Ref<number|null> = ref(null)
+    const counterPartyAddress: Ref<string|null> = ref('6J4RO7U2WYQWOGWXQOZUTBBA46W4QSFL5HTHJWC5BZR53RSYRAOPAY7KPM')
+    const counterPartyFees: Ref<number|null> = ref(1)
 
     async function getListingParameters(client: SupabaseClient, listing_id: string) {
         const { data, error } = await getListingById(client, listing_id)
@@ -75,6 +77,8 @@ export const useParametersStore = defineStore('parametersStore', () => {
         listingType,
         auctionType,
         account_id,
+        counterPartyAddress,
+        counterPartyFees,
         getListingParameters,
     }
 })

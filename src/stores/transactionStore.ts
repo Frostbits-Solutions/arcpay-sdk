@@ -7,6 +7,8 @@ import {Transaction} from "@/transaction";
 import {getTransactionFunction} from "@/lib/contracts/getTransactionFunction";
 import { createAuction, createSale } from '@/lib/supabase/listings'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import {useWalletStore} from "@/stores/walletStore";
+import {useParametersStore} from "@/stores/parametersStore";
 
 export const useTransactionStore = defineStore('transactionStore', () => {
     const client:SupabaseClient = ref(null)
@@ -20,6 +22,8 @@ export const useTransactionStore = defineStore('transactionStore', () => {
     const successInfo: Ref<object | null> = ref(null)
     async function doTransaction () {
         try{
+            if (walletStore.value === null) walletStore.value = useWalletStore()
+            if (parameterStore.value === null) parameterStore.value = useParametersStore()
             if (
                 walletStore.value === null ||
                 transactionType.value === null ||
@@ -30,6 +34,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
                     message: 'null values for the transaction'
                 }
             }
+
             state.value = TRANSACTION_STATE.initiatingTransaction
             const transactionFunction =
                 getTransactionFunction(
@@ -47,7 +52,7 @@ export const useTransactionStore = defineStore('transactionStore', () => {
 
             state.value = TRANSACTION_STATE.sendingTransaction
             const confirmation = await walletStore.value.provider.sendRawTransactions(signedTxn)
-
+            console.log('confirmed')
             if (transactionType.value === TRANSACTION_TYPE.create) {
                 if (client.value) {
                     if (contractType.value === CONTRACT_TYPE.Sale) {

@@ -41,7 +41,7 @@ export async function VoiRwaSaleBuy (provider: Provider, account: Account, param
     return [payObj, appCallObj]
 }
 export async function VoiRwaSaleCreate (provider: Provider, account: Account, parameters: TransactionParameters) {
-
+    console.log(parameters)
     const algosdk = provider.algosdk
     const algodClient = provider.algodClient as _algosdk.Algodv2
 
@@ -52,7 +52,9 @@ export async function VoiRwaSaleCreate (provider: Provider, account: Account, pa
         longToByteArray(_price, 8),
         algosdk.decodeAddress(parameters.feesAddress).publicKey,
         new TextEncoder().encode(parameters.rwaId),
-        new TextEncoder().encode(parameters.rwaName)
+        new TextEncoder().encode(parameters.rwaName),
+        algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+        longToByteArray(parameters.counterPartyFees, 8),
     ]
 
     const appCreateObj =
