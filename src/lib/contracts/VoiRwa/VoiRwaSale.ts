@@ -1,4 +1,4 @@
-import {TRANSACTION_STATE} from "@/constants";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID} from "@/constants";
 import _algosdk from "algosdk";
 import {TransactionType} from "algosdk/src/types/transactions";
 import {base64ToArrayBuffer, longToByteArray} from "@/utils";
@@ -34,6 +34,8 @@ export async function VoiRwaSaleBuy (provider: Provider, account: Account, param
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: appArgs,
         suggestedParams,
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID],
     }
 
     return [payObj, appCallObj]

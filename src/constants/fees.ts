@@ -1,0 +1,2 @@
+export const SMART_CONTRACT_FEES_ADDRESS = ""
+export const SMART_CONTRACT_FEES_APP_ID = ""
