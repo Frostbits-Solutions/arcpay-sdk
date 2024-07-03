@@ -1,5 +1,5 @@
 import type {Account, AppCallObject, AppCreateObject, PaymentObject, Provider, TransactionParameters} from "@/types";
-import {TRANSACTION_STATE} from "@/constants";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID, TRANSACTION_STATE} from "@/constants";
 import _algosdk from "algosdk";
 import {TransactionType} from "algosdk/src/types/transactions";
 import {base64ToArrayBuffer, encodeAppArgs, longToByteArray} from "@/utils";
@@ -48,6 +48,8 @@ export async function VoiArc72DutchBuy(provider: Provider, account: Account, par
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: appArgs,
         suggestedParams,
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID],
     }
 
     return [preValidateObj, payObj, appCallObj]
