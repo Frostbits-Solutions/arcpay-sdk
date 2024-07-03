@@ -6,7 +6,7 @@ import type {Account, AppCallObject, AppCreateObject, PaymentObject, Provider, T
 import {TransactionType} from "algosdk/src/types/transactions";
 import {Transaction} from "@/transaction";
 import {clearProgram, saleApprovalProgram} from "@/lib/contracts/Arc200Rwa/Arc200RwaContract";
-import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID} from "@/constants";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID, ARC200_APP_DICT} from "@/constants";
 
 export async function Arc200RwaSaleBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
 
@@ -67,7 +67,7 @@ export async function Arc200RwaSaleBuy(provider: Provider, account: Account, par
         appArgs: appArgs,
         suggestedParams,
         accounts: [SMART_CONTRACT_FEES_ADDRESS],
-        foreignApps:[SMART_CONTRACT_FEES_APP_ID, 54881300],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID, ARC200_APP_DICT[parameters.arc200AppID]],
     }
 
     return [fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj]
