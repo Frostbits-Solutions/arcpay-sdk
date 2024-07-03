@@ -70,6 +70,8 @@ console.log(parameters)
         longToByteArray(_priceMax, 8),
         longToByteArray(_priceMin, 8),
         longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8),
+        algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+        longToByteArray(parameters.counterPartyFees, 8),
     ]
 
     const appCreateObj =
