@@ -6,6 +6,7 @@ import {TransactionType} from "algosdk/src/types/transactions";
 import {arc72Schema} from "@/lib/contracts/abi/arc72";
 import {Transaction} from "@/transaction";
 import {clearProgram, saleApprovalProgram} from "./Arc200Arc72Contract";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID, ARC200_APP_DICT} from "@/constants";
 
 export async function Arc200Arc72SaleBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
 
@@ -64,6 +65,8 @@ export async function Arc200Arc72SaleBuy(provider: Provider, account: Account, p
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: appArgs,
         suggestedParams,
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID, ARC200_APP_DICT[parameters.arc200AppID]],
     }
 
     return [fundArc200Obj,
@@ -85,7 +88,9 @@ export async function Arc200Arc72SaleCreate(provider: Provider, account: Account
             longToByteArray(parameters.nftID, 32),
             longToByteArray(_price, 8),
             longToByteArray(parameters.arc200AppID, 8),
-            algosdk.decodeAddress(parameters.arc200AppAddress).publicKey
+            algosdk.decodeAddress(parameters.arc200AppAddress).publicKey,
+            algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+            longToByteArray(parameters.counterPartyFees, 8),
         ]
 
         const appCreateObj =
