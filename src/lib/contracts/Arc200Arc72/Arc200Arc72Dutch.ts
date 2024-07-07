@@ -6,6 +6,7 @@ import {TransactionType} from "algosdk/src/types/transactions";
 import {arc72Schema} from "@/lib/contracts/abi/arc72";
 import {dutchApprovalProgram, clearProgram} from "./Arc200Arc72Contract";
 import {Transaction} from "@/transaction";
+import {SMART_CONTRACT_FEES_ADDRESS, SMART_CONTRACT_FEES_APP_ID, ARC200_APP_DICT} from "@/constants";
 
 export async function Arc200Arc72DutchBuy(provider: Provider, account: Account, parameters: TransactionParameters) {
     console.log(parameters)
@@ -52,6 +53,16 @@ export async function Arc200Arc72DutchBuy(provider: Provider, account: Account, 
         suggestedParams: suggestedParams,
     }
 
+    const preValidateAppArgs2 = [new TextEncoder().encode('pre_validate')]
+    const preValidateObj2: AppCallObject = {
+        type: TransactionType.appl,
+        from: account.address,
+        appIndex: parameters.appIndex,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        appArgs: preValidateAppArgs2,
+        suggestedParams: suggestedParams,
+    }
+
     const appArgs = [
         new TextEncoder().encode('buy'),
         longToByteArray(parameters.price, 8),
@@ -63,9 +74,11 @@ export async function Arc200Arc72DutchBuy(provider: Provider, account: Account, 
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: appArgs,
         suggestedParams,
+        accounts: [SMART_CONTRACT_FEES_ADDRESS],
+        foreignApps:[SMART_CONTRACT_FEES_APP_ID, ARC200_APP_DICT[parameters.arc200AppID]],
     }
 
-    return [fundArc200Obj, arc200ApproveObj, preValidateObj, appCallObj]
+    return [fundArc200Obj, arc200ApproveObj, preValidateObj, preValidateObj2, appCallObj]
 }
 export async function Arc200Arc72DutchCreate(provider: Provider, account: Account, parameters: TransactionParameters) {
     const algosdk = provider.algosdk
@@ -82,6 +95,8 @@ export async function Arc200Arc72DutchCreate(provider: Provider, account: Accoun
         longToByteArray((Date.now() + parameters.duration * 3_600_000) / 1_000, 8),
         longToByteArray(parameters.arc200AppID, 8),
         algosdk.decodeAddress(parameters.arc200AppAddress).publicKey,
+        algosdk.decodeAddress(parameters.counterPartyAddress).publicKey,
+        longToByteArray(parameters.counterPartyFees, 8),
     ]
     const appCreateObj =
         {
@@ -92,8 +107,8 @@ export async function Arc200Arc72DutchCreate(provider: Provider, account: Accoun
             appArgs,
             approvalProgram: base64ToArrayBuffer(dutchApprovalProgram),
             clearProgram: base64ToArrayBuffer(clearProgram),
-            numGlobalInts: 7,
-            numGlobalByteSlices: 7,
+            numGlobalInts: 9,
+            numGlobalByteSlices: 9,
             numLocalInts: 0,
             numLocalByteSlices: 0,
         } as AppCreateObject
