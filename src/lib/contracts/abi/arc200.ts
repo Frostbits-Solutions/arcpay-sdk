@@ -1,6 +1,6 @@
 const arc200Schema = {
   "name": "ARC-200",
-  "desc": "Smart Contract Token Base Interface",
+  "description": "Smart Contract Token Base Interface",
   "methods": [
     {
       "name": "arc200_name",
