@@ -11,7 +11,7 @@ import { AlgodClient } from '@/lib/algod/AlgodClient'
 import type { SuggestedParamsWithMinFee } from 'algosdk/dist/types/types/transactions/base'
 import { TransactionType } from 'algosdk/src/types/transactions'
 import algosdk, { type BoxReference } from 'algosdk'
-import { base64ToArrayBuffer, encodeAppArgs, longToByteArray } from '@/utils'
+import { base64ToArrayBuffer, encodeAppArgs } from '@/utils'
 import { OnApplicationComplete } from 'algosdk/src/types/transactions/base'
 import type Wallet from '@/lib/wallets/Wallet'
 import type { ABI } from '@/lib/contracts/abi/types'
@@ -19,8 +19,6 @@ import type { ABI } from '@/lib/contracts/abi/types'
 export interface TransactionParameters {
   fromAddress: string
   appIndex?: number
-  nftAppID?: number
-  nftID?: number
 }
 
 export class TransactionError extends Error {
@@ -37,14 +35,15 @@ export class SimulationError extends Error {
   }
 }
 
-type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call'
+type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call' | '_delete'
 
-type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string]
-type FundArgs = []
-type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, foreignApp: number, approveArg: number]
-type PreValidateArgs = [sellerAddress: string, feesAddress: string, foreignApps: number[]]
-type PayArgs = [amount: number, to: string]
-type CallArgs = [functionName: string, args: Uint8Array[]]
+type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number]
+type FundArgs = [amount?: number]
+type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, foreignApps: number[], args: (string | number)[]]
+type PreValidateArgs = [accounts?: string[], foreignApps?: number[]]
+type PayArgs = [amount: number, to?: string]
+type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]]
+type DeleteArgs = []
 
 type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs
 
@@ -58,8 +57,6 @@ export class Transaction {
   private readonly _queue: QueueObject[]
   private readonly _algod: AlgodClient
   private readonly _fromAddress: string | null
-  private readonly _nftAppID: number | null
-  private readonly _nftID: number | null
   private _suggestedParams: SuggestedParamsWithMinFee | null = null
   private _appIndex: number | null
 
@@ -68,38 +65,41 @@ export class Transaction {
     this._objs = []
     this._appIndex = parameters.appIndex || 0
     this._fromAddress = parameters.fromAddress
-    this._nftAppID = parameters.nftAppID || null
-    this._nftID = parameters.nftID || null
     this._queue = []
   }
 
-  public createApp(appArgs: Uint8Array[], approvalProgram: string, clearProgram: string) {
-    this._queue.push({ method: '_createApp', args: [ appArgs, approvalProgram, clearProgram ] })
+  public createApp(args: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number) {
+    this._queue.push({ method: '_createApp', args: [ args, approvalProgram, clearProgram,  numGlobalInts, numGlobalByteSlices, numLocalInts, numLocalByteSlices] })
     return this
   }
 
-  public fund() {
-    this._queue.push({ method: '_fund', args: [] })
+  public fund(amount?: number) {
+    this._queue.push({ method: '_fund', args: [ amount ] })
     return this
   }
 
-  public approve(contractAbi: ABI, methodName:string, appIndex: number = 0, foreignApp: number = 0, approveArg: number = 0) {
-    this._queue.push({ method: '_approve', args: [ contractAbi, methodName, appIndex, foreignApp, approveArg ] })
+  public approve(contractAbi: ABI, methodName:string, appIndex: number, foreignApps: number[], args: (string | number)[]) {
+    this._queue.push({ method: '_approve', args: [ contractAbi, methodName, appIndex, foreignApps, args ] })
     return this
   }
 
-  public preValidate(sellerAddress: string, feesAddress: string, foreignApps: number[] = []) {
-    this._queue.push({ method: '_preValidate', args: [ sellerAddress, feesAddress, foreignApps ] })
+  public preValidate(accounts?: string[], foreignApps?: number[]) {
+    this._queue.push({ method: '_preValidate', args: [ accounts, foreignApps ] })
     return this
   }
 
-  public pay(amount: number, to: string = '') {
+  public pay(amount: number, to?: string) {
     this._queue.push({ method: '_pay', args: [ amount, to ] })
     return this
   }
 
-  public call(functionName: string, args: Uint8Array[] = []) {
-    this._queue.push({ method: '_call', args: [ functionName, args ] })
+  public call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]) {
+    this._queue.push({ method: '_call', args: [ functionName, args, accounts, foreignApps ] })
+    return this
+  }
+
+  public delete() {
+    this._queue.push({ method: '_delete', args: [] })
     return this
   }
 
@@ -127,6 +127,9 @@ export class Transaction {
         case '_call':
           await this._call(...args as CallArgs)
           break
+        case '_delete':
+          await this._delete(...args as DeleteArgs)
+          break
         default:
           throw new TransactionError(`Method ${method} not implemented`)
       }
@@ -136,40 +139,33 @@ export class Transaction {
     return await wallet.sendRawTransactions(signedTxns)
   }
 
-  private async _createApp(appArgs: Uint8Array[], approvalProgram: string, clearProgram: string) {
+  private async _createApp(args: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number) {
     if (!this._fromAddress) throw new TransactionError('Unable to create app: From address not set.')
-    const args = [
-      ...appArgs
-    ]
-    // Inserting nftID and nftAppID at the beginning of appArgs. Order matters!
-    if (this._nftID) args.unshift(longToByteArray(this._nftID, 32))
-    if (this._nftAppID) args.unshift(longToByteArray(this._nftAppID, 8))
-
     const suggestedParams = await this._getSuggestedParams()
     const appCreateObj: AppCreateObject = {
       type: TransactionType.appl,
       from: this._fromAddress,
       onComplete: algosdk.OnApplicationComplete.NoOpOC,
       suggestedParams,
-      appArgs: args,
+      appArgs: [...args],
       approvalProgram: base64ToArrayBuffer(approvalProgram),
       clearProgram: base64ToArrayBuffer(clearProgram),
-      numGlobalInts: 7,
-      numGlobalByteSlices: 7,
-      numLocalInts: 0,
-      numLocalByteSlices: 0
+      numGlobalInts: numGlobalInts || 8,
+      numGlobalByteSlices: numGlobalByteSlices || 7,
+      numLocalInts: numLocalInts || 0,
+      numLocalByteSlices: numLocalByteSlices || 0
     }
     this._objs.push(appCreateObj)
 
     this._appIndex = await this._getFutureAppIndex()
   }
 
-  private async _fund() {
+  private async _fund(amount?:number) {
     const suggestedParams = await this._getSuggestedParams()
     if (!this._appIndex) throw new TransactionError('Unable to fund app: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to fund app: From address not set.')
     const appAddr = algosdk.getApplicationAddress(this._appIndex)
-    const fundingAmount = 300_000
+    const fundingAmount = amount || 700_000
     const fundAppObj: PaymentObject = {
       type: TransactionType.pay,
       from: this._fromAddress,
@@ -180,42 +176,32 @@ export class Transaction {
     this._objs.push(fundAppObj)
   }
 
-  private async _approve(contractAbi: ABI, methodName: string, appIndex: number, foreignApp: number, approveArg: number) {
-    if (!appIndex || !foreignApp) {
-      if (!this._nftAppID) throw new TransactionError('Unable to approve app: NFT app ID not set.')
-      appIndex = appIndex || this._nftAppID
-      foreignApp = foreignApp || this._nftAppID
-    }
-    if(!approveArg) {
-      if (!this._nftID) throw new TransactionError('Unable to approve app: NFT ID not set.')
-      approveArg = this._nftID
-    }
+  private async _approve(contractAbi: ABI, methodName: string, appIndex: number, foreignApps: number[], args: (string | number)[]) {
     if (!this._appIndex) throw new TransactionError('Unable to approve app: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to approve app: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
     const abi = new algosdk.ABIContract(contractAbi)
     const abiMethod = abi.getMethodByName(methodName)
     const appAddr = algosdk.getApplicationAddress(this._appIndex)
-    const args = [appAddr, approveArg]
-    const appArgsFund = encodeAppArgs(abiMethod, args)
+    const appArgs = [appAddr, ...args]
+    const encodedAppArgs = encodeAppArgs(abiMethod, appArgs)
 
     const appCallObj: AppCallObject = {
       type: TransactionType.appl,
       suggestedParams,
       from: this._fromAddress,
       appIndex,
-      appArgs: appArgsFund,
-      foreignApps: [foreignApp],
+      appArgs: encodedAppArgs,
+      foreignApps: [...foreignApps],
       onComplete: algosdk.OnApplicationComplete.NoOpOC
     }
 
     this._objs.push(appCallObj)
   }
 
-  private async _preValidate(sellerAddress: string, feesAddress: string, foreignApps: number[]) {
+  private async _preValidate(accounts?: string[], foreignApps?: number[]) {
     if (!this._fromAddress) throw new TransactionError('Unable to pre-validate: From address not set.')
     if (!this._appIndex) throw new TransactionError('Unable to pre-validate: App index not set.')
-    if (!this._nftAppID) throw new TransactionError('Unable to pre-validate: NFT app ID not set.')
     const suggestedParams = await this._getSuggestedParams()
     const preValidateObj: AppCallObject = {
       type: TransactionType.appl,
@@ -223,17 +209,14 @@ export class Transaction {
       appIndex: this._appIndex,
       onComplete: algosdk.OnApplicationComplete.NoOpOC,
       appArgs: [new TextEncoder().encode('pre_validate')],
-      accounts: [
-        sellerAddress,
-        feesAddress
-      ],
-      foreignApps: [this._nftAppID, ...foreignApps],
       suggestedParams: suggestedParams
     }
+    if (accounts) preValidateObj.accounts = accounts
+    if (foreignApps) preValidateObj.foreignApps = foreignApps
     this._objs.push(preValidateObj)
   }
 
-  private async _pay(amount: number, to: string) {
+  private async _pay(amount: number, to?: string) {
     if (!to) {
       if (!this._appIndex) throw new TransactionError('Unable to pay: App index not set.')
       to = algosdk.getApplicationAddress(this._appIndex)
@@ -251,7 +234,7 @@ export class Transaction {
     this._objs.push(payObj)
   }
 
-  private async _call(functionName: string, args: Uint8Array[]) {
+  private async _call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]) {
     if (!this._appIndex) throw new TransactionError('Unable to call: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to call: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -264,7 +247,26 @@ export class Transaction {
       appArgs: appArgs,
       suggestedParams
     }
+    if (accounts) appCallObj.accounts = accounts
+    if (foreignApps) appCallObj.foreignApps = foreignApps
     this._objs.push(appCallObj)
+  }
+
+  private async _delete() {
+    if (!this._appIndex) throw new TransactionError('Unable to delete app: App index not set.')
+    if (!this._fromAddress) throw new TransactionError('Unable to delete app: From address not set.')
+    const suggestedParams = await this._getSuggestedParams()
+    const appDeleteObj: AppDeleteObject = {
+      type: TransactionType.appl,
+      from: this._fromAddress,
+      appIndex: this._appIndex,
+      onComplete: algosdk.OnApplicationComplete.DeleteApplicationOC,
+      accounts: [this._fromAddress],
+      appArgs: [new TextEncoder().encode('cancel')],
+      foreignApps: [this._appIndex],
+      suggestedParams
+    }
+    this._objs.push(appDeleteObj)
   }
 
   private async _getTxns(): Promise<algosdk.Transaction[]> {

@@ -8,22 +8,28 @@ import { CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_TYPE } from '@/constants'
 import { routerListenStores } from '@/router'
 import {getListingById, getListings} from '@/lib/supabase/listings'
 
-interface ArcpayClientOptions {
+export interface ArcpayClientOptions {
   apiKey?: string,
   client?: SupabaseClient,
+  darkMode?: boolean
 }
 
 export class Client {
+  private readonly _id: string
   private readonly _client: SupabaseClient
   private readonly _apiKey: string | undefined
 
-  constructor(options: ArcpayClientOptions) {
+  constructor(modalId: string, options: ArcpayClientOptions) {
+    this._id = modalId
     if (options.client) {
       this._client = options.client
     } else {
       if (!options.apiKey) throw new Error('API key is required')
       this._client = createSupabaseClient(options.apiKey)
       this._apiKey = options.apiKey
+    }
+    if (options.darkMode) {
+      document.getElementById(this._id)?.classList.toggle('ap-dark')
     }
   }
 
@@ -34,10 +40,10 @@ export class Client {
         origin: window.location.origin
       })
     }
-    return { data: null, error: 'Missing API Key' }
+    throw new Error('Unable to derive account ID from key. No API key provided.')
   }
 
-  public async createListing(account_id?: number) {
+  public async createListing(nftAppID?: number, nftID?: number, account_id?: number) {
     const modals = useModalsStore()
     modals.showModal('root')
 
@@ -46,8 +52,7 @@ export class Client {
     if (typeof account_id === 'undefined') {
       const { data, error } = await this._deriveAccountIdFromKey()
       if (error) {
-        console.error(error)
-        return
+        throw new Error(`Unable to derive account ID from key. ${error.message}`)
       }
       account_id = data
     }

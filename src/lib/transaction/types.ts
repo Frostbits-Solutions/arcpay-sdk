@@ -2,45 +2,6 @@ import type { BoxReference, SuggestedParams } from 'algosdk'
 import { TransactionType } from 'algosdk/src/types/transactions'
 import { OnApplicationComplete } from 'algosdk'
 
-export interface BuyTransactionParameters {
-  seller: string,
-  appIndex: number,
-  nftAppID: number,
-  nftID: number,
-  price: number,
-  feesAddress: string,
-}
-
-export interface BuyWArc200TransactionParameters extends BuyTransactionParameters {
-  arc200AppID: number,
-}
-
-export interface BidTransactionParameters {
-  seller: string,
-  appIndex: number,
-  nftAppID: number,
-  nftID: number,
-  minPrice: number,
-  feesAddress: string,
-}
-
-export interface CancelTransactionParameters {
-  seller: string,
-  appIndex: number,
-  nftAppID: number,
-}
-
-export interface CreateTransactionParameters {
-  nftAppID: number,
-  nftID: number,
-  feesAddress: string
-}
-
-export interface UpdateTransactionParameters {
-  appIndex: number,
-  feesAddress: string,
-}
-
 export type PaymentObject = {
   type: TransactionType, // TransactionType.pay
   from: string,
@@ -81,8 +42,7 @@ export type AppCallObject = {
   extraPages?: number,
 }
 
-export type AppCreateObject =
-  {
+export type AppCreateObject = {
     type: TransactionType, // TransactionType.appl
     from: string,
     suggestedParams: SuggestedParams,
@@ -104,8 +64,7 @@ export type AppCreateObject =
     extraPages?: number,
   }
 
-export type AppDeleteObject =
-{
+export type AppDeleteObject = {
   type: TransactionType, // TransactionType.appl
   from: string,
   appIndex: number,
@@ -123,22 +82,3 @@ export type AppDeleteObject =
 
 export type AppObject = AppCallObject | AppCreateObject | AppDeleteObject
 export type TransactionObject = AppObject | PaymentObject | TransfertObject
-
-export interface TransactionParameters {
-    nftID: number,
-    priceMin: number, // input for min price in dutch
-    priceMax: number, // input for max price in dutch
-    reserve: number, // input for reserve in auction
-    price: number,
-    seller: string,
-    appIndex: number,
-    appAddress: string,
-    nftAppID: number,
-    arc200AppID: number,
-    arc200AppAddress: string,
-    arc200Decimals: number,
-    duration: number, // auction duration
-    feesAddress: string,
-    rwaId: string,
-    rwaName: string
-}
