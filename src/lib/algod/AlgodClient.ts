@@ -6,7 +6,7 @@ export class AlgodClient {
   private readonly _client: algosdk.Algodv2
   private readonly _networkConfig: typeof networkConfig[keyof typeof networkConfig]
 
-  protected constructor(network: PublicNetwork) {
+  constructor(network: PublicNetwork) {
     this._networkConfig = networkConfig[network]
     this._client = new algosdk.Algodv2(this._networkConfig.nodeToken, this._networkConfig.nodeBaseURL, this._networkConfig.nodePort)
   }

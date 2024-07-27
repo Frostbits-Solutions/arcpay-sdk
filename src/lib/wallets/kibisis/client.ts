@@ -5,20 +5,23 @@ import type {
   ISignTxnsResult,
 } from '@agoralabs-sh/algorand-provider';
 import { assignGroupID, type Transaction } from 'algosdk'
-
-import {
-  ICON, KIBISIS_NOT_INSTALLED,
-  NO_ALGO_WALLET_INSTALLED, UNKNOWN_ERROR
-} from './constants'
+import { KIBISIS_NOT_INSTALLED, NO_ALGO_WALLET_INSTALLED, UNKNOWN_ERROR } from './constants'
 import Wallet from '../Wallet';
 import { bytesToBase64 } from '@agoralabs-sh/algorand-provider'
-import { base64ToArrayBuffer } from '@/utils'
+import { base64ToArrayBuffer } from '@/lib/utils'
 import type { AlgodClient } from '@/lib/algod/AlgodClient'
-import type { Account } from '@/lib/wallets/types'
+import type { Account, ProviderId } from '@/lib/wallets/types'
+import KibisisIcon from '@/assets/wallet-logos/kibisis.jpeg'
 
 class Kibisis extends Wallet {
   constructor(algod: AlgodClient) {
-    super(algod, 'kibisis', ICON)
+    super(algod, 'kibisis')
+  }
+
+  static metadata = {
+    id: 'kibisis' as ProviderId,
+    name: 'Kibisis',
+    icon: KibisisIcon
   }
 
   async connect(onDisconnect: () => void): Promise<Wallet> {

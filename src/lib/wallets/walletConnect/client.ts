@@ -3,12 +3,13 @@ import type { WalletConnectModalSignSession } from '@walletconnect/modal-sign-ht
 
 import { assignGroupID, Transaction } from 'algosdk'
 import Wallet from '../Wallet'
-import { ARCPAY_METADATA, ICON } from './constants'
+import { ARCPAY_METADATA } from './constants'
 import { bytesToBase64 } from '@agoralabs-sh/algorand-provider'
 import { formatJsonRpcRequest } from './utils'
 import { Buffer } from 'buffer'
 import type { AlgodClient } from '@/lib/algod/AlgodClient'
-import type { Account } from '@/lib/wallets/types'
+import type { Account, ProviderId } from '@/lib/wallets/types'
+import WalletConnectIcon from '@/assets/wallet-logos/walletconnect.png'
 
 
 class WalletConnect extends Wallet {
@@ -16,13 +17,19 @@ class WalletConnect extends Wallet {
   private readonly _chain: string = ''
 
   constructor(algod: AlgodClient) {
-    super(algod, 'walletconnect', ICON)
+    super(algod, 'walletconnect')
     this._client = new WalletConnectModalSign(  {
         projectId: import.meta.env.VITE_WC_PROJECT_ID,
         metadata: ARCPAY_METADATA
     })
 
     this._chain = this._algod.config.blockchainId
+  }
+
+  static metadata = {
+    id: 'walletconnect' as ProviderId,
+    name: 'WalletConnect',
+    icon: WalletConnectIcon
   }
 
   #mapAccounts(accounts: string[]): Account[] {

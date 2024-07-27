@@ -1,8 +1,13 @@
-import Kibisis from "@/lib/wallets/kibisis";
-import WalletConnect from "@/lib/wallets/walletConnect";
+import Kibisis from "@/lib/wallets/kibisis/client";
+import WalletConnect from "@/lib/wallets/walletConnect/client";
 
-export type Provider  = Kibisis | WalletConnect
+export type Provider  = typeof Kibisis | typeof WalletConnect
 export type ProviderId = 'kibisis' | 'walletconnect'
+export interface ProviderMetadata {
+  id: ProviderId
+  name: string
+  icon: string
+}
 
 export interface Account {
   providerId: ProviderId

@@ -1,4 +1,4 @@
-//@ts-nocheck
+/*//@ts-nocheck
 import {CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_STATE, TRANSACTION_TYPE} from "@/constants"
 import type {Ref} from "vue";
 import {computed, ref} from "vue";
@@ -121,3 +121,4 @@ export const useTransactionStore = defineStore('transactionStore', () => {
         client
     }
 })
+*/

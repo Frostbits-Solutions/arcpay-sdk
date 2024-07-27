@@ -1,65 +1,92 @@
-<template>
-<div class="ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
-  <div class="ap-border-b ap-mb-8 ap-pb-4 dark:ap-border-gray-700 ap-w-72 ap-m-auto ap-text-center">
-    <div class="ap-m-auto ap-w-fit ap-flex ap-items-center ap-relative ap-left-[20px]">
-      <img class="ap-w-8 ap-h-8" src="/src/assets/logo.png" >
-      <h1 class="ap-ml-2 ap-text-2xl ml-2 dark:text-white">Arcpay</h1>
-    </div>
-  </div>
-  <h2 class="ap-font-bold ap-text-lg ap-mb-4">Select a Wallet</h2>
-  <div class="ap-mx-auto ap-w-fit">
-    <button
-      class="ap-flex ap-items-center ap-w-full hover:ap-bg-gray-100 ap-p-2 rounded"
-      v-for="provider of providers"
-      @click="() => chooseWallet(provider.providerId)"
-      :key="provider.name"
-    >
-      <img
-        class="ap-mr-2 ap-w-8 ap-h-8 ap-rounded-full"
-        :src="provider.icon">
-      {{provider.name}}
-      <IconChevronNext class="ap-inline-block ap-ml-auto"/>
-    </button>
-  </div>
-</div>
-</template>
-
 <script setup lang="ts">
-import {PROVIDER_ID, PROVIDER_ICONS, PROVIDER} from '@/constants'
-import IconChevronNext from '@/components/icons/IconChevronNext.vue'
-import {useWalletStore} from "@/stores/walletStore";
+import { inject, ref } from 'vue'
+import type { AlgodClient } from '@/lib/algod/AlgodClient'
+import { type Provider, type ProviderMetadata, type Account, Wallet } from '@/lib/wallets'
+import { Button } from '@/components/ui/button'
+import { ChevronRight, ChevronDown, CircleHelp } from 'lucide-vue-next'
+import { getShortAddress } from '@/lib/utils'
+import Jazzicon from '@/components/Jazzicon.vue'
+import type { WalletSelection } from '@/app'
 
-const emit = defineEmits(['wallet'])
+interface WalletSelectionProvider {
+  callback: ((selection: WalletSelection) => void)
+}
 
-const walletStore = useWalletStore()
+const algod:AlgodClient | undefined = inject('algod')
+const { callback } = inject<{WalletSelection: WalletSelectionProvider}>('appProvider')?.['WalletSelection'] || {}
+const error = ref<string | undefined>()
+const selectedWallet = ref<Wallet | undefined>()
 
-const providers =
-  Object.values(PROVIDER_ID)
-    .map((id) => {
-      return {
-        providerId: id,
-        name: id,
-        icon: PROVIDER_ICONS[id]
-      }
-    }) ;
+const providers: {
+  provider: Provider, metadata: ProviderMetadata
+}[] = algod?.config.walletProviders.map((provider) => {return {
+  provider,
+  metadata: provider.metadata
+}}) || []
 
-async function chooseWallet (providerid: PROVIDER_ID) {
-  const provider = await PROVIDER[providerid].init()
-  const wallet = await provider.connect(() => {})
-  if (wallet.accounts.length === 0) {
-    throw { message: 'Wallet does not have any accounts'}
+async function selectWallet(provider: Provider) {
+  if (algod) {
+    const wallet = await new provider(algod).connect(() => {})
+    if (wallet.accounts.length === 0) {
+      error.value = 'Wallet does not have any accounts. Please select another wallet.'
+    }
+    selectedWallet.value = wallet
   }
-  walletStore.$patch({
-    wallet,
-    provider,
-    walletId: providerid
-  })
+}
+
+async function selectAccount(account: Account) {
+  if (callback && selectedWallet.value) {
+    callback({
+      wallet: selectedWallet.value,
+      account
+    })
+  } else {
+    throw { message: 'Unexpected error: WalletSelectionCallback not provided'}
+  }
 }
 </script>
 
+<template>
+  <ul class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2" v-if="!selectedWallet">
+    <li v-for="provider in providers" :key="provider.metadata.id">
+      <Button @click="selectWallet(provider.provider)" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between">
+        <div class="ap-flex ap-items-center ap-w-full">
+          <img :src="provider.metadata.icon" :alt="provider.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
+          {{ provider.metadata.name }}
+        </div>
+        <ChevronRight class="ap-w-5 ap-h-5 ap-text-muted-foreground" />
+      </Button>
+    </li>
+    <li v-if="error">
+      {{ error }}
+    </li>
+  </ul>
+  <ul v-else class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2">
+    <li>
+      <Button @click="selectedWallet = undefined" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between">
+        <div class="ap-flex ap-items-center ap-w-full">
+          <img :src="selectedWallet?.constructor.metadata.icon" :alt="selectedWallet?.constructor.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
+          {{ selectedWallet?.constructor.metadata.name }}
+        </div>
+        <ChevronDown class="ap-w-5 ap-h-5 ap-text-muted-foreground" />
+      </Button>
+    </li>
+    <li v-for="(account, index) in selectedWallet?.accounts" :key="account.address" class="ap-animate-in ap-slide-in-from-bottom ap-fade-in" :style="`animation-delay: ${index * 50}ms; animation-fill-mode: both;`">
+      <Button @click="selectAccount(account)"  variant="ghost" class="ap-w-full ap-h-12 ap-justify-between">
+        <div class="ap-flex ap-items-center ap-w-full ap-text-xs ap-font-semibold">
+          <Jazzicon :address="`0x${account.address}`" :diameter="25" class="ap-w-[25px] ap-h-[25px] ap-mr-2 ap-shadow ap-rounded-full" />
+          <div class="ap-truncate">{{ account.name }}<span class="ap-text-muted-foreground ap-ml-2 ap-font-normal">{{ getShortAddress(account.address) }}</span></div>
+        </div>
+        <div class="ap-w-4 ap-h-4 ap-border-2 ap-border-muted-foreground/40 ap-rounded ap-flex-shrink-0"></div>
+      </Button>
+    </li>
+  </ul>
+  <div class="ap-text-muted-foreground ap-flex ap-items-center ap-gap-1 ap-text-xs ap-underline ap-justify-center ap-mt-6">
+    <CircleHelp class="ap-w-4 ap-h-4" />
+    Why do I need to connect with my wallet?
+  </div>
+</template>
+
 <style scoped>
-button {
-  border: none;
-  background: transparent;
-}
+
 </style>

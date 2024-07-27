@@ -1,4 +1,4 @@
-import type { ConfirmedTxn, RawTxnResponse } from './types'
+import type { ConfirmedTxn, ProviderId, ProviderMetadata, RawTxnResponse } from './types'
 import {
   Transaction,
   waitForConfirmation,
@@ -7,21 +7,18 @@ import {
   encodeAddress
 } from 'algosdk'
 import { AlgodClient } from '@/lib/algod/AlgodClient'
-import type { Account, ProviderId } from '@/lib/wallets/types'
+import type { Account } from '@/lib/wallets/types'
 
 export default abstract class Wallet {
   protected readonly _algod: AlgodClient
-  protected readonly _id: ProviderId
-  protected readonly _name: string
-  protected readonly _icon: string
   protected _accounts: Account[] = []
-
-  protected constructor( algod: AlgodClient, id: ProviderId, icon: string) {
+  protected _id: ProviderId
+  protected constructor(algod: AlgodClient, id: ProviderId) {
     this._algod = algod
     this._id = id
-    this._name = id.toUpperCase()
-    this._icon = icon
   }
+
+  static metadata: ProviderMetadata
 
   abstract connect(onDisconnect: () => void): Promise<Wallet>
   abstract disconnect(): Promise<void>
@@ -30,14 +27,6 @@ export default abstract class Wallet {
     transactions: Transaction[],
     isAtomicTransactions: Boolean
   ): Promise<Uint8Array[]>
-
-  get metadata() {
-    return {
-      id: this._id,
-      name: this._name,
-      icon: this._icon,
-    }
-  }
 
   get accounts() {
     return this._accounts

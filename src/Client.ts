@@ -1,26 +1,37 @@
 import { createSupabaseClient } from '@/lib/supabase/supabaseClient'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { useModalsStore } from '@/stores/modalsStore'
-import { useParametersStore } from '@/stores/parametersStore'
-import { useWalletStore } from '@/stores/walletStore'
-import { useTransactionStore } from '@/stores/transactionStore'
-import { CONTRACT_TYPE, CONVENTION_TYPE, TRANSACTION_TYPE } from '@/constants'
-import { routerListenStores } from '@/router'
-import {getListingById, getListings} from '@/lib/supabase/listings'
+import { AlgodClient } from '@/lib/algod/AlgodClient'
+import type { PublicNetwork } from '@/lib/algod/network.config'
+import type { App } from 'vue'
+import { AppProvider, getListingParams, type GetListingParamsOptions, selectWallet } from '@/app'
 
 export interface ArcpayClientOptions {
+  network: PublicNetwork
   apiKey?: string,
   client?: SupabaseClient,
   darkMode?: boolean
 }
 
-export class Client {
-  private readonly _id: string
-  private readonly _client: SupabaseClient
-  private readonly _apiKey: string | undefined
+interface CreateListingOptions {
+  assetId?: string
+  listingName?: string
+  accountId?: number
+}
 
-  constructor(modalId: string, options: ArcpayClientOptions) {
+export class ArcpayClient {
+  private readonly _id: string
+  private readonly _app: App
+  private readonly _appProvider: AppProvider
+  private readonly _apiKey: string | undefined
+  private readonly _client: SupabaseClient
+  private readonly _algod: AlgodClient
+
+  constructor(modalId: string, app: App, options: ArcpayClientOptions ) {
     this._id = modalId
+    this._app = app
+    this._appProvider = new AppProvider(app)
+    this._algod = new AlgodClient(options.network)
+
     if (options.client) {
       this._client = options.client
     } else {
@@ -28,9 +39,13 @@ export class Client {
       this._client = createSupabaseClient(options.apiKey)
       this._apiKey = options.apiKey
     }
+
     if (options.darkMode) {
-      document.getElementById(this._id)?.classList.toggle('ap-dark')
+      this.toggleDarkMode(options.darkMode)
     }
+
+    this._app.provide('algod', this._algod)
+    this._app.provide('supabase', this._client)
   }
 
   private async _deriveAccountIdFromKey() {
@@ -43,165 +58,23 @@ export class Client {
     throw new Error('Unable to derive account ID from key. No API key provided.')
   }
 
-  public async createListing(nftAppID?: number, nftID?: number, account_id?: number) {
-    const modals = useModalsStore()
-    modals.showModal('root')
+  public toggleDarkMode(bool?: boolean) {
+    document.getElementById(this._id)?.classList.toggle('ap-dark', bool)
+  }
 
-    const params = useParametersStore()
+  public async createListing(options?:CreateListingOptions) {
+    let accountId = options?.accountId
 
-    if (typeof account_id === 'undefined') {
+    // WARNING: account_id can be 0
+    if (typeof accountId === 'undefined') {
       const { data, error } = await this._deriveAccountIdFromKey()
       if (error) {
         throw new Error(`Unable to derive account ID from key. ${error.message}`)
       }
-      account_id = data
+      accountId = data
     }
 
-    if(typeof account_id !== 'undefined') {
-      params.account_id = account_id
-    }
-
-    const walletStore = useWalletStore()
-    const transactionStore = useTransactionStore()
-    // @ts-ignore
-    transactionStore.walletStore = walletStore
-    // @ts-ignore
-    transactionStore.parameterStore = params
-    transactionStore.transactionType = TRANSACTION_TYPE.create
-    transactionStore.contractType = CONTRACT_TYPE.Sale
-    transactionStore.conventionType = CONVENTION_TYPE.VoiArc72
-    transactionStore.client = this._client
-
-    routerListenStores()
-  }
-
-  public async getListings() {
-    return await getListings(this._client)
-  }
-
-  public async getListingById(listing_id: string) {
-    return await getListingById(this._client, listing_id)
-  }
-
-  public async updateListing() {
-    const modals = useModalsStore()
-    modals.showModal('root')
-    const params = useParametersStore()
-
-    const walletStore = useWalletStore()
-    const transactionStore = useTransactionStore()
-    // @ts-ignore
-    transactionStore.walletStore = walletStore
-    // @ts-ignore
-    transactionStore.parameterStore = params
-    transactionStore.transactionType = TRANSACTION_TYPE.update
-    routerListenStores()
-  }
-
-  public async cancelListing() {
-    const modals = useModalsStore()
-    modals.showModal('root')
-    const params = useParametersStore()
-
-    const walletStore = useWalletStore()
-    const transactionStore = useTransactionStore()
-    // @ts-ignore
-    transactionStore.walletStore = walletStore
-    // @ts-ignore
-    transactionStore.parameterStore = params
-    transactionStore.transactionType = TRANSACTION_TYPE.cancel
-    routerListenStores()
-  }
-
-  public async closeListing() {
-    const modals = useModalsStore()
-    modals.showModal('root')
-    const params = useParametersStore()
-
-    const walletStore = useWalletStore()
-    const transactionStore = useTransactionStore()
-    // @ts-ignore
-    transactionStore.walletStore = walletStore
-    // @ts-ignore
-    transactionStore.parameterStore = params
-    transactionStore.transactionType = TRANSACTION_TYPE.close
-    transactionStore.contractType = CONTRACT_TYPE.Auction
-    routerListenStores()
-  }
-
-  public async buy (listing_id: string) {
-    const modals = useModalsStore()
-    modals.showModal('root')
-    const params = useParametersStore()
-
-    const walletStore = useWalletStore()
-    const transactionStore = useTransactionStore()
-    // @ts-ignore
-    transactionStore.walletStore = walletStore
-    // @ts-ignore
-    transactionStore.parameterStore = params
-    transactionStore.transactionType = TRANSACTION_TYPE.buy
-    transactionStore.contractType = CONTRACT_TYPE.Sale
-
-    await params.getListingParameters(this._client, listing_id)
-    if (params.listingType === 'sale') {
-      if (params.assetType === 'ARC72') {
-        if (params.arc200AppID) {
-          transactionStore.conventionType = CONVENTION_TYPE.Arc200Arc72
-        } else {
-          transactionStore.conventionType = CONVENTION_TYPE.VoiArc72
-        }
-      } else {
-        if (params.arc200AppID) {
-          transactionStore.conventionType = CONVENTION_TYPE.Arc200Rwa
-        } else {
-          transactionStore.conventionType = CONVENTION_TYPE.VoiRwa
-        }
-      }
-      routerListenStores()
-    } else {
-      console.error(`Listing ${listing_id} is not a sale`)
-    }
-  }
-
-  public async bid (listing_id: string) {
-    const modals = useModalsStore()
-    modals.showModal('root')
-    const params = useParametersStore()
-
-    const walletStore = useWalletStore()
-    const transactionStore = useTransactionStore()
-    // @ts-ignore
-    transactionStore.walletStore = walletStore
-    // @ts-ignore
-    transactionStore.parameterStore = params
-
-    await params.getListingParameters(this._client, listing_id)
-    if (params.listingType === 'auction') {
-      if (params.auctionType === 'dutch') {
-        transactionStore.transactionType = TRANSACTION_TYPE.buy
-        transactionStore.contractType = CONTRACT_TYPE.Dutch
-      } else {
-        transactionStore.transactionType = TRANSACTION_TYPE.bid
-        transactionStore.contractType = CONTRACT_TYPE.Auction
-      }
-
-      if (params.assetType === 'ARC72') {
-        if (params.arc200AppID) {
-          transactionStore.conventionType = CONVENTION_TYPE.Arc200Arc72
-        } else {
-          transactionStore.conventionType = CONVENTION_TYPE.VoiArc72
-        }
-      } else {
-        if (params.arc200AppID) {
-          transactionStore.conventionType = CONVENTION_TYPE.Arc200Rwa
-        } else {
-          transactionStore.conventionType = CONVENTION_TYPE.VoiRwa
-        }
-      }
-      routerListenStores()
-    } else {
-      console.error(`Listing ${listing_id} is not an auction`)
-    }
+    const { wallet, account } = await selectWallet(this._appProvider)
+    const params = await getListingParams(this._appProvider, account, options satisfies GetListingParamsOptions | undefined)
   }
 }

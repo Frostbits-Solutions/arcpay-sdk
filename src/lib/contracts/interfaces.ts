@@ -1,6 +1,6 @@
 import { Transaction } from '@/lib//transaction/Transaction'
 import { AlgodClient } from '@/lib/algod/AlgodClient'
-import { longToByteArray } from '@/utils'
+import { longToByteArray } from '@/lib/utils'
 import type Wallet from '@/lib/wallets/Wallet'
 import { arc72Schema } from '@/lib/contracts/abi/arc72'
 import { arc200Schema } from '@/lib/contracts/abi/arc200'
