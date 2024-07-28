@@ -3,11 +3,11 @@ import { Gavel, HandCoins, Receipt } from 'lucide-vue-next'
 import AssetSelectionCombobox from '@/components/ListingCreation/AssetSelectionCombobox.vue'
 import type { GetListingParamsOptions, WalletSelection } from '@/app'
 import { inject } from 'vue'
-import type { Account } from '@/lib/wallets'
+import type {WalletAccount} from "@txnlab/use-wallet-vue";
 
 interface ListingCreationProvider {
   args: {
-    account: Account,
+    account: WalletAccount,
     options: GetListingParamsOptions
   },
   callback: ((selection: WalletSelection) => void)

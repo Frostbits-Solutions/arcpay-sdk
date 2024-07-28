@@ -1,6 +1,7 @@
 import router from '@/router'
-import type { Wallet, Account } from '@/lib/wallets'
 import type { App } from 'vue'
+import type { Wallet, WalletAccount} from "@txnlab/use-wallet-vue";
+import {AlgodClient} from "@/lib/algod/AlgodClient";
 
 interface AppProviderArgs { [key: string]: any }
 interface AppProviderCallback { (...args: any[]): void }
@@ -28,7 +29,7 @@ export class AppProvider {
 
 export interface WalletSelection {
   wallet: Wallet,
-  account: Account
+  account: WalletAccount
 }
 
 export function selectWallet(appProvider: AppProvider) {
@@ -50,7 +51,7 @@ export interface ListingCreationParams {
 
 }
 
-export function getListingParams(appProvider: AppProvider, account: Account, options?: GetListingParamsOptions) {
+export function getListingParams(appProvider: AppProvider, account: WalletAccount, options?: GetListingParamsOptions) {
   return new Promise<ListingCreationParams>((resolve, reject) => {
     appProvider.provide('ListingCreation', {account, options}, (params: ListingCreationParams, error?: Error) => {
       if (error) reject(error)

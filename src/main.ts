@@ -8,6 +8,7 @@ import App from './App.vue'
 import router from './router'
 
 import { ArcpayClient, type ArcpayClientOptions} from '@/Client'
+import {WalletManagerPlugin} from "@txnlab/use-wallet-vue";
 
 const pinia = createPinia()
 const app = createApp(App)

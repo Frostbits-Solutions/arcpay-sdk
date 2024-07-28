@@ -4,6 +4,8 @@ import { AlgodClient } from '@/lib/algod/AlgodClient'
 import type { PublicNetwork } from '@/lib/algod/network.config'
 import type { App } from 'vue'
 import { AppProvider, getListingParams, type GetListingParamsOptions, selectWallet } from '@/app'
+import {useWallet, WalletManagerPlugin} from "@txnlab/use-wallet-vue";
+import {networkConfig} from "@/lib/algod/network.config";
 
 export interface ArcpayClientOptions {
   network: PublicNetwork
@@ -46,6 +48,16 @@ export class ArcpayClient {
 
     this._app.provide('algod', this._algod)
     this._app.provide('supabase', this._client)
+    this._app.use(WalletManagerPlugin, {
+      // @ts-ignore
+      wallets: networkConfig[options.network].walletProviders,
+      network: networkConfig[options.network].networkId,
+      algod: {
+        token: '',
+        baseServer: networkConfig[options.network].nodeBaseURL,
+        port: networkConfig[options.network].nodePort
+      }
+    })
   }
 
   private async _deriveAccountIdFromKey() {
@@ -75,6 +87,7 @@ export class ArcpayClient {
     }
 
     const { wallet, account } = await selectWallet(this._appProvider)
+
     const params = await getListingParams(this._appProvider, account, options satisfies GetListingParamsOptions | undefined)
   }
 }

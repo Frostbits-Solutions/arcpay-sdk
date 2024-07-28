@@ -1,11 +1,10 @@
 import { Transaction } from '@/lib//transaction/Transaction'
 import { AlgodClient } from '@/lib/algod/AlgodClient'
 import { longToByteArray } from '@/lib/utils'
-import type Wallet from '@/lib/wallets/Wallet'
 import { arc72Schema } from '@/lib/contracts/abi/arc72'
 import { arc200Schema } from '@/lib/contracts/abi/arc200'
 import type { ABI } from '@/lib/contracts/abi/types'
-import algosdk from 'algosdk'
+import algosdk, {type TransactionSigner} from 'algosdk'
 
 export const interfaces = {
   voi: {
@@ -14,7 +13,7 @@ export const interfaces = {
         sale: {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             nftAppID: number,
             nftID: number,
@@ -23,7 +22,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
               .createApp([
                 longToByteArray(nftAppID, 8),
                 longToByteArray(nftID, 32),
@@ -34,10 +33,10 @@ export const interfaces = {
               .fund()
               .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
               .call('fund', [])
-              .send(wallet),
+              .send(transaction),
           buy: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             nftAppID: number,
             appIndex: number,
@@ -45,16 +44,16 @@ export const interfaces = {
             price: number,
             feesAppAddress: string,
             feesAppId: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .preValidate([sellerAddress], [nftAppID])
             .pay(price)
             .call('buy', [], [feesAppAddress], [feesAppId])
-            .send(wallet)
+            .send(transaction)
         },
         auction: {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             nftAppID: number,
             nftID: number,
@@ -64,7 +63,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
               .createApp([
                 longToByteArray(nftAppID, 8),
                 longToByteArray(nftID, 32),
@@ -76,22 +75,22 @@ export const interfaces = {
               .fund()
               .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
               .call('fund', [])
-              .send(wallet),
+              .send(transaction),
           bid: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             appIndex: number,
             price: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .pay(price)
             .call('bid', [])
-            .send(wallet)
+            .send(transaction)
         },
         dutch : {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             nftAppID: number,
             nftID: number,
@@ -102,7 +101,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
             .createApp([
               longToByteArray(nftAppID, 8),
               longToByteArray(nftID, 32),
@@ -115,10 +114,10 @@ export const interfaces = {
             .fund()
             .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
             .call('fund', [])
-            .send(wallet),
+            .send(transaction),
           buy: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             nftAppID: number,
             appIndex: number,
@@ -126,18 +125,18 @@ export const interfaces = {
             price: number,
             feesAppAddress: string,
             feesAppId: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .preValidate([sellerAddress], [nftAppID])
             .pay(price)
             .call('buy', [], [feesAppAddress], [feesAppId])
-            .send(wallet)
+            .send(transaction)
         }
       },
       rwa: {
         sale: {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             rwaId: string,
             rwaName: string,
@@ -146,7 +145,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
               .createApp([
                 longToByteArray(price * 1_000_000, 8),
                 new TextEncoder().encode(rwaId),
@@ -156,19 +155,19 @@ export const interfaces = {
               ], approvalProgram, clearProgram)
               .fund()
               .call('fund', [])
-              .send(wallet),
+              .send(transaction),
           buy: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             appIndex: number,
             price: number,
             feesAppAddress: string,
             feesAppId: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .pay(price)
             .call('buy', [],[feesAppAddress], [feesAppId])
-            .send(wallet),
+            .send(transaction),
         }
       }
     },
@@ -177,7 +176,7 @@ export const interfaces = {
         sale: {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -188,7 +187,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
               .createApp([
                 longToByteArray(nftAppID, 8),
                 longToByteArray(nftID, 32),
@@ -201,10 +200,10 @@ export const interfaces = {
               .fund()
               .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
               .call('fund', [])
-              .send(wallet),
+              .send(transaction),
           buy: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -215,17 +214,17 @@ export const interfaces = {
             feesAppAddress: string,
             feesAppId: number,
             arc200FeesAppId: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
             .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
             .call('buy', [], [feesAppAddress], [feesAppId, arc200FeesAppId])
-            .send(wallet),
+            .send(transaction),
         },
         auction: {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -237,7 +236,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
               .createApp([
                 longToByteArray(nftAppID, 8),
                 longToByteArray(nftID, 32),
@@ -251,25 +250,25 @@ export const interfaces = {
               .fund()
               .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
               .call('fund', [])
-              .send(wallet),
+              .send(transaction),
           bid: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
             appIndex: number,
             price: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
             .call('bid', [longToByteArray(price, 8)])
-            .send(wallet)
+            .send(transaction)
         },
         dutch : {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -282,7 +281,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
             .createApp([
               longToByteArray(nftAppID, 8),
               longToByteArray(nftID, 32),
@@ -297,10 +296,10 @@ export const interfaces = {
             .fund()
             .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
             .call('fund', [])
-            .send(wallet),
+            .send(transaction),
           buy: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -311,20 +310,20 @@ export const interfaces = {
             feesAppAddress: string,
             feesAppId: number,
             arc200FeesAppId: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
             .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
             .preValidate()
             .call('buy', [longToByteArray(price, 8)], [feesAppAddress], [feesAppId, arc200FeesAppId])
-            .send(wallet)
+            .send(transaction)
         }
       },
       rwa: {
         sale: {
           create: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -335,7 +334,7 @@ export const interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, { fromAddress })
+          ) => new Transaction(algod.client, { fromAddress })
               .createApp([
                 longToByteArray(price, 8),
                 new TextEncoder().encode(rwaId),
@@ -347,10 +346,10 @@ export const interfaces = {
               ], approvalProgram, clearProgram)
               .fund()
               .call('fund', [])
-              .send(wallet),
+              .send(transaction),
           buy: (
             algod: AlgodClient,
-            wallet: Wallet,
+            transaction: TransactionSigner,
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
@@ -359,11 +358,11 @@ export const interfaces = {
             feesAppAddress: string,
             feesAppId: number,
             arc200FeesAppId: number
-          ) => new Transaction(algod, { fromAddress, appIndex })
+          ) => new Transaction(algod.client, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
             .call('buy', [], [feesAppAddress], [feesAppId, arc200FeesAppId])
-            .send(wallet)
+            .send(transaction)
         }
       }
     }
@@ -371,22 +370,22 @@ export const interfaces = {
   common: {
     close: (
       algod: AlgodClient,
-      wallet: Wallet,
+      transaction: TransactionSigner,
       fromAddress: string,
       appIndex: number,
       feesAppAddress: string,
       feesAppId: number
-    ) => new Transaction(algod, { fromAddress, appIndex })
+    ) => new Transaction(algod.client, { fromAddress, appIndex })
       .preValidate()
       .call('close', [], [fromAddress, feesAppAddress], [appIndex, feesAppId])
-      .send(wallet),
+      .send(transaction),
     cancel: (
       algod: AlgodClient,
-      wallet: Wallet,
+      transaction: TransactionSigner,
       fromAddress: string,
       appIndex: number,
-    ) => new Transaction(algod, { fromAddress, appIndex })
+    ) => new Transaction(algod.client, { fromAddress, appIndex })
       .delete()
-      .send(wallet),
+      .send(transaction),
   }
 }

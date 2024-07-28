@@ -7,13 +7,11 @@ import type {
   TransactionObject,
   TransfertObject
 } from './types'
-import { AlgodClient } from '@/lib/algod/AlgodClient'
 import type { SuggestedParamsWithMinFee } from 'algosdk/dist/types/types/transactions/base'
 import { TransactionType } from 'algosdk/src/types/transactions'
-import algosdk, { type BoxReference } from 'algosdk'
+import algosdk, {type BoxReference, type TransactionSigner} from 'algosdk'
 import { base64ToArrayBuffer, encodeAppArgs } from '@/lib/utils'
 import { OnApplicationComplete } from 'algosdk/src/types/transactions/base'
-import type Wallet from '@/lib/wallets/Wallet'
 import type { ABI } from '@/lib/contracts/abi/types'
 
 export interface TransactionParameters {
@@ -55,12 +53,12 @@ interface QueueObject {
 export class Transaction {
   private readonly _objs: TransactionObject[]
   private readonly _queue: QueueObject[]
-  private readonly _algod: AlgodClient
+  private readonly _algod: algosdk.Algodv2
   private readonly _fromAddress: string | null
   private _suggestedParams: SuggestedParamsWithMinFee | null = null
   private _appIndex: number | null
 
-  constructor(algod: AlgodClient, parameters: TransactionParameters) {
+  constructor(algod: algosdk.Algodv2, parameters: TransactionParameters) {
     this._algod = algod
     this._objs = []
     this._appIndex = parameters.appIndex || 0
@@ -104,7 +102,7 @@ export class Transaction {
   }
 
   // Sign and send transaction
-  public async send(wallet: Wallet) {
+  public async send(transactionSigner: TransactionSigner) {
     for (const obj of this._queue) {
       const method: QueueMethods = obj.method
       const args: QueueArgs = obj.args
@@ -135,8 +133,13 @@ export class Transaction {
       }
     }
     const txns = await this._getTxns()
-    const signedTxns = await wallet.signTransactions(txns, true)
-    return await wallet.sendRawTransactions(signedTxns)
+    const atc = new algosdk.AtomicTransactionComposer()
+    for (const txn of txns) {
+      atc.addTransaction({txn, signer: transactionSigner})
+    }
+    return await atc.execute(this._algod, 4)
+    //const signedTxns = await wallet.signTransactions(txns, txns.map((_,i) => i))
+    //return await wallet.sendRawTransactions(this._algod, signedTxns)
   }
 
   private async _createApp(args: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number) {
@@ -333,7 +336,7 @@ export class Transaction {
 
   private async _getSuggestedParams() {
     if (!this._suggestedParams) {
-      this._suggestedParams = await this._algod.client.getTransactionParams().do()
+      this._suggestedParams = await this._algod.getTransactionParams().do()
     }
     return this._suggestedParams
   }
@@ -363,7 +366,7 @@ export class Transaction {
     })
 
     // Simulate the transaction group
-    return await this._algod.client
+    return await this._algod
       .simulateTransactions(request)
       .do()
   }
