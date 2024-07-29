@@ -80,12 +80,12 @@ onMounted(() => {
         <CaretSortIcon class="ap-ml-2 ap-h-4 ap-w-4 ap-shrink-0 ap-opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="ap-p-0 ap-w-[160px]">
+    <PopoverContent class="ap-p-0 ap-w-[334px] ap-h-[150px]" side="bottom" align="end" >
       <Command>
         <CommandInput class="ap-h-9" placeholder="Search by ticker" />
         <CommandEmpty>No currency found.</CommandEmpty>
         <CommandList>
-          <CommandGroup class="ap-w-[152px]">
+          <CommandGroup class="ap-w-[327px]">
             <CommandItem
               v-for="currency in currencies"
               :key="currency.id"

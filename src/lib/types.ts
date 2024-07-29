@@ -1,4 +1,4 @@
-export interface onChainAssetMetadata {
+export interface OnChainAssetMetadata {
   id: string
   name: string
   description: string

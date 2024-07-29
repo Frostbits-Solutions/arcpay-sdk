@@ -41,7 +41,7 @@
     "@agoralabs-sh/avm-web-provider": "^1.6.2",
     "@radix-icons/vue": "^1.0.0",
     "@supabase/supabase-js": "^2.42.7",
-    "@txnlab/use-wallet-vue": "^3.0.0",
+    "@txnlab/use-wallet": "^3.0.0",
     "@vueuse/core": "^10.9.0",
     "@walletconnect/modal-sign-html": "^2.6.2",
     "@walletconnect/web3wallet": "^1.11.2",

@@ -1,29 +1,56 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
-import type { AlgodClient } from '@/lib/algod/AlgodClient'
+import { computed, inject, ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import { ChevronRight, ChevronDown, CircleHelp } from 'lucide-vue-next'
+import { ChevronRight, ChevronDown, CircleHelp, OctagonAlert } from 'lucide-vue-next'
 import { getShortAddress } from '@/lib/utils'
 import Jazzicon from '@/components/Jazzicon.vue'
-import type { WalletSelection } from '@/app'
-import {useWallet, type Wallet, type WalletAccount, WalletId} from "@txnlab/use-wallet-vue";
-const { wallets, activeWallet, activeAccount, signTransactions, transactionSigner } = useWallet()
+import { type WalletAccount, WalletId, type WalletManager, type WalletMetadata } from '@txnlab/use-wallet'
 
-console.log(useWallet())
 interface WalletSelectionProvider {
-  callback: ((selection: WalletSelection) => void)
+  callback: ((account: WalletAccount) => void)
 }
 
-const algod:AlgodClient | undefined = inject('algod')
+interface Wallet {
+  id: string
+  metadata: WalletMetadata
+  accounts: WalletAccount[]
+  activeAccount: WalletAccount | null
+  isConnected: boolean
+  isActive: boolean
+  connect: (args?: Record<string, any>) => Promise<WalletAccount[]>
+  disconnect: () => Promise<void>
+  setActive: () => void
+  setActiveAccount: (address: string) => void
+}
+
+const manager = inject<WalletManager>('walletManager')
 const { callback } = inject<{WalletSelection: WalletSelectionProvider}>('appProvider')?.['WalletSelection'] || {}
 const error = ref<string | undefined>()
+const activeWallet = ref<Wallet | undefined>()
+const wallets = computed(() => {
+  if (!manager) return []
+  return [...manager.wallets.values()].map((wallet): Wallet => {
+    return {
+      id: wallet.id,
+      metadata: wallet.metadata,
+      accounts: [],
+      activeAccount: null,
+      isConnected: false,
+      isActive: false,
+      connect: (args) => wallet.connect(args),
+      disconnect: () => wallet.disconnect(),
+      setActive: () => wallet.setActive(),
+      setActiveAccount: (addr) => wallet.setActiveAccount(addr)
+    }
+  })
+})
+
 
 // All of this will be needed when we allow magic wallet
-const isMagicLink = (wallet: Wallet) => wallet.id === WalletId.MAGIC
 const magicEmail = ref('')
+const isMagicLink = (wallet: Wallet) => wallet.id === WalletId.MAGIC
 const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(magicEmail.value)
-const isConnectDisabled = (wallet: Wallet) =>
-  wallet.isConnected || (isMagicLink(wallet) && !isEmailValid())
+const isConnectDisabled = (wallet: Wallet) => wallet.isConnected || (isMagicLink(wallet) && !isEmailValid())
 
 const getConnectArgs = (wallet: Wallet) => {
   if (isMagicLink(wallet)) {
@@ -33,22 +60,16 @@ const getConnectArgs = (wallet: Wallet) => {
 }
 
 async function selectWallet(wallet: Wallet) {
-  if (algod) {
-    console.log(wallet)
-    await wallet.connect(getConnectArgs(wallet))
-    if (wallet.accounts.length === 0) {
-      error.value = 'Wallet does not have any accounts. Please select another wallet.'
-    }
+  activeWallet.value = wallet
+  activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
+  if (activeWallet.value?.accounts.length === 0) {
+    error.value = 'Wallet does not have any accounts. Please select another wallet.'
   }
 }
 
 async function selectAccount(account: WalletAccount) {
-  activeWallet.value?.setActiveAccount(account.address)
-  if (callback && activeWallet.value && activeAccount.value) {
-    callback({
-      wallet: activeWallet.value,
-      account: activeAccount.value
-    })
+  if (callback && account) {
+    callback(account)
   } else {
     throw { message: 'Unexpected error: WalletSelectionCallback not provided'}
   }
@@ -66,7 +87,8 @@ async function selectAccount(account: WalletAccount) {
         <ChevronRight class="ap-w-5 ap-h-5 ap-text-muted-foreground" />
       </Button>
     </li>
-    <li v-if="error">
+    <li v-if="error" class="ap-text-xs ap-bg-destructive ap-text-destructive-foreground ap-py-2 ap-px-3 ap-rounded-md ap-mt-2 ap-flex ap-items-center">
+      <OctagonAlert class="ap-w-6 ap-h-6 ap-mr-2" />
       {{ error }}
     </li>
   </ul>

@@ -1,10 +1,29 @@
-import {NetworkId, WalletId} from '@txnlab/use-wallet-vue'
+import { NetworkId, type SupportedWallet, WalletId } from '@txnlab/use-wallet'
 import { getAddressAssets, getAssetMetadata } from '@/lib/algod/voi'
+import type { OnChainAssetMetadata } from '@/lib/types'
 
-export type PublicNetwork = keyof typeof networkConfig
-export const networkConfig = {
+export type PublicNetwork = 'voi:testnet' | 'voi:mainnet' | 'algo:testnet' | 'algo:mainnet'
+export type Chain = 'voi' | 'algo'
+
+export type NetworksConfig = {
+  key: PublicNetwork
+  chain: Chain
+  networkId: NetworkId
+  blockchainId: string
+  nodeBaseURL: string
+  walletProviders: SupportedWallet[]
+  services: {
+    getAssetMetadata: (assetId: string) => Promise<OnChainAssetMetadata>
+    getAddressAssets: (address: string) => Promise<OnChainAssetMetadata[]>
+  }
+  nodeToken: string
+  nodePort: number
+}
+
+export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
   'voi:testnet': {
-    network: 'voi:testnet',
+    key: 'voi:testnet',
+    chain: 'voi',
     networkId: NetworkId.TESTNET,
     blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
     nodeBaseURL: 'https://testnet-api.voi.nodly.io/',
@@ -22,7 +41,8 @@ export const networkConfig = {
     nodePort: 443
   },
   'voi:mainnet': {
-    network: 'voi:mainnet',
+    key: 'voi:mainnet',
+    chain: 'voi',
     networkId: NetworkId.MAINNET,
     blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
     nodeBaseURL: 'https://testnet-api.voi.nodly.io/',
@@ -40,7 +60,8 @@ export const networkConfig = {
     nodePort: 443
   },
   'algo:testnet': {
-    network: 'algo:testnet',
+    key: 'algo:testnet',
+    chain: 'algo',
     networkId: NetworkId.TESTNET,
     blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
     nodeBaseURL: 'https://testnet-api.algonode.cloud',
@@ -61,7 +82,8 @@ export const networkConfig = {
     nodePort: 443
   },
   'algo:mainnet': {
-    network: 'algo:mainnet',
+    key: 'algo:mainnet',
+    chain: 'algo',
     networkId: NetworkId.MAINNET,
     blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
     nodeBaseURL: 'https://mainnet-api.algonode.cloud',

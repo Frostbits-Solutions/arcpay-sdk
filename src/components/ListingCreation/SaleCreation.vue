@@ -9,9 +9,22 @@ import {
 } from '@/components/ui/number-field'
 import { Label } from '@/components/ui/label'
 import CurrencySelectionCombobox from '@/components/ListingCreation/CurrencySelectionCombobox.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const currencySelectorRef = ref<typeof CurrencySelectionCombobox | null>(null)
+const price = ref<number>(100)
+
+const params = computed(() => {
+  return {
+    type: 'sale',
+    price: price.value,
+    currency: currencySelectorRef.value?.selectedCurrency
+  }
+})
+
+defineExpose({
+  params
+})
 
 </script>
 
@@ -20,7 +33,7 @@ const currencySelectorRef = ref<typeof CurrencySelectionCombobox | null>(null)
   <div class="ap-flex ap-gap-1 ap-items-center">
     <NumberField
       id="price"
-      :default-value="100"
+      :model-value="price"
       :format-options="{
         style: 'decimal',
         minimumFractionDigits: 2

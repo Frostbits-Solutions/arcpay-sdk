@@ -54,14 +54,14 @@ export class Transaction {
   private readonly _objs: TransactionObject[]
   private readonly _queue: QueueObject[]
   private readonly _algod: algosdk.Algodv2
-  private readonly _fromAddress: string | null
-  private _suggestedParams: SuggestedParamsWithMinFee | null = null
-  private _appIndex: number | null
+  private readonly _fromAddress: string | undefined
+  private _suggestedParams: SuggestedParamsWithMinFee | undefined
+  private _appIndex: number | undefined
 
   constructor(algod: algosdk.Algodv2, parameters: TransactionParameters) {
     this._algod = algod
     this._objs = []
-    this._appIndex = parameters.appIndex || 0
+    this._appIndex = parameters.appIndex
     this._fromAddress = parameters.fromAddress
     this._queue = []
   }
@@ -137,7 +137,13 @@ export class Transaction {
     for (const txn of txns) {
       atc.addTransaction({txn, signer: transactionSigner})
     }
-    return await atc.execute(this._algod, 4)
+    return new Promise<{confirmedRound: number, txIDs: string[], methodResults: algosdk.ABIResult[], appIndex: number | undefined}>((resolve, reject) => {
+      atc.execute(this._algod, 4).then(({confirmedRound, txIDs, methodResults}) => {
+        resolve({confirmedRound, txIDs, methodResults, appIndex: this._appIndex})
+      }).catch((error) => {
+        reject(error)
+      })
+    })
     //const signedTxns = await wallet.signTransactions(txns, txns.map((_,i) => i))
     //return await wallet.sendRawTransactions(this._algod, signedTxns)
   }
@@ -274,6 +280,7 @@ export class Transaction {
 
   private async _getTxns(): Promise<algosdk.Transaction[]> {
     const results = await this._simulateTxn()
+    console.log(results)
     if (results?.txnGroups[0]?.failureMessage) {
       throw new SimulationError(results.txnGroups[0].failureMessage)
     }
@@ -351,6 +358,7 @@ export class Transaction {
 
   private async _simulateTxn() {
     const txns = this._objs.map(this._getTxn)
+    algosdk.assignGroupID(txns);
     // Sign the transaction
     const stxns = txns.map(algosdk.encodeUnsignedSimulateTransaction)
     // Construct the simulation request

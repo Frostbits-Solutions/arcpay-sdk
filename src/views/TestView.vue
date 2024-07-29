@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button'
 
 const arcpay = useArcpay({
   network: 'voi:testnet',
-  apiKey: 'test',
-  darkMode: true
+  apiKey: import.meta.env.VITE_ARCPAY_API_KEY,
+  darkMode: false
 })
 
 function createListing() {
-  arcpay.createListing({accountId: 0, assetId:'29105406/583'}).then(() => {
+  arcpay.create({accountId: 0, assetId:'29105406/583'}).then(() => {
     console.log('Listing created')
   }).catch((error) => {
     console.error(error)

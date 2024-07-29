@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from 'vue'
-import { CaretSortIcon, CheckIcon } from '@radix-icons/vue'
+import { CheckIcon } from '@radix-icons/vue'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -17,14 +17,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import type { onChainAssetMetadata } from '@/lib/types'
-import type { Account } from '@/lib/wallets'
-import type { AlgodClient } from '@/lib/algod/AlgodClient'
+import type { OnChainAssetMetadata } from '@/lib/types'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { WalletAccount } from '@txnlab/use-wallet'
+import type { NetworksConfig } from '@/lib/algod/networks.config'
 
-const props = defineProps<{account: Account | undefined, defaultValue: string | undefined}>()
-const algod = inject<AlgodClient>('algod')
-const assets = ref<onChainAssetMetadata[]>([])
+const props = defineProps<{account: WalletAccount | undefined, defaultValue: string | undefined}>()
+const network = inject<NetworksConfig>('network')
+const assets = ref<OnChainAssetMetadata[]>([])
 const open = ref(false)
 const value = ref('')
 const loading = ref(true)
@@ -33,9 +33,9 @@ const selectedAsset = computed(() => {
 })
 
 function getAssets() {
-  if (props.account?.address) {
+  if (network && props.account?.address) {
     loading.value = true
-    algod?.config.services.getAddressAssets(props.account?.address).then((data) => {
+    network.services.getAddressAssets(props.account.address).then((data) => {
       assets.value = data
       if (assets.value.findIndex((asset) => asset.id === props.defaultValue) !== -1) {
         value.value = props.defaultValue || ''
@@ -44,8 +44,14 @@ function getAssets() {
     }).catch((error) => {
       console.error(error)
     })
+  } else {
+    console.error('Network or account not available')
   }
 }
+
+defineExpose({
+  selectedAsset,
+})
 
 onMounted(async () => {
   getAssets()
@@ -80,12 +86,12 @@ onMounted(async () => {
         />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="ap-p-0 ap-w-[333px]">
+    <PopoverContent class="ap-p-0 ap-w-[333px]" side="right" :side-offset="-333">
       <Command>
         <CommandInput class="ap-h-9" placeholder="Search by asset id" />
         <CommandEmpty>No asset found.</CommandEmpty>
         <CommandList>
-          <CommandGroup class="ap-w-[325px]">
+          <CommandGroup class="ap-w-[326px]">
             <CommandItem
               v-for="asset in assets"
               :key="asset.id"
