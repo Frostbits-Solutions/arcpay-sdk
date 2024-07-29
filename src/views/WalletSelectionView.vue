@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import { ChevronRight, ChevronDown, CircleHelp, OctagonAlert } from 'lucide-vue-next'
+import { ChevronRight, ChevronDown, CircleHelp, OctagonAlert, LoaderCircle } from 'lucide-vue-next'
 import { getShortAddress } from '@/lib/utils'
 import Jazzicon from '@/components/Jazzicon.vue'
 import { type WalletAccount, WalletId, type WalletManager, type WalletMetadata } from '@txnlab/use-wallet'
@@ -27,6 +27,7 @@ const manager = inject<WalletManager>('walletManager')
 const { callback } = inject<{WalletSelection: WalletSelectionProvider}>('appProvider')?.['WalletSelection'] || {}
 const error = ref<string | undefined>()
 const activeWallet = ref<Wallet | undefined>()
+const accountLoading = ref<boolean>(false)
 const wallets = computed(() => {
   if (!manager) return []
   return [...manager.wallets.values()].map((wallet): Wallet => {
@@ -61,9 +62,18 @@ const getConnectArgs = (wallet: Wallet) => {
 
 async function selectWallet(wallet: Wallet) {
   activeWallet.value = wallet
+  accountLoading.value = true
   activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
+  accountLoading.value = false
   if (activeWallet.value?.accounts.length === 0) {
     error.value = 'Wallet does not have any accounts. Please select another wallet.'
+  }
+}
+
+function disconnectWallet() {
+  if (activeWallet.value) {
+    activeWallet.value.disconnect()
+    activeWallet.value = undefined
   }
 }
 
@@ -77,14 +87,15 @@ async function selectAccount(account: WalletAccount) {
 </script>
 
 <template>
-  <ul class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2" v-if="!activeWallet">
+  <ul class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2" v-if="!activeWallet || accountLoading">
     <li v-for="wallet in wallets" :key="wallet.id">
       <Button @click="selectWallet(wallet)" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between" :disabled="isConnectDisabled(wallet)">
         <div class="ap-flex ap-items-center ap-w-full">
           <img :src="wallet.metadata.icon" :alt="wallet.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
           {{ wallet.metadata.name }}
         </div>
-        <ChevronRight class="ap-w-5 ap-h-5 ap-text-muted-foreground" />
+        <LoaderCircle class="ap-w-5 ap-h-5 ap-text-primary ap-animate-spin" v-if="activeWallet?.id === wallet.id"/>
+        <ChevronRight class="ap-w-5 ap-h-5 ap-text-muted-foreground" v-else/>
       </Button>
     </li>
     <li v-if="error" class="ap-text-xs ap-bg-destructive ap-text-destructive-foreground ap-py-2 ap-px-3 ap-rounded-md ap-mt-2 ap-flex ap-items-center">
@@ -94,7 +105,7 @@ async function selectAccount(account: WalletAccount) {
   </ul>
   <ul v-else class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2">
     <li>
-      <Button @click="activeWallet?.disconnect()" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between">
+      <Button @click="disconnectWallet" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between">
         <div class="ap-flex ap-items-center ap-w-full">
           <img :src="activeWallet?.metadata.icon" :alt="activeWallet?.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
           {{ activeWallet?.metadata.name }}
