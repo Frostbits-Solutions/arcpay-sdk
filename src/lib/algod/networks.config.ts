@@ -26,7 +26,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     chain: 'voi',
     networkId: NetworkId.TESTNET,
     blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
-    nodeBaseURL: 'https://testnet-api.voi.nodly.io/',
+    nodeBaseURL: 'https://voitest-api.algorpc.pro/',
     walletProviders: [
         {
           id: WalletId.WALLETCONNECT,
@@ -45,7 +45,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     chain: 'voi',
     networkId: NetworkId.MAINNET,
     blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
-    nodeBaseURL: 'https://testnet-api.voi.nodly.io/',
+    nodeBaseURL: 'https://voitest-api.algorpc.pro/',
     walletProviders: [
       {
         id: WalletId.WALLETCONNECT,

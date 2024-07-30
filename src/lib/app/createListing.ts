@@ -4,9 +4,12 @@ import router from '@/router'
 import type { Database } from '@/lib/supabase/database.types'
 import type { OnChainAssetMetadata } from '@/lib/types'
 
+export type ListingType = 'sale' | 'auction' | 'dutch'
+
 export interface CreateListingOptions {
   assetId?: string
   listingName?: string
+  listingType?: ListingType
 }
 
 export interface SaleParams {

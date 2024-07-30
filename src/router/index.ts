@@ -6,6 +6,7 @@ import ListingCreationView from '@/views/ListingCreationView.vue'
 import SaleCreation from '@/components/ListingCreation/SaleCreation.vue'
 import AuctionCreation from '@/components/ListingCreation/AuctionCreation.vue'
 import DutchCreation from '@/components/ListingCreation/DutchCreation.vue'
+import LoadingView from '@/views/LoadingView.vue'
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -18,6 +19,11 @@ const router = createRouter({
       path: '/modal',
       component: ModalView,
       children: [
+        {
+          path: '/loading',
+          name: 'loading',
+          component: LoadingView,
+        },
         {
           path: '/wallet',
           name: 'wallet-selection',

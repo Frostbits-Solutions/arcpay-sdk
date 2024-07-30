@@ -2,12 +2,13 @@ import { createSupabaseClient } from '@/lib/supabase/supabaseClient'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { NetworksConfig, PublicNetwork } from '@/lib/algod/networks.config'
 import type { App } from 'vue'
-import { AppProvider, createListing, type CreateListingOptions, selectWallet } from '@/lib/app'
+import { AppProvider, createListing, type CreateListingOptions, selectWallet, load } from '@/lib/app'
 import { type SupportedWallet, WalletManager } from '@txnlab/use-wallet'
 import {networksConfig} from "@/lib/algod/networks.config";
 import {interfaces} from '@/lib/contracts/interfaces'
 import getContract from '@/lib/contracts/contracts'
 import { createSale } from '@/lib/supabase/listings'
+import type { ListingType } from '@/lib/app/createListing'
 
 export interface ArcpayClientOptions {
   network: PublicNetwork
@@ -18,8 +19,9 @@ export interface ArcpayClientOptions {
 
 interface CreateOptions {
   assetId?: string
+  listingType?: ListingType
   listingName?: string
-  accountId?: number,
+  accountId?: number
   tags?: string[]
 }
 
@@ -90,14 +92,14 @@ export class ArcpayClient {
       accountId = data
     }
 
-    const account = await selectWallet(this._appProvider)
-    const params = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
-    console.log(params)
-    const chain = this._networkConfig.chain
-    const currency = params.currency?.id ? chain : params.currency?.id
-    const [nftAppId, nftId] = params.asset.id.split('/')
-    if (params.type === 'sale') {
-      try {
+    try {
+      const account = await selectWallet(this._appProvider)
+      const params = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
+      load(this._appProvider)
+      const chain = this._networkConfig.chain
+      const currency = params.currency?.id ? chain : params.currency?.id
+      const [nftAppId, nftId] = params.asset.id.split('/')
+      if (params.type === 'sale') {
         const transactionConfirmation = await interfaces[chain][currency]['arc72']['sale'].create(
           this._walletManager.algodClient,
           this._walletManager.transactionSigner,
@@ -110,33 +112,34 @@ export class ArcpayClient {
           "5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ",
           1,
         )
-        if (transactionConfirmation.appIndex && accountId) {
-          const { data, error } = await createSale(
-            this._client,
-            accountId,
-            transactionConfirmation.appIndex,
-            "Unknown",
-            params.asset.id,
-            1,
-            params.asset.thumbnail,
-            'ARC72',
-            this._networkConfig.key,
-            params.currency?.id || 0,
-            params.asset.name || params.asset.id,
-            account.address,
-            options?.tags || null,
-            params.price
-          )
-          if (error) {
-            throw new Error(`Unable to create Sale: ${error.message}`)
-          }
-          return data
-        } else {
-          throw new Error('New contract appIndex is undefined')
+
+        // WARNING: account_id can be 0
+        if (typeof accountId === 'undefined') throw new Error('Unexpected error: Account ID is undefined')
+        if (!transactionConfirmation.appIndex) throw new Error('Unexpected error: New contract appIndex is undefined')
+        const { data, error } = await createSale(
+          this._client,
+          accountId,
+          transactionConfirmation.appIndex,
+          "Unknown",
+          params.asset.id,
+          1,
+          params.asset.thumbnail,
+          'ARC72',
+          this._networkConfig.key,
+          params.currency?.id || 0,
+          options?.listingName || params.asset.name || params.asset.id,
+          account.address,
+          options?.tags || null,
+          params.price
+        )
+        if (error) {
+          throw new Error(`Unexpected error: Unable to create sale, ${error.message}`)
         }
-      } catch (e) {
-        console.error(e)
+        return data
       }
+    } catch (error) {
+      // Push error view
+      throw error
     }
   }
 }

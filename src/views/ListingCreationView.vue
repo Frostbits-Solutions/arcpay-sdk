@@ -2,11 +2,12 @@
 import { Gavel, HandCoins, Receipt } from 'lucide-vue-next'
 import AssetSelectionCombobox from '@/components/ListingCreation/AssetSelectionCombobox.vue'
 import type { CreateListingOptions, ListingCreationParams } from '@/lib/app'
-import { computed, inject, ref, type VNodeRef } from 'vue'
+import { computed, inject, onMounted, ref, type VNodeRef } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import type {WalletAccount} from "@txnlab/use-wallet";
 import type { OnChainAssetMetadata } from '@/lib/types'
+import router from '@/router'
 
 interface ListingCreationProvider {
   args: {
@@ -37,12 +38,17 @@ function createListing() {
   }
 }
 
+onMounted(() => {
+  if (args?.options?.listingType) {
+    router.push({name: `${args.options.listingType}-creation`})
+  }
+})
 </script>
 
 <template>
   <div class="ap-flex ap-flex-col ap-gap-2 ap-mt-4">
     <AssetSelectionCombobox ref="assetSelectionComboboxRef" :account="args?.account" :default-value="args?.options?.assetId"/>
-    <div>
+    <div v-if="!args?.options?.listingType">
       <Label class="ap-text-xs ap-text-muted-foreground ap-mb-1">Listing type</Label>
       <div class="ap-grid ap-gap-[17px] ap-grid-cols-4 ap-w-[333px]">
         <RouterLink :to="{name: 'sale-creation'}"

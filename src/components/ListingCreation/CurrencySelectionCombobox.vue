@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from 'vue'
 import { CaretSortIcon, CheckIcon } from '@radix-icons/vue'
+import defaultCurrencyIcon from '@/assets/currency.svg'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -21,9 +22,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { type Database } from '@/lib/supabase/database.types'
 import { getCurrencies } from '@/lib/supabase/currencies'
-
+import type { NetworksConfig } from '@/lib/algod/networks.config'
 
 const supabase = inject<SupabaseClient>('supabase')
+const network = inject<NetworksConfig>('network')
 const currencies = ref<Database['public']['Tables']['currencies']['Row'][]>([])
 const selectedCurrency = computed(() => {
   return currencies.value.find((currency) => currency.ticker === value.value)
@@ -33,19 +35,19 @@ const value = ref('voi')
 const loading = ref(true)
 
 function fetchCurrencies() {
-  if (supabase) {
-    loading.value = true
-    getCurrencies(supabase).then(({data, error}) => {
-      if (data) {
-        currencies.value = data
-      } else {
-        console.error(`Unable to fetch currencies: ${error || 'unexpected error'}`)
-      }
-      loading.value = false
-    }).catch((error) => {
+  if (!supabase) throw new Error('Unexpected error: supabase is undefined')
+  if (!network) throw new Error('Unexpected error: supabase is undefined')
+  loading.value = true
+  getCurrencies(supabase, network.key).then(({data, error}) => {
+    if (data) {
+      currencies.value = data
+    } else {
       console.error(`Unable to fetch currencies: ${error || 'unexpected error'}`)
-    })
-  }
+    }
+    loading.value = false
+  }).catch((error) => {
+    console.error(`Unable to fetch currencies: ${error || 'unexpected error'}`)
+  })
 }
 
 defineExpose({
@@ -71,7 +73,7 @@ onMounted(() => {
         </template>
         <template v-else-if="selectedCurrency">
           <div class="ap-flex ap-items-center ap-gap-1 ap-min-w-0">
-            <img src="#" :alt="`${selectedCurrency.ticker} icon`" class="ap-h-6 ap-w-6 ap-rounded-full ap-bg-border" />
+            <img :src="selectedCurrency?.icon || defaultCurrencyIcon" :alt="`${selectedCurrency.ticker} icon`" class="ap-h-5 ap-w-5 ap-rounded-full ap-bg-border" />
             <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
               <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ selectedCurrency.ticker.toUpperCase() }}</div>
             </div>
@@ -80,7 +82,7 @@ onMounted(() => {
         <CaretSortIcon class="ap-ml-2 ap-h-4 ap-w-4 ap-shrink-0 ap-opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="ap-p-0 ap-w-[334px] ap-h-[150px]" side="bottom" align="end" >
+    <PopoverContent class="ap-p-0 ap-w-[334px] ap-h-[250px]" side="bottom" align="end" >
       <Command>
         <CommandInput class="ap-h-9" placeholder="Search by ticker" />
         <CommandEmpty>No currency found.</CommandEmpty>
@@ -97,7 +99,7 @@ onMounted(() => {
                 open = false
               }">
               <div class="ap-flex ap-items-center ap-gap-1 ap-min-w-0">
-                <img src="#" :alt="`${currency.ticker} icon`" class="ap-h-6 ap-w-6 ap-rounded-full ap-bg-border" />
+                <img :src="selectedCurrency?.icon || defaultCurrencyIcon" :alt="`${currency.ticker} icon`" class="ap-h-5 ap-w-5 ap-rounded-full ap-bg-border" />
                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
                   <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ currency.ticker.toUpperCase() }}</div>
                   ID: {{ currency.id }}
