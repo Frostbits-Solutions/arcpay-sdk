@@ -21,6 +21,7 @@ import { createSale, getListingById } from '@/lib/supabase/listings'
 import type { ListingType } from '@/lib/app/createListing'
 import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
+import algosdk from "algosdk";
 
 export interface ArcpayClientOptions {
   network: PublicNetwork
@@ -147,11 +148,25 @@ export class ArcpayClient {
       '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
       0
     )
-    if (!transactionConfirmation.appIndex) throw new Error('Unexpected error: New contract appIndex is undefined')
+    console.log("sent transaction", Date.now())
+
+    if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: New contract application was not created')
+    const appIndex = await this._networkConfig.services.getCreatedAppId(this._walletManager.algodClient, transactionConfirmation.txIDs[0])
+
+    const fundConfirmation: TransactionConfirmation = await chain[currency]['arc72']['sale'].fund(
+        this._walletManager.algodClient,
+        this._walletManager.transactionSigner,
+        account.address,
+        parseInt(nftAppId),
+        parseInt(nftId),
+        appIndex
+    )
+
+    //if (!transactionConfirmation.appIndex) throw new Error('Unexpected error: New contract appIndex is undefined')
     return createSale(
       this._client,
       accountId,
-      transactionConfirmation.appIndex,
+      appIndex,
       'Unknown',
       params.asset.id,
       1,
