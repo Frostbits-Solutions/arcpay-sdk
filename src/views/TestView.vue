@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useArcpay } from '@/main'
 import { Button } from '@/components/ui/button'
+import { ref } from 'vue'
+
+const listingId = ref('')
 
 const arcpay = useArcpay({
   network: 'voi:testnet',
@@ -8,18 +11,34 @@ const arcpay = useArcpay({
   darkMode: false
 })
 
-function createListing() {
+function create() {
   arcpay.create({accountId: 0, assetId:'29105406/583'}).then((data) => {
     console.log('Listing created', data)
   }).catch((error) => {
     console.error(error)
   })
 }
+
+function buy() {
+  if (listingId.value) {
+    arcpay.buy(listingId.value).then((data) => {
+      console.log('Listing bought', data)
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+}
 </script>
 
 <template>
-  <Button @click="createListing" variant="default">createListing</Button>
-  <Button @click="arcpay.toggleDarkMode()" variant="secondary">Toggle dark mode</Button>
+  <div class="ap-w-[100dvw] ap-h-[100dvh]">
+    <div class="ap-flex ap-gap-4 ap-p-4">
+      <Button @click="create" variant="default">create</Button>
+      <Button @click="buy" variant="default">buy</Button>
+      <input type="text" v-model="listingId" placeholder="listing id"/>
+      <Button @click="arcpay.toggleDarkMode()" variant="secondary">toggle dark mode</Button>
+    </div>
+  </div>
 </template>
 
 <style scoped>

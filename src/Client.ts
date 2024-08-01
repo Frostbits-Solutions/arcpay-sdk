@@ -1,14 +1,26 @@
 import { createSupabaseClient } from '@/lib/supabase/supabaseClient'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { NetworksConfig, PublicNetwork } from '@/lib/algod/networks.config'
+import type { NetworksConfig, PublicNetwork, VoiPublicNetwork } from '@/lib/algod/networks.config'
+import { networksConfig } from '@/lib/algod/networks.config'
 import type { App } from 'vue'
-import { AppProvider, createListing, type CreateListingOptions, selectWallet, load } from '@/lib/app'
-import { type SupportedWallet, WalletManager } from '@txnlab/use-wallet'
-import {networksConfig} from "@/lib/algod/networks.config";
-import {interfaces} from '@/lib/contracts/interfaces'
+import {
+  AppProvider,
+  closeDialog,
+  createListing,
+  type CreateListingOptions,
+  displayError,
+  type ListingCreationParams,
+  load,
+  selectWallet,
+  success
+} from '@/lib/app'
+import { type SupportedWallet, type WalletAccount, WalletManager } from '@txnlab/use-wallet'
+import { interfaces, type VoiInterface } from '@/lib/contracts/interfaces'
 import getContract from '@/lib/contracts/contracts'
-import { createSale } from '@/lib/supabase/listings'
+import { createSale, getListingById } from '@/lib/supabase/listings'
 import type { ListingType } from '@/lib/app/createListing'
+import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
+import { reviewListing } from '@/lib/app/reviewListing'
 
 export interface ArcpayClientOptions {
   network: PublicNetwork
@@ -34,11 +46,11 @@ export class ArcpayClient {
   private readonly _networkConfig: NetworksConfig
   private readonly _walletManager: WalletManager
 
-  constructor(modalId: string, app: App, options: ArcpayClientOptions ) {
+  constructor(modalId: string, app: App, options: ArcpayClientOptions) {
     this._id = modalId
     this._app = app
     this._appProvider = new AppProvider(app)
-    this._networkConfig =  networksConfig[options.network]
+    this._networkConfig = networksConfig[options.network]
     this._walletManager = new WalletManager({
       wallets: networksConfig[options.network].walletProviders as SupportedWallet[],
       network: networksConfig[options.network].networkId,
@@ -80,7 +92,7 @@ export class ArcpayClient {
     document.getElementById(this._id)?.classList.toggle('ap-dark', bool)
   }
 
-  public async create(options?:CreateOptions) {
+  public async create(options?: CreateOptions) {
     let accountId = options?.accountId
 
     // WARNING: account_id can be 0
@@ -92,53 +104,102 @@ export class ArcpayClient {
       accountId = data
     }
 
+    if (typeof accountId === 'undefined') throw new Error('Unexpected error: Account ID is undefined')
     try {
-      const account = await selectWallet(this._appProvider)
-      const params = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
-      load(this._appProvider)
-      const chain = this._networkConfig.chain
-      const currency = params.currency?.id ? chain : params.currency?.id
-      const [nftAppId, nftId] = params.asset.id.split('/')
+      const account: WalletAccount = await selectWallet(this._appProvider)
+      const params: ListingCreationParams = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
+      load(this._appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction to create the listing.')
+      let listingId: string | undefined
       if (params.type === 'sale') {
-        const transactionConfirmation = await interfaces[chain][currency]['arc72']['sale'].create(
+        if (this._networkConfig.chain !== 'voi') throw new Error(`${this._networkConfig.chain} network is not supported`)
+        const { data, error } = await this._createVoiSale(accountId, account, params, options)
+        if (error) throw new Error(`Error creating sale: ${error.message}`)
+        listingId = data?.[0]?.listing_id
+      }
+      if (!listingId) throw new Error(`Unexpected error: Listing ID is undefined`)
+      success(this._appProvider, 'Listing created', 'Your listing has been created successfully.', () => {
+        closeDialog()
+      })
+      return listingId
+    } catch (error) {
+      let message = 'Unknown Error'
+      if (error instanceof Error) message = error.message
+      displayError(this._appProvider, 'Error creating listing', message, () => {
+        closeDialog()
+      })
+      throw error
+    }
+  }
+
+  private async _createVoiSale(accountId: number, account: WalletAccount, params: ListingCreationParams, options?: CreateOptions) {
+    const chain = interfaces[this._networkConfig.chain] as VoiInterface
+    const currency = params.currency?.id === '0' ? 'voi' : 'arc200'
+    const [nftAppId, nftId] = params.asset.id.split('/')
+    const transactionConfirmation: TransactionConfirmation = await chain[currency]['arc72']['sale'].create(
+      this._walletManager.algodClient,
+      this._walletManager.transactionSigner,
+      account.address,
+      parseInt(nftAppId),
+      parseInt(nftId),
+      params.price,
+      await getContract(`${this._networkConfig.key}:voi_arc72_sale_approval:latest`),
+      await getContract(`${this._networkConfig.key}:clear:latest`),
+      '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
+      0
+    )
+    if (!transactionConfirmation.appIndex) throw new Error('Unexpected error: New contract appIndex is undefined')
+    return createSale(
+      this._client,
+      accountId,
+      transactionConfirmation.appIndex,
+      'Unknown',
+      params.asset.id,
+      1,
+      params.asset.thumbnail,
+      'ARC72',
+      this._networkConfig.key as VoiPublicNetwork,
+      params.currency?.id || '0',
+      options?.listingName || params.asset.name || params.asset.id,
+      account.address,
+      options?.tags?.join(', ') || null,
+      params.price
+    )
+  }
+
+  public async buy(id: string): Promise<TransactionConfirmation | undefined> {
+    try {
+      const { data: listingParams, error } = await getListingById(this._client, id)
+      if (error) throw new Error(`Unable to fetch listing: ${error.message}`)
+
+      if (listingParams && listingParams.asset_id && listingParams.listing_type === 'sale') {
+        await reviewListing(this._appProvider, listingParams)
+        const account: WalletAccount = await selectWallet(this._appProvider)
+        const chain = interfaces[this._networkConfig.chain] as VoiInterface
+        const currency = listingParams.listing_currency !== '0' ? 'arc200' : 'voi'
+        const [nftAppId, _] = listingParams.asset_id.split('/')
+        load(this._appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction.')
+        const transactionConfirmation: TransactionConfirmation = await chain[currency]['arc72']['sale'].buy(
           this._walletManager.algodClient,
           this._walletManager.transactionSigner,
           account.address,
           parseInt(nftAppId),
-          parseInt(nftId),
-          params.price,
-          await getContract(`${this._networkConfig.key}:voi_arc72_sale_approval:latest`),
-          await getContract(`${this._networkConfig.key}:clear:latest`),
-          "5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ",
-          1,
+          listingParams.app_id,
+          listingParams.seller_address,
+          listingParams.asking_price,
+          'ZTVMV2EQNUU3HJQ3HUPBLXMPD3PLVQGCJ4SDGOM4BU2W4554UTMPDQ2TTU',
+          54881294,
         )
-
-        // WARNING: account_id can be 0
-        if (typeof accountId === 'undefined') throw new Error('Unexpected error: Account ID is undefined')
-        if (!transactionConfirmation.appIndex) throw new Error('Unexpected error: New contract appIndex is undefined')
-        const { data, error } = await createSale(
-          this._client,
-          accountId,
-          transactionConfirmation.appIndex,
-          "Unknown",
-          params.asset.id,
-          1,
-          params.asset.thumbnail,
-          'ARC72',
-          this._networkConfig.key,
-          params.currency?.id || 0,
-          options?.listingName || params.asset.name || params.asset.id,
-          account.address,
-          options?.tags || null,
-          params.price
-        )
-        if (error) {
-          throw new Error(`Unexpected error: Unable to create sale, ${error.message}`)
-        }
-        return data
+        success(this._appProvider, 'NFT purchased!', 'Check your wallet', () => {
+          closeDialog()
+        })
+        return transactionConfirmation
       }
     } catch (error) {
-      // Push error view
+      let message = 'Unknown Error'
+      if (error instanceof Error) message = error.message
+      displayError(this._appProvider, 'Error', message, () => {
+        closeDialog()
+      })
       throw error
     }
   }

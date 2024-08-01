@@ -1,12 +1,100 @@
-import { Transaction } from '@/lib//transaction/Transaction'
+import { Transaction, type TransactionConfirmation } from '@/lib//transaction/Transaction'
 import { longToByteArray } from '@/lib/utils'
 import { arc72Schema } from '@/lib/contracts/abi/arc72'
 import { arc200Schema } from '@/lib/contracts/abi/arc200'
 import type { ABI } from '@/lib/contracts/abi/types'
 import algosdk, {type TransactionSigner, type Algodv2} from 'algosdk'
 
+export interface SaleInterface {
+  create: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    ...args: any[]
+  ) => Promise<TransactionConfirmation>;
+  buy: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    ...args: any[]
+  ) => Promise<TransactionConfirmation>;
+}
 
-export const interfaces = {
+export interface AuctionInterface {
+  create: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    ...args: any[]
+  ) => Promise<TransactionConfirmation>;
+  bid: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    ...args: any[]
+  ) => Promise<TransactionConfirmation>;
+}
+
+export interface DutchInterface {
+  create: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    ...args: any[]
+  ) => Promise<TransactionConfirmation>;
+  buy: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    ...args: any[]
+  ) => Promise<TransactionConfirmation>;
+}
+
+export interface RwaInterface {
+  sale: SaleInterface;
+}
+
+export interface Arc72Interface {
+  sale: SaleInterface;
+  auction: AuctionInterface;
+  dutch: DutchInterface;
+}
+
+export interface VoiInterface {
+  voi: {
+    arc72: Arc72Interface;
+    rwa: RwaInterface;
+  };
+  arc200: {
+    arc72: Arc72Interface;
+    rwa: RwaInterface;
+  };
+}
+
+export interface CommonInterface {
+  close: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    appIndex: number,
+    feesAppAddress: string,
+    feesAppId: number
+  ) => Promise<TransactionConfirmation>;
+  cancel: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    appIndex: number
+  ) => Promise<TransactionConfirmation>;
+}
+
+export interface Interfaces {
+  voi: VoiInterface;
+  algo: {}
+  common: CommonInterface;
+}
+
+export const interfaces:Interfaces = {
   voi: {
     voi: {
       arc72: {
@@ -367,6 +455,7 @@ export const interfaces = {
       }
     }
   },
+  algo: {},
   common: {
     close: (
       algod: Algodv2,

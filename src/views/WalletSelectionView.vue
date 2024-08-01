@@ -94,7 +94,7 @@ async function selectAccount(account: WalletAccount) {
           <img :src="wallet.metadata.icon" :alt="wallet.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
           {{ wallet.metadata.name }}
         </div>
-        <LoaderCircle class="ap-w-5 ap-h-5 ap-text-primary ap-animate-spin" v-if="activeWallet?.id === wallet.id"/>
+        <LoaderCircle class="ap-w-5 ap-h-5 ap-text-muted-foreground ap-animate-spin" v-if="activeWallet?.id === wallet.id"/>
         <ChevronRight class="ap-w-5 ap-h-5 ap-text-muted-foreground" v-else/>
       </Button>
     </li>

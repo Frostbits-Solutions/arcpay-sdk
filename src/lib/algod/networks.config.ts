@@ -2,7 +2,9 @@ import { NetworkId, type SupportedWallet, WalletId } from '@txnlab/use-wallet'
 import { getAddressAssets, getAssetMetadata } from '@/lib/algod/voi'
 import type { OnChainAssetMetadata } from '@/lib/types'
 
-export type PublicNetwork = 'voi:testnet' | 'voi:mainnet' | 'algo:testnet' | 'algo:mainnet'
+export type PublicNetwork = VoiPublicNetwork | AlgorandPublicNetwork
+export type VoiPublicNetwork = 'voi:testnet' | 'voi:mainnet'
+export type AlgorandPublicNetwork = 'algo:testnet' | 'algo:mainnet'
 export type Chain = 'voi' | 'algo'
 
 export type NetworksConfig = {

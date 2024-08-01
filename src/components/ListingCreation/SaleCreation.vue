@@ -39,6 +39,7 @@ defineExpose({
         minimumFractionDigits: 2
       }"
       class="ap-flex-1"
+      @update:modelValue="(value) => price = value"
     >
       <NumberFieldContent>
         <NumberFieldDecrement />

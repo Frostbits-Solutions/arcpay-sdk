@@ -33,6 +33,13 @@ export class SimulationError extends Error {
   }
 }
 
+export interface TransactionConfirmation {
+  confirmedRound: number,
+  txIDs: string[],
+  methodResults: algosdk.ABIResult[],
+  appIndex: number | undefined
+}
+
 type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call' | '_delete'
 
 type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number]
@@ -102,7 +109,7 @@ export class Transaction {
   }
 
   // Sign and send transaction
-  public async send(transactionSigner: TransactionSigner) {
+  public async send(transactionSigner: TransactionSigner): Promise<TransactionConfirmation> {
     for (const obj of this._queue) {
       const method: QueueMethods = obj.method
       const args: QueueArgs = obj.args
@@ -137,7 +144,7 @@ export class Transaction {
     for (const txn of txns) {
       atc.addTransaction({txn, signer: transactionSigner})
     }
-    return new Promise<{confirmedRound: number, txIDs: string[], methodResults: algosdk.ABIResult[], appIndex: number | undefined}>((resolve, reject) => {
+    return new Promise<TransactionConfirmation>((resolve, reject) => {
       atc.execute(this._algod, 4).then(({confirmedRound, txIDs, methodResults}) => {
         resolve({confirmedRound, txIDs, methodResults, appIndex: this._appIndex})
       }).catch((error) => {

@@ -7,6 +7,10 @@ import SaleCreation from '@/components/ListingCreation/SaleCreation.vue'
 import AuctionCreation from '@/components/ListingCreation/AuctionCreation.vue'
 import DutchCreation from '@/components/ListingCreation/DutchCreation.vue'
 import LoadingView from '@/views/LoadingView.vue'
+import ErrorView from '@/views/ErrorView.vue'
+import SuccessView from '@/views/SuccessView.vue'
+import ListingReviewView from '@/views/ListingReviewView.vue'
+import SaleReview from '@/components/ListingReview/SaleReview.vue'
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -23,6 +27,25 @@ const router = createRouter({
           path: '/loading',
           name: 'loading',
           component: LoadingView,
+          meta: {
+            closeable: false
+          }
+        },
+        {
+          path: '/success',
+          name: 'success',
+          component: SuccessView,
+          meta: {
+            closeable: true
+          }
+        },
+        {
+          path: '/error',
+          name: 'error',
+          component: ErrorView,
+          meta: {
+            closeable: true
+          }
         },
         {
           path: '/wallet',
@@ -31,6 +54,7 @@ const router = createRouter({
           meta: {
             title: 'Connect wallet',
             description: 'Select an account to connect to the application',
+            closeable: true
           }
         },
         {
@@ -40,6 +64,7 @@ const router = createRouter({
           meta: {
             title: 'Create listing',
             description: 'Create a new listing for digital and real-world assets',
+            closeable: true
           },
           redirect: {name: 'sale-creation'},
           children: [
@@ -59,7 +84,24 @@ const router = createRouter({
               component: DutchCreation
             }
           ]
-        }
+        },
+        {
+          path: '/review',
+          name: 'listing-review',
+          component: ListingReviewView,
+          meta: {
+            closeable: true,
+            transparent: true
+          },
+          redirect: {name: 'sale-review'},
+          children: [
+            {
+              path: '/sale',
+              name: 'sale-review',
+              component: SaleReview
+            }
+          ]
+        },
       ]
     }
   ]
