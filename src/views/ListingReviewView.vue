@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
+import { computed, inject } from 'vue'
 import CountUp from 'vue-countup-v3'
 import type { ListingParams } from '@/lib/app/reviewListing'
 import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-vue-next'
 
 interface ListingReviewProvider {
   callback: () => void
@@ -26,16 +27,15 @@ const nftNavigatorLink = computed(() => {
 
 <template>
   <div class="ap-flex ap-flex-col ap-justify-start ap-gap-4 ap-items-center" v-if="listingParams">
-    <h1 class="ap-text-muted-foreground/50 ap-pt-2 ap-pl-4 ap-pr-10 ap-text-left ap-w-full ap-truncate">{{listingParams.listing_name}}</h1>
     <a
       :href="nftNavigatorLink"
       target="_blank"
-      class="ap-w-[333px] ap-h-[333px] ap-flex ap-items-end ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both">
+      class="ap-max-w-[500px] ap-max-h-[500px] table ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
       <img
         v-if="listingParams.asset_thumbnail"
         :src="listingParams.asset_thumbnail"
         :alt="listingParams.asset_id || 'Asset'"
-        class="ap-w-[333px] ap-h-[333px] ap-object-cover ap-absolute ap-top-0 ap-left-0 ap-z-0"
+        class="ap-w-auto ap-h-auto ap-object-cover"
       />
     </a>
     <div class="ap-flex ap-justify-between ap-items-center ap-w-full ap-px-4">
@@ -67,21 +67,105 @@ const nftNavigatorLink = computed(() => {
         </span>
       </div>
     </div>
-    <Button variant="default" class="ap-w-[175px] ap-mt-8 ap-h-12 ap-rounded-xl ap-text-lg ap-shadow btn-grad" @click="callback" v-if="listingParams.status === 'active'">Buy</Button>
+    <button class="animated-button" @click="callback" v-if="listingParams.status === 'active'">
+      <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
+      <span class="text">Buy {{listingParams.listing_name}}</span>
+      <span class="circle"></span>
+      <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
+    </button>
   </div>
 </template>
 
 <style scoped>
-.btn-grad {
-  background-image: linear-gradient(to right, #00c6ff 0%, #0072ff  51%, #00c6ff  100%);
-  transition: 0.5s;
-  background-size: 200% auto;
-  color: #fff;
-  background-position: right center;
+.animated-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 36px;
+  border: 4px solid transparent;
+  font-size: 16px;
+  background-color: inherit;
+  border-radius: 100px;
+  font-weight: 600;
+  color: hsla(var(--muted-foreground)/0.5);
+  box-shadow: 0 0 0 2px hsla(var(--muted-foreground)/0.5);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  margin-top: 50px;
 }
 
-.btn-grad:hover {
-  background-position: left center; /* change the direction of the change here */
-  text-decoration: none;
+.animated-button svg {
+  position: absolute;
+  width: 24px;
+  color: hsla(var(--muted-foreground)/0.5);
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .arr-1 {
+  right: 16px;
+}
+
+.animated-button .arr-2 {
+  left: -25%;
+}
+
+.animated-button .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .text {
+  position: relative;
+  z-index: 1;
+  transform: translateX(-12px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  max-width: 220px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.animated-button:hover {
+  box-shadow: 0 0 0 12px transparent;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.animated-button:hover .arr-1 {
+  right: -25%;
+}
+
+.animated-button:hover .arr-2 {
+  left: 16px;
+}
+
+.animated-button:hover .text {
+  transform: translateX(12px);
+}
+
+.animated-button:hover svg {
+  color: #fff;
+}
+
+.animated-button:active {
+  scale: 0.95;
+  box-shadow: 0 0 0 4px hsl(var(--primary));
+}
+
+.animated-button:hover .circle {
+  width: 320px;
+  height: 320px;
+  opacity: 1;
 }
 </style>

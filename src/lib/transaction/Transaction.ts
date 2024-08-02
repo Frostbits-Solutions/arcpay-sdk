@@ -151,8 +151,6 @@ export class Transaction {
         reject(error)
       })
     })
-    //const signedTxns = await wallet.signTransactions(txns, txns.map((_,i) => i))
-    //return await wallet.sendRawTransactions(this._algod, signedTxns)
   }
 
   private async _createApp(args: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number) {
@@ -287,7 +285,6 @@ export class Transaction {
 
   private async _getTxns(): Promise<algosdk.Transaction[]> {
     const results = await this._simulateTxn()
-    console.log(results)
     if (results?.txnGroups[0]?.failureMessage) {
       throw new SimulationError(results.txnGroups[0].failureMessage)
     }

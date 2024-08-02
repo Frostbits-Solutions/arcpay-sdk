@@ -1,25 +1,29 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { computed, inject, ref, type Ref, watch } from 'vue'
 interface LoadProvider {
   args: {
     title: string
     description: string
   }
 }
-const { args } = inject<{Load: LoadProvider}>('appProvider')?.['Load'] || {}
+const loadProvider = inject<{Load: Ref<LoadProvider>}>('appProvider')?.['Load']
+const title = computed(() => loadProvider?.value.args?.title || 'Loading')
+const description = computed(() => loadProvider?.value.args?.description || 'Sit tight.')
 </script>
 
 <template>
   <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px]">
-    <div class="ap-flex-1 ap-flex ap-items-end ap-pb-4">
-      <svg class="spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-        <circle class="spinner__circle" cx="26" cy="26" r="25" fill="none" />
-      </svg>
+    <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
+      <div style="transform: translate(6px, -5px)">
+        <svg class="spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="spinner__circle" cx="26" cy="26" r="25" fill="none" />
+        </svg>
+      </div>
     </div>
-    <div class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both">
+    <div class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both ap-animate-out ap-slide-out-to-top-2">
       <div>
-        <div v-if="args?.title" class="ap-text-md ap-font-semibold ap-text-foreground">{{args.title}}</div>
-        <div v-if="args?.description" class="ap-text-xs ap-text-muted-foreground">{{args.description}}</div>
+        <div v-if="title" class="ap-text-md ap-font-semibold ap-text-foreground">{{title}}</div>
+        <div v-if="description" class="ap-text-xs ap-text-muted-foreground ap-whitespace-pre-line">{{description}}</div>
       </div>
     </div>
   </div>

@@ -65,9 +65,9 @@ onMounted(async () => {
         variant="ghost"
         role="combobox"
         :aria-expanded="open"
-        class="ap-justify-between ap-w-[333px] ap-h-[333px] ap-flex ap-items-end ap-relative ap-rounded-lg ap-p-2 ap-overflow-hidden ap-border-2 ap-border-border"
+        class="ap-justify-between ap-w-[333px] ap-h-[333px] ap-flex ap-items-end ap-relative ap-rounded-2xl ap-p-2 ap-overflow-hidden ap-bg-muted"
       >
-        <div class="ap-flex ap-items-center ap-gap-2 ap-min-w-0 ap-relative ap-z-10 ap-bg-background/90 ap-backdrop-blur-md ap-w-full ap-p-2 ap-rounded-lg">
+        <div class="ap-flex ap-items-center ap-gap-2 ap-min-w-0 ap-relative ap-z-10 ap-bg-background/50 ap-backdrop-blur-md ap-w-full ap-p-2 ap-rounded-xl">
           <template v-if="!value">
             Click to select asset
           </template>

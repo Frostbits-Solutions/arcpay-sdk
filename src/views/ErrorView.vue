@@ -15,11 +15,13 @@ const { callback, args } = inject<{ Error: ErrorProvider }>('appProvider')?.['Er
 
 <template>
   <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px]">
-    <div class="ap-flex-1 ap-flex ap-items-end ap-pb-4">
-      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-        <path class="checkmark__check" fill="none" d="M16 16 36 36 M36 16 16 36" />
-      </svg>
+    <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
+      <div style="transform: translate(6px, -5px)">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+          <path class="checkmark__check" fill="none" d="M16 16 36 36 M36 16 16 36" />
+        </svg>
+      </div>
     </div>
     <div class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between">
       <div class="ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both">

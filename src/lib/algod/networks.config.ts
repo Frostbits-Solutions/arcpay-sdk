@@ -40,7 +40,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     services: {
       getAssetMetadata: (assetId: string) => getAssetMetadata(assetId, 'voi:testnet'),
       getAddressAssets: (address: string) => getAddressAssets(address, 'voi:testnet'),
-      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppId(algodClient, txId, 'voi:mainnet')
+      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppId(algodClient, txId, 'voi:testnet')
     },
     nodeToken: '',
     nodePort: 443

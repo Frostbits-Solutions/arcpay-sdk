@@ -1,3 +1,4 @@
+import {ref} from 'vue'
 import {AppProvider} from '@/lib/app/AppProvider'
 import {selectWallet} from '@/lib/app/selectWallet'
 import {createListing, type CreateListingOptions, type ListingCreationParams} from '@/lib/app/createListing'
@@ -16,7 +17,7 @@ export function closeDialog() {
 }
 
 export function load(appProvider: AppProvider, title: string, description: string) {
-  appProvider.provide('Load', {title, description}, ()=>{})
+  appProvider.provide('Load', ref({title, description}), ()=>{}, true)
   router.push({name: 'loading'})
 }
 

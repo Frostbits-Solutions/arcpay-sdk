@@ -48,32 +48,37 @@ export async function getAddressAssets(address: string, network: PublicNetwork):
 }
 
 export async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {
-  let url
+  let url: string | undefined
   if (network === 'voi:testnet') url = `https://testnet-idx.voi.nodly.io:443/v2/transactions/${txId}`
   if (network === 'voi:mainnet') url = `https://testnet-idx.voi.nodly.io:443/v2/transactions/${txId}`
   if (!url) throw new Error('Invalid network')
-  console.log(url)
 
   await algosdk.waitForConfirmation(
       algodClient,
       txId,
       12)
 
-  let data = undefined
-  for (let i = 0; i < 10; i++) {
-    try {
-      const response = await axios.get(url);
-      if (!response.data) throw new Error(`Failed to fetch application index for txID ${txId}`)
-      data = response.data
-    } catch (e) {
-      console.log(`attempt ${i} to fetch appID failed`)
-      await new Promise(resolve => setTimeout(resolve, 2000))
+  const getTxExponentialBackOff = (tryNumber: number = 0): Promise<number> => {
+    console.log(`Attempt ${tryNumber} to fetch appID`)
+    if (tryNumber > 5) {
+      throw new Error(`Failed to fetch application index for txID ${txId}`)
     }
-    if (data !== undefined) {
-      break
-    }
+    return new Promise<number>((resolve, reject) => {
+      setTimeout(() => {
+        axios.get<{transaction: {'created-application-index'?: number}}>(url)
+          .then((response) => {
+            if (response.data.transaction['created-application-index']) {
+              resolve(response.data.transaction['created-application-index'])
+            } else {
+              reject('Failed to fetch application index ')
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+            resolve(getTxExponentialBackOff(tryNumber + 1))
+          })
+      }, tryNumber * 300)
+    })
   }
-
-
-  return data.transaction['created-application-index']
+  return await getTxExponentialBackOff()
 }

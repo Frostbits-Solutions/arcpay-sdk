@@ -39,7 +39,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
       v-bind="forwarded"
       :class="
         cn(
-          'ap-fixed ap-left-1/2 ap-top-1/2 ap-z-50 ap-table ap--translate-x-1/2 ap--translate-y-1/2 ap-duration-200 data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0 data-[state=closed]:ap-zoom-out-95 data-[state=open]:ap-zoom-in-95 data-[state=closed]:ap-slide-out-to-left-1/2 data-[state=closed]:ap-slide-out-to-top-[48%] data-[state=open]:ap-slide-in-from-left-1/2 data-[state=open]:ap-slide-in-from-top-[48%] sm:ap-rounded-lg ap-transition-all',
+          'ap-fixed ap-left-1/2 ap-top-1/2 ap-z-50 ap-table ap--translate-x-1/2 ap--translate-y-1/2 ap-duration-200 data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0 data-[state=closed]:ap-zoom-out-95 data-[state=open]:ap-zoom-in-95 data-[state=closed]:ap-slide-out-to-left-1/2 data-[state=closed]:ap-slide-out-to-top-[48%] data-[state=open]:ap-slide-in-from-left-1/2 data-[state=open]:ap-slide-in-from-top-[48%] ap-rounded-2xl ap-transition-all',
           props.class,
           route.meta.fullSize ? 'ap-p-0 ap-overflow-hidden' : 'ap-p-6',
           route.meta.transparent ? 'ap-p-0' : 'ap-border ap-border-border ap-bg-background ap-shadow-lg'
@@ -49,7 +49,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
 
       <DialogClose
         v-if="route.meta.closeable"
-        class="ap-absolute ap-right-4 ap-top-4 ap-rounded-sm ap-opacity-70 ring-offset-background ap-transition-opacity hover:ap-opacity-100 focus:ap-outline-none disabled:ap-pointer-events-none data-[state=open]:ap-bg-accent data-[state=open]:ap-text-muted-foreground"
+        class="ap-absolute ap-right-4 ap-top-4 ap-rounded-sm ap-opacity-70 ring-offset-background ap-transition-opacity hover:ap-opacity-100 focus:ap-outline-none disabled:ap-pointer-events-none data-[state=open]:ap-bg-accent data-[state=open]:ap-text-muted-foreground ap-bg-background/20"
       >
         <Cross2Icon class="ap-w-4 ap-h-4" />
         <span class="ap-sr-only">Close</span>

@@ -124,9 +124,6 @@ export const interfaces:Interfaces = {
                 algosdk.decodeAddress(accountFeesAddress).publicKey,
                 longToByteArray(accountFees, 8)
               ], approvalProgram, clearProgram)
-              // .fund()
-              // .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-              // .call('fund', [])
               .send(signer),
             fund: (
                 algod: Algodv2,
@@ -264,8 +261,6 @@ export const interfaces:Interfaces = {
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
-            nftAppID: number,
-            nftID: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
             .fund()
@@ -473,8 +468,6 @@ export const interfaces:Interfaces = {
                 algod: Algodv2,
                 signer: TransactionSigner,
                 fromAddress: string,
-                nftAppID: number,
-                nftID: number,
                 appIndex: number
             ) => new Transaction(algod, {fromAddress, appIndex})
                 .fund()

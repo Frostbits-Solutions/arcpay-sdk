@@ -14,14 +14,13 @@ import {
   selectWallet,
   success
 } from '@/lib/app'
-import { type SupportedWallet, type WalletAccount, WalletManager } from '@txnlab/use-wallet'
+import { type SupportedWallet, type WalletAccount, WalletManager} from '@txnlab/use-wallet'
 import { interfaces, type VoiInterface } from '@/lib/contracts/interfaces'
 import getContract from '@/lib/contracts/contracts'
 import { createSale, getListingById } from '@/lib/supabase/listings'
 import type { ListingType } from '@/lib/app/createListing'
 import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
-import algosdk from "algosdk";
 
 export interface ArcpayClientOptions {
   network: PublicNetwork
@@ -109,7 +108,6 @@ export class ArcpayClient {
     try {
       const account: WalletAccount = await selectWallet(this._appProvider)
       const params: ListingCreationParams = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
-      load(this._appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction to create the listing.')
       let listingId: string | undefined
       if (params.type === 'sale') {
         if (this._networkConfig.chain !== 'voi') throw new Error(`${this._networkConfig.chain} network is not supported`)
@@ -123,8 +121,8 @@ export class ArcpayClient {
       })
       return listingId
     } catch (error) {
-      let message = 'Unknown Error'
-      if (error instanceof Error) message = error.message
+      //@ts-ignore
+      const message = error.message || 'Unknown Error'
       displayError(this._appProvider, 'Error creating listing', message, () => {
         closeDialog()
       })
@@ -136,6 +134,9 @@ export class ArcpayClient {
     const chain = interfaces[this._networkConfig.chain] as VoiInterface
     const currency = params.currency?.id === '0' ? 'voi' : 'arc200'
     const [nftAppId, nftId] = params.asset.id.split('/')
+
+    // Create application
+    load(this._appProvider, 'Creating sale app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
     const transactionConfirmation: TransactionConfirmation = await chain[currency]['arc72']['sale'].create(
       this._walletManager.algodClient,
       this._walletManager.transactionSigner,
@@ -148,21 +149,23 @@ export class ArcpayClient {
       '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
       0
     )
-    console.log("sent transaction", Date.now())
 
-    if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: New contract application was not created')
+    // Get created app index
+    if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Application creation failed.')
     const appIndex = await this._networkConfig.services.getCreatedAppId(this._walletManager.algodClient, transactionConfirmation.txIDs[0])
+    load(this._appProvider, 'Funding sale app', 'Transaction 2 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
 
-    const fundConfirmation: TransactionConfirmation = await chain[currency]['arc72']['sale'].fund(
-        this._walletManager.algodClient,
-        this._walletManager.transactionSigner,
-        account.address,
-        parseInt(nftAppId),
-        parseInt(nftId),
-        appIndex
+    // Fund created app
+    await chain[currency]['arc72']['sale'].fund(
+      this._walletManager.algodClient,
+      this._walletManager.transactionSigner,
+      account.address,
+      parseInt(nftAppId),
+      parseInt(nftId),
+      appIndex
     )
 
-    //if (!transactionConfirmation.appIndex) throw new Error('Unexpected error: New contract appIndex is undefined')
+    // Save listing in DB
     return createSale(
       this._client,
       accountId,
@@ -210,8 +213,8 @@ export class ArcpayClient {
         return transactionConfirmation
       }
     } catch (error) {
-      let message = 'Unknown Error'
-      if (error instanceof Error) message = error.message
+      //@ts-ignore
+      const message = error.message || 'Unknown Error'
       displayError(this._appProvider, 'Error', message, () => {
         closeDialog()
       })
