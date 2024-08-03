@@ -16,6 +16,13 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
     <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
       <div style="transform: translate(6px, -5px)">
         <svg class="spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <defs>
+            <linearGradient id="gradient">
+              <stop offset="0%" stop-color="rgb(65, 88, 208)" />
+              <stop offset="30%" stop-color="rgb(200, 80, 192)" />
+              <stop offset="100%" stop-color="rgb(255, 204, 112)" />
+            </linearGradient>
+          </defs>
           <circle class="spinner__circle" cx="26" cy="26" r="25" fill="none" />
         </svg>
       </div>
@@ -35,7 +42,7 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
   height: 100px;
   border-radius: 50%;
   display: block;
-  position:relative;
+  position: relative;
   top: 5px;
   right: 5px;
   margin: 0 auto;
@@ -45,7 +52,7 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: hsl(var(--primary));
+  stroke: url(#gradient);
   fill: hsl(var(--background));
   animation: stroke .6s linear forwards, rotate 0.9s linear .6s infinite;
   transform-origin: 50% 50%;

@@ -59,7 +59,6 @@ export async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string
       12)
 
   const getTxExponentialBackOff = (tryNumber: number = 0): Promise<number> => {
-    console.log(`Attempt ${tryNumber} to fetch appID`)
     if (tryNumber > 5) {
       throw new Error(`Failed to fetch application index for txID ${txId}`)
     }
@@ -74,8 +73,12 @@ export async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string
             }
           })
           .catch((error) => {
-            console.log(error)
-            resolve(getTxExponentialBackOff(tryNumber + 1))
+            if (error.response?.status === 404) {
+              resolve(getTxExponentialBackOff(tryNumber + 1))
+            }
+            else {
+              reject(error)
+            }
           })
       }, tryNumber * 300)
     })

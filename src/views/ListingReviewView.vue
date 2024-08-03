@@ -30,7 +30,7 @@ const nftNavigatorLink = computed(() => {
     <a
       :href="nftNavigatorLink"
       target="_blank"
-      class="ap-max-w-[500px] ap-max-h-[500px] table ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
+      class="ap-max-w-[333px] ap-max-h-[333px] table ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
       <img
         v-if="listingParams.asset_thumbnail"
         :src="listingParams.asset_thumbnail"
@@ -82,9 +82,9 @@ const nftNavigatorLink = computed(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 16px 36px;
+  padding: 14px 32px;
   border: 4px solid transparent;
-  font-size: 16px;
+  font-size: 12px;
   background-color: inherit;
   border-radius: 100px;
   font-weight: 600;
@@ -93,7 +93,7 @@ const nftNavigatorLink = computed(() => {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-  margin-top: 50px;
+  margin-top: 25px;
 }
 
 .animated-button svg {
@@ -119,7 +119,7 @@ const nftNavigatorLink = computed(() => {
   transform: translate(-50%, -50%);
   width: 20px;
   height: 20px;
-  background: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);
+  background: var(--gradient);
   border-radius: 50%;
   opacity: 0;
   transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
@@ -164,8 +164,8 @@ const nftNavigatorLink = computed(() => {
 }
 
 .animated-button:hover .circle {
-  width: 320px;
-  height: 320px;
   opacity: 1;
+  width: 100%;
+  padding-top: 100%;
 }
 </style>

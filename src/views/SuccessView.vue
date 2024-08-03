@@ -16,6 +16,13 @@ const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['
     <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
       <div style="transform: translate(6px, -5px)">
         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <defs>
+            <linearGradient id="gradient">
+              <stop offset="0%" stop-color="rgb(65, 88, 208)" />
+              <stop offset="30%" stop-color="rgb(200, 80, 192)" />
+              <stop offset="100%" stop-color="rgb(255, 204, 112)" />
+            </linearGradient>
+          </defs>
           <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
           <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
         </svg>
@@ -26,7 +33,7 @@ const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['
         <div v-if="args?.title" class="ap-text-md ap-font-semibold ap-text-foreground">{{args.title}}</div>
         <div v-if="args?.description" class="ap-text-xs ap-text-muted-foreground">{{args.description}}</div>
       </div>
-      <Button @click="callback" variant="default" size="lg" class="ap-mb-8 ap-grow-0 ap-w-24">Close</Button>
+      <Button @click="callback" variant="default" size="lg" class="ap-mb-8 ap-grow-0 ap-w-24 ap-bg-gradient ap-text-[white]">Close</Button>
     </div>
   </div>
 </template>
@@ -38,9 +45,9 @@ const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['
   border-radius: 50%;
   display: block;
   stroke-width: 2;
-  stroke: hsl(var(--primary));
+  stroke: url(#gradient);
   stroke-miterlimit: 10;
-  box-shadow: inset 0px 0px 0px hsl(var(--primary));
+  box-shadow: inset 0px 0px 0px rgb(255, 204, 112);
   animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
   position:relative;
   top: 5px;
@@ -52,7 +59,7 @@ const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: hsl(var(--primary));
+  stroke: url(#gradient);
   fill: hsl(var(--background));
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
@@ -82,7 +89,7 @@ const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['
 
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 30px hsl(var(--primary));
+    box-shadow: inset 0px 0px 0px 30px rgb(255, 204, 112);
   }
 }
 </style>
