@@ -12,7 +12,7 @@ const arcpay = useArcpay({
 })
 
 function create() {
-  arcpay.create({accountId: 0, assetId:'29105406/583'}).then((data) => {
+  arcpay.create({accountId: 0, assetId:'29105406/583', listingType: 'sale'}).then((data) => {
     console.log('Listing created', data)
   }).catch((error) => {
     console.error(error)

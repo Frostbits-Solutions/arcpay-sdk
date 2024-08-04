@@ -64,7 +64,7 @@ export async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string
     }
     return new Promise<number>((resolve, reject) => {
       setTimeout(() => {
-        axios.get<{transaction: {'created-application-index'?: number}}>(url)
+        axios.get<{transaction: {'created-application-index'?: number}}>(url as string)
           .then((response) => {
             if (response.data.transaction['created-application-index']) {
               resolve(response.data.transaction['created-application-index'])

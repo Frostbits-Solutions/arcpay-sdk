@@ -7,7 +7,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'ap-bg-primary ap-text-primary-foreground ap-shadow hover:ap-bg-primary/90',
+        default: 'ap-bg-gradient ap-text-white ap-shadow hover:ap-bg-primary/90',
         destructive:
           'ap-bg-destructive ap-text-destructive-foreground ap-shadow-sm hover:ap-bg-destructive/90',
         outline:

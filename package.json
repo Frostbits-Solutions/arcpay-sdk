@@ -16,13 +16,13 @@
     "pay",
     "sdk"
   ],
-  "main": "./dist/arcpay-sdk.umd.cjs",
+  "main": "./dist/arcpay-sdk.cjs",
   "module": "./dist/arcpay-sdk.js",
   "types": "./dist/main.d.ts",
   "exports": {
     ".": {
       "import": "./dist/arcpay-sdk.js",
-      "require": "./dist/arcpay-sdk.umd.cjs"
+      "require": "./dist/arcpay-sdk.cjs"
     }
   },
   "scripts": {
@@ -62,9 +62,13 @@
     "vite-plugin-css-injected-by-js": "^3.5.1",
     "vue": "^3.4.21",
     "vue-countup-v3": "^1.4.2",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "vue3-webcomponent-wrapper": "^0.2.0"
   },
   "devDependencies": {
+    "@babel/types": "^7.25.2",
+    "@magic-ext/algorand": "^23.2.0",
+    "@magic-sdk/provider": "^28.2.0",
     "@playwright/test": "^1.43.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
@@ -81,6 +85,7 @@
     "eslint-plugin-playwright": "^1.5.4",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^24.0.0",
+    "magic-sdk": "^28.2.0",
     "npm-run-all2": "^6.1.2",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",

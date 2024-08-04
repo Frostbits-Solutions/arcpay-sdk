@@ -194,6 +194,7 @@ export type Database = {
         Row: {
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
+          icon: string | null
           id: string
           name: string
           ticker: string
@@ -202,6 +203,7 @@ export type Database = {
         Insert: {
           chain: Database["public"]["Enums"]["chains"]
           created_at?: string
+          icon?: string | null
           id: string
           name: string
           ticker: string
@@ -210,6 +212,7 @@ export type Database = {
         Update: {
           chain?: Database["public"]["Enums"]["chains"]
           created_at?: string
+          icon?: string | null
           id?: string
           name?: string
           ticker?: string
@@ -278,17 +281,17 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "listings_listing_currency_chain_fkey"
+            columns: ["listing_currency", "chain"]
+            isOneToOne: false
+            referencedRelation: "currencies"
+            referencedColumns: ["id", "chain"]
+          },
+          {
             foreignKeyName: "public_listings_account_id_fkey"
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_listings_listing_currency_fkey"
-            columns: ["listing_currency"]
-            isOneToOne: false
-            referencedRelation: "currencies"
             referencedColumns: ["id"]
           },
         ]
@@ -484,7 +487,7 @@ export type Database = {
       assets_types: "ARC72" | "OFFCHAIN"
       auctions_type: "english" | "dutch"
       chains: "voi:testnet" | "voi:mainnet"
-      listings_statuses: "pending" | "active" | "closed"
+      listings_statuses: "pending" | "active" | "closed" | "cancelled"
       listings_types: "sale" | "auction"
       transaction_type:
         | "create"
@@ -517,7 +520,7 @@ export type Database = {
         max_price: number | null
         increment: number | null
         duration: number | null
-        type: Database["public"]["Enums"]["auctions_type"] | null
+        auction_type: Database["public"]["Enums"]["auctions_type"] | null
         asking_price: number | null
       }
     }

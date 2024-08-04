@@ -7,11 +7,11 @@ import type {
   TransactionObject,
   TransfertObject
 } from './types'
-import type { SuggestedParamsWithMinFee } from 'algosdk/dist/types/types/transactions/base'
-import { TransactionType } from 'algosdk/src/types/transactions'
+import type { SuggestedParams } from 'algosdk'
+import { TransactionType } from 'algosdk'
 import algosdk, {type BoxReference, type TransactionSigner} from 'algosdk'
 import { base64ToArrayBuffer, encodeAppArgs } from '@/lib/utils'
-import { OnApplicationComplete } from 'algosdk/src/types/transactions/base'
+import { OnApplicationComplete } from 'algosdk'
 import type { ABI } from '@/lib/contracts/abi/types'
 
 export interface TransactionParameters {
@@ -62,7 +62,7 @@ export class Transaction {
   private readonly _queue: QueueObject[]
   private readonly _algod: algosdk.Algodv2
   private readonly _fromAddress: string | undefined
-  private _suggestedParams: SuggestedParamsWithMinFee | undefined
+  private _suggestedParams: SuggestedParams | undefined
   private _appIndex: number | undefined
 
   constructor(algod: algosdk.Algodv2, parameters: TransactionParameters) {

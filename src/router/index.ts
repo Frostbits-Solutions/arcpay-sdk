@@ -11,13 +11,14 @@ import ErrorView from '@/views/ErrorView.vue'
 import SuccessView from '@/views/SuccessView.vue'
 import ListingReviewView from '@/views/ListingReviewView.vue'
 import SaleReview from '@/components/ListingReview/SaleReview.vue'
+import IdleView from '@/views/IdleView.vue'
 
 const router = createRouter({
   history: createMemoryHistory(),
   routes: [
     {
       path: '/',
-      component: TestView
+      component: IdleView
     },
     {
       path: '/modal',

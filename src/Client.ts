@@ -1,4 +1,4 @@
-import { createSupabaseClient } from '@/lib/supabase/supabaseClient'
+import { createSupabaseClient, deriveAccountIdFromKey } from '@/lib/supabase/supabaseClient'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { NetworksConfig, PublicNetwork, VoiPublicNetwork } from '@/lib/algod/networks.config'
 import { networksConfig } from '@/lib/algod/networks.config'
@@ -17,7 +17,7 @@ import {
 import { type SupportedWallet, type WalletAccount, WalletManager} from '@txnlab/use-wallet'
 import { interfaces, type VoiInterface } from '@/lib/contracts/interfaces'
 import getContract from '@/lib/contracts/contracts'
-import { createSale, getListingById } from '@/lib/supabase/listings'
+import { createSale, getListingById, getListings } from '@/lib/supabase/listings'
 import type { ListingType } from '@/lib/app/createListing'
 import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
@@ -47,6 +47,8 @@ export class ArcpayClient {
   private readonly _walletManager: WalletManager
 
   constructor(modalId: string, app: App, options: ArcpayClientOptions) {
+    if (!options.network) throw new Error('Network is required')
+    if (!networksConfig[options.network]) throw new Error(`Network ${options.network} is not supported`)
     this._id = modalId
     this._app = app
     this._appProvider = new AppProvider(app)
@@ -78,18 +80,16 @@ export class ArcpayClient {
     this._app.provide('supabase', this._client)
   }
 
-  private async _deriveAccountIdFromKey() {
-    if (this._apiKey) {
-      return this._client.rpc('get_key_account_id', {
-        key: this._apiKey,
-        origin: window.location.origin
-      })
-    }
-    throw new Error('Unable to derive account ID from key. No API key provided.')
-  }
-
   public toggleDarkMode(bool?: boolean) {
     document.getElementById(this._id)?.classList.toggle('ap-dark', bool)
+  }
+
+  public async getListings() {
+    return await getListings(this._client)
+  }
+
+  public async getListingById(id: string) {
+    return await getListingById(this._client, id)
   }
 
   public async create(options?: CreateOptions) {
@@ -97,7 +97,7 @@ export class ArcpayClient {
 
     // WARNING: account_id can be 0
     if (typeof accountId === 'undefined') {
-      const { data, error } = await this._deriveAccountIdFromKey()
+      const { data, error } = await deriveAccountIdFromKey(this._client, this._apiKey as string)
       if (error) {
         throw new Error(`Unable to derive account ID from key. ${error.message}`)
       }

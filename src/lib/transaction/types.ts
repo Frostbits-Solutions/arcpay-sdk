@@ -1,5 +1,5 @@
 import type { BoxReference, SuggestedParams } from 'algosdk'
-import { TransactionType } from 'algosdk/src/types/transactions'
+import { TransactionType } from 'algosdk'
 import { OnApplicationComplete } from 'algosdk'
 
 export type PaymentObject = {
