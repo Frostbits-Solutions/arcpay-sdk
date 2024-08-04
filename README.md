@@ -1,7 +1,7 @@
 # arcpay-sdk
 
-arcpay is a digital royalty points payment processor, facilitating the use of royalty points to purchase digital assets and real-world assets.
-The sdk provides a plug and play interface with arcpay contracts and enable users to create listing a.
+arcpay is a web3 payment processor, facilitating the use of royalty points to purchase digital and real-world assets.
+The sdk provides a plug and play interface with arcpay contracts and enable users to create and purchase listings.
 
 ## Features
 - Supported chain: `voi:testnet`, `voi:mainnet (soon)`, `algorand:testnet (soon)`, `algorand:mainnet (soon)`
@@ -23,7 +23,7 @@ import { useArcpay } from 'arcpay-sdk';
 // Instantiate the arcpay client
 const arcpayClient = useArcpay({
   network: 'voi:testnet',
-  apiKey: '<your-api-key>', // API key can be optained from the arcpay dashboard
+  apiKey: '<your-api-key>', // API key can be obtained from the arcpay dashboard
 });
 
 // Create a VOI -> ARC-72 sale

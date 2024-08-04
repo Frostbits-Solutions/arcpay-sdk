@@ -1,14 +1,14 @@
 {
   "name": "arcpay-sdk",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.0.2",
   "type": "module",
+  "license": "Apache-2.0 license",
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MatijaNovosel/tri-state-checkbox.git"
+    "url": "git+https://github.com/Frostbits-Solutions/arcpay-sdk.git"
   },
   "keywords": [
     "voi",
