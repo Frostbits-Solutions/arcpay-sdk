@@ -21,6 +21,10 @@ const router = createRouter({
       component: IdleView
     },
     {
+      path: '/test',
+      component: TestView
+    },
+    {
       path: '/modal',
       component: ModalView,
       children: [

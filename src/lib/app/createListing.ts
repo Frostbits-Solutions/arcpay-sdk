@@ -27,7 +27,16 @@ export interface AuctionParams {
   currency: Database['public']['Tables']['currencies']['Row'] | undefined
 }
 
-export type ListingCreationParams = SaleParams | AuctionParams
+export interface DutchParams {
+  type: 'sale',
+  asset: OnChainAssetMetadata,
+  priceMin: number,
+  priceMax: number,
+  duration: number,
+  currency: Database['public']['Tables']['currencies']['Row'] | undefined
+}
+
+export type ListingCreationParams = SaleParams | AuctionParams | DutchParams
 
 export function createListing(appProvider: AppProvider, account: WalletAccount, options?: CreateListingOptions) {
   return new Promise<ListingCreationParams>((resolve, reject) => {

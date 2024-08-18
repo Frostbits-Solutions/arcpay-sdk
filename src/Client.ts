@@ -17,8 +17,8 @@ import {
 import { type SupportedWallet, type WalletAccount, WalletManager} from '@txnlab/use-wallet'
 import { interfaces, type VoiInterface } from '@/lib/contracts/interfaces'
 import getContract from '@/lib/contracts/contracts'
-import { createSale, getListingById, getListings } from '@/lib/supabase/listings'
-import type { ListingType } from '@/lib/app/createListing'
+import {createAuction, createSale, getListingById, getListings} from '@/lib/supabase/listings'
+import type {ListingType} from '@/lib/app/createListing'
 import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
 
@@ -115,6 +115,18 @@ export class ArcpayClient {
         if (error) throw new Error(`Error creating sale: ${error.message}`)
         listingId = data?.[0]?.listing_id
       }
+      else if (params.type === 'auction') {
+        if (this._networkConfig.chain !== 'voi') throw new Error(`${this._networkConfig.chain} network is not supported`)
+        const { data, error } = await this._createVoiAuction(accountId, account, params, options)
+        if (error) throw new Error(`Error creating sale: ${error.message}`)
+        listingId = data?.[0]?.listing_id
+      }
+      else if (params.type === 'dutch') {
+        if (this._networkConfig.chain !== 'voi') throw new Error(`${this._networkConfig.chain} network is not supported`)
+        const { data, error } = await this._createVoiDutch(accountId, account, params, options)
+        if (error) throw new Error(`Error creating sale: ${error.message}`)
+        listingId = data?.[0]?.listing_id
+      }
       if (!listingId) throw new Error(`Unexpected error: Listing ID is undefined`)
       success(this._appProvider, 'Listing created', 'Your listing has been created successfully.', () => {
         closeDialog()
@@ -131,6 +143,10 @@ export class ArcpayClient {
   }
 
   private async _createVoiSale(accountId: number, account: WalletAccount, params: ListingCreationParams, options?: CreateOptions) {
+    if (!('price' in params)) {
+      throw new Error(`Missing parameter price for creating a voi sale`)
+    }
+
     const chain = interfaces[this._networkConfig.chain] as VoiInterface
     const currency = params.currency?.id === '0' ? 'voi' : 'arc200'
     const [nftAppId, nftId] = params.asset.id.split('/')
@@ -220,5 +236,140 @@ export class ArcpayClient {
       })
       throw error
     }
+  }
+
+  private async _createVoiAuction(accountId: number, account: WalletAccount, params: ListingCreationParams, options?: CreateOptions) {
+    if (!('price' in params)) {
+      throw new Error(`Missing parameter price for creating a voi auction`)
+    }
+    if (!('duration' in params)) {
+      throw new Error(`Missing parameter duration for creating a voi auction`)
+    }
+
+    const chain = interfaces[this._networkConfig.chain] as VoiInterface
+    const currency = params.currency?.id === '0' ? 'voi' : 'arc200'
+    const [nftAppId, nftId] = params.asset.id.split('/')
+
+    // Create application
+    load(this._appProvider, 'Creating auction app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
+    const transactionConfirmation: TransactionConfirmation = await chain[currency]['arc72']['auction'].create(
+        this._walletManager.algodClient,
+        this._walletManager.transactionSigner,
+        account.address,
+        parseInt(nftAppId),
+        parseInt(nftId),
+        params.price,
+        params.duration,
+        await getContract(`${this._networkConfig.key}:voi_arc72_auction_approval:latest`),
+        await getContract(`${this._networkConfig.key}:clear:latest`),
+        '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
+        0
+    )
+
+    // Get created app index
+    if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Application creation failed.')
+    const appIndex = await this._networkConfig.services.getCreatedAppId(this._walletManager.algodClient, transactionConfirmation.txIDs[0])
+    load(this._appProvider, 'Funding auction app', 'Transaction 2 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
+
+    // Fund created app
+    await chain[currency]['arc72']['auction'].fund(
+        this._walletManager.algodClient,
+        this._walletManager.transactionSigner,
+        account.address,
+        parseInt(nftAppId),
+        parseInt(nftId),
+        appIndex
+    )
+
+    // Save listing in DB
+    return createAuction(
+        this._client,
+        accountId,
+        appIndex,
+        'Unknown',
+        params.asset.id,
+        1,
+        params.asset.thumbnail,
+        'ARC72',
+        this._networkConfig.key as VoiPublicNetwork,
+        params.currency?.id || '0',
+        options?.listingName || params.asset.name || params.asset.id,
+        account.address,
+        options?.tags?.join(', ') || null,
+        params.duration,
+        params.price,
+        null,
+        1,
+        'english'
+    )
+  }
+
+  private async _createVoiDutch(accountId: number, account: WalletAccount, params: ListingCreationParams, options?: CreateOptions) {
+    if (!('priceMin' in params)) {
+      throw new Error(`Missing parameter priceMin for creating a voi dutch`)
+    }
+    if (!('priceMax' in params)) {
+      throw new Error(`Missing parameter priceMax for creating a voi dutch`)
+    }
+    if (!('duration' in params)) {
+      throw new Error(`Missing parameter duration for creating a voi dutch`)
+    }
+    const chain = interfaces[this._networkConfig.chain] as VoiInterface
+    const currency = params.currency?.id === '0' ? 'voi' : 'arc200'
+    const [nftAppId, nftId] = params.asset.id.split('/')
+
+    // Create application
+    load(this._appProvider, 'Creating dutch app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
+    const transactionConfirmation: TransactionConfirmation = await chain[currency]['arc72']['dutch'].create(
+        this._walletManager.algodClient,
+        this._walletManager.transactionSigner,
+        account.address,
+        parseInt(nftAppId),
+        parseInt(nftId),
+        params.priceMin,
+        params.priceMax,
+        params.duration,
+        await getContract(`${this._networkConfig.key}:voi_arc72_dutch_approval:latest`),
+        await getContract(`${this._networkConfig.key}:clear:latest`),
+        '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
+        0
+    )
+
+    // Get created app index
+    if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Application creation failed.')
+    const appIndex = await this._networkConfig.services.getCreatedAppId(this._walletManager.algodClient, transactionConfirmation.txIDs[0])
+    load(this._appProvider, 'Funding dutch app', 'Transaction 2 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
+
+    // Fund created app
+    await chain[currency]['arc72']['dutch'].fund(
+        this._walletManager.algodClient,
+        this._walletManager.transactionSigner,
+        account.address,
+        parseInt(nftAppId),
+        parseInt(nftId),
+        appIndex
+    )
+
+    // Save listing in DB
+    return createAuction(
+        this._client,
+        accountId,
+        appIndex,
+        'Unknown',
+        params.asset.id,
+        1,
+        params.asset.thumbnail,
+        'ARC72',
+        this._networkConfig.key as VoiPublicNetwork,
+        params.currency?.id || '0',
+        options?.listingName || params.asset.name || params.asset.id,
+        account.address,
+        options?.tags?.join(', ') || null,
+        params.duration,
+        params.priceMin,
+        params.priceMax,
+        1,
+        'dutch'
+    )
   }
 }

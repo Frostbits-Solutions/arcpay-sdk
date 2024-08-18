@@ -16,6 +16,7 @@ export interface SaleInterface {
     algod: Algodv2,
     signer: TransactionSigner,
     fromAddress: string,
+    appIndex: number,
     ...args: any[]
   )=> Promise<TransactionConfirmation>;
   buy: (
@@ -33,6 +34,13 @@ export interface AuctionInterface {
     fromAddress: string,
     ...args: any[]
   ) => Promise<TransactionConfirmation>;
+  fund: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    appIndex: number,
+    ...args: any[]
+  )=> Promise<TransactionConfirmation>;
   bid: (
     algod: Algodv2,
     signer: TransactionSigner,
@@ -48,6 +56,13 @@ export interface DutchInterface {
     fromAddress: string,
     ...args: any[]
   ) => Promise<TransactionConfirmation>;
+  fund: (
+    algod: Algodv2,
+    signer: TransactionSigner,
+    fromAddress: string,
+    appIndex: number,
+    ...args: any[]
+  )=> Promise<TransactionConfirmation>;
   buy: (
     algod: Algodv2,
     signer: TransactionSigner,
@@ -175,6 +190,15 @@ export const interfaces:Interfaces = {
                 algosdk.decodeAddress(accountFeesAddress).publicKey,
                 longToByteArray(accountFees, 8)
               ], approvalProgram, clearProgram)
+              .send(signer),
+          fund: (
+              algod: Algodv2,
+              signer: TransactionSigner,
+              fromAddress: string,
+              nftAppID: number,
+              nftID: number,
+              appIndex: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
               .fund()
               .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
               .call('fund', [])
@@ -214,6 +238,15 @@ export const interfaces:Interfaces = {
               algosdk.decodeAddress(accountFeesAddress).publicKey,
               longToByteArray(accountFees, 8)
             ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftAppID: number,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
             .fund()
             .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
             .call('fund', [])
@@ -366,10 +399,21 @@ export const interfaces:Interfaces = {
                 algosdk.decodeAddress(accountFeesAddress).publicKey,
                 longToByteArray(accountFees, 8),
               ], approvalProgram, clearProgram, 9, 9)
-              .fund()
-              .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-              .call('fund', [])
               .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            arc200AppID: number,
+            arc200AppAddress: string,
+            nftAppID: number,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .fund()
+            .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
+            .call('fund', [])
+            .send(signer),
           bid: (
             algod: Algodv2,
             signer: TransactionSigner,
@@ -412,6 +456,17 @@ export const interfaces:Interfaces = {
               algosdk.decodeAddress(accountFeesAddress).publicKey,
               longToByteArray(accountFees, 8),
             ], approvalProgram, clearProgram, 9, 9)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            arc200AppID: number,
+            arc200AppAddress: string,
+            nftAppID: number,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
             .fund()
             .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
             .call('fund', [])
