@@ -8,6 +8,14 @@
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module">
+      import { useArcpay } from '/src/main.ts'
+
+      useArcpay({
+        network: 'voi:testnet',
+        apiKey: import.meta.env.VITE_DEBUG_API_KEY,
+        darkMode: false
+      })
+    </script>
   </body>
 </html>

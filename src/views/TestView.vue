@@ -7,7 +7,7 @@ const listingId = ref('')
 
 const arcpay = useArcpay({
   network: 'voi:testnet',
-  apiKey: import.meta.env.VITE_ARCPAY_API_KEY,
+  apiKey: import.meta.env.VITE_DEBUG_API_KEY,
   darkMode: false
 })
 
