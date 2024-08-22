@@ -1,14 +1,14 @@
 {
   "name": "arcpay-sdk",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.0.2",
   "type": "module",
+  "license": "Apache-2.0 license",
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MatijaNovosel/tri-state-checkbox.git"
+    "url": "git+https://github.com/Frostbits-Solutions/arcpay-sdk.git"
   },
   "keywords": [
     "voi",
@@ -16,13 +16,13 @@
     "pay",
     "sdk"
   ],
-  "main": "./dist/arcpay-sdk.umd.cjs",
+  "main": "./dist/arcpay-sdk.cjs",
   "module": "./dist/arcpay-sdk.js",
   "types": "./dist/main.d.ts",
   "exports": {
     ".": {
       "import": "./dist/arcpay-sdk.js",
-      "require": "./dist/arcpay-sdk.umd.cjs"
+      "require": "./dist/arcpay-sdk.cjs"
     }
   },
   "scripts": {
@@ -38,24 +38,43 @@
   },
   "dependencies": {
     "@agoralabs-sh/algorand-provider": "^1.1.0",
+    "@agoralabs-sh/avm-web-provider": "^1.6.2",
+    "@radix-icons/vue": "^1.0.0",
     "@supabase/supabase-js": "^2.42.7",
+    "@txnlab/use-wallet": "^3.0.0",
     "@vueuse/core": "^10.9.0",
     "@walletconnect/modal-sign-html": "^2.6.2",
+    "@walletconnect/sign-client": "^2.14.0",
     "@walletconnect/web3wallet": "^1.11.2",
     "algosdk": "^2.7.0",
+    "axios": "^1.7.2",
     "buffer": "^6.0.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "color": "^4.2.3",
+    "lucide-vue-next": "^0.412.0",
+    "mersenne-twister": "^1.1.0",
     "pinia": "^2.1.7",
+    "radix-vue": "^1.9.2",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
     "vite-plugin-css-injected-by-js": "^3.5.1",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-countup-v3": "^1.4.2",
+    "vue-router": "^4.3.0",
+    "vue3-webcomponent-wrapper": "^0.2.0"
   },
   "devDependencies": {
+    "@babel/types": "^7.25.2",
+    "@magic-ext/algorand": "^23.2.0",
+    "@magic-sdk/provider": "^28.2.0",
     "@playwright/test": "^1.43.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/jsdom": "^21.1.6",
     "@types/node": "^20.12.5",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
@@ -66,13 +85,14 @@
     "eslint-plugin-playwright": "^1.5.4",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^24.0.0",
+    "magic-sdk": "^28.2.0",
     "npm-run-all2": "^6.1.2",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.3",
     "typescript": "~5.4.0",
     "vite": "^5.2.8",
-    "vite-plugin-dts": "^3.9.0",
+    "vite-plugin-dts": "^2.3.0",
     "vitest": "^1.4.0",
     "vue-tsc": "^2.0.11"
   }

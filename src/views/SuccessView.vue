@@ -1,31 +1,95 @@
-ap-<template>
-<div class="ap-space-y-6 ap-text-center ap-text-gray-700 dark:ap-text-gray-200">
-  <div class="ap-border-b ap-mb-8 ap-pb-4 dark:ap-border-gray-700 ap-w-72 ap-m-auto ap-text-center">
-    <div class="ap-m-auto ap-w-fit ap-flex ap-items-center ap-relative ap-left-[20px]">
-      <img class="ap-w-8 ap-h-8" src="/src/assets/logo.png" >
-      <h1 class="ap-ml-2 ap-text-2xl ml-2 dark:text-white">Arcpay</h1>
-    </div>
-  </div>
-  <IconCheckCircle class="ap-block ap-m-auto ap-fill-green-500 ap-w-14 ap-h-14 ap-mb-4"/>
-  Confirmed round: {{information['confirmed-round']}}
-  <br>
-  <a :href="`https://voi.observer/explorer/transaction/${information.txId}`">VOI explorer <IconArrowRightCorner class="ap-inline-block ap-w-4 ap-h-4"/></a>
-  <div class="ap-truncate ap-text-xs ap-text-gray-400 dark:ap-text-gray-700">Tx id: {{information.txId}}</div>
-
-</div>
-</template>
-
 <script setup lang="ts">
-
-import IconCheckCircle from '@/components/icons/IconCheckCircle.vue'
-import IconArrowRightCorner from '@/components/icons/IconArrowRightCorner.vue'
-import {useTransactionStore} from "@/stores/transactionStore";
-import {computed} from "vue";
-
-const transactionStore = useTransactionStore()
-const information = computed(() =>transactionStore.successInfo)
+import { inject } from 'vue'
+import { Button } from '@/components/ui/button'
+interface SuccessProvider {
+  callback: (() => void)
+  args: {
+    title: string
+    description: string
+  }
+}
+const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['Success'] || {}
 </script>
 
-<style scoped>
+<template>
+  <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px]">
+    <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
+      <div style="transform: translate(6px, -5px)">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <defs>
+            <linearGradient id="gradient">
+              <stop offset="0%" stop-color="rgb(65, 88, 208)" />
+              <stop offset="30%" stop-color="rgb(200, 80, 192)" />
+              <stop offset="100%" stop-color="rgb(255, 204, 112)" />
+            </linearGradient>
+          </defs>
+          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+          <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+        </svg>
+      </div>
+    </div>
+    <div class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between">
+      <div class="ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both">
+        <div v-if="args?.title" class="ap-text-md ap-font-semibold ap-text-foreground">{{args.title}}</div>
+        <div v-if="args?.description" class="ap-text-xs ap-text-muted-foreground">{{args.description}}</div>
+      </div>
+      <Button @click="callback" variant="default" size="lg" class="ap-mb-8 ap-grow-0 ap-w-24 ap-bg-gradient ap-text-[white]">Close</Button>
+    </div>
+  </div>
+</template>
 
+<style scoped>
+.checkmark {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: url(#gradient);
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px rgb(255, 204, 112);
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+  position:relative;
+  top: 5px;
+  right: 5px;
+  margin: 0 auto;
+}
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: url(#gradient);
+  fill: hsl(var(--background));
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px rgb(255, 204, 112);
+  }
+}
 </style>

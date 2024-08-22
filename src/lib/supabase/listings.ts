@@ -4,12 +4,12 @@ import type { Database } from '@/lib/supabase/database.types'
 export async function getListings(client: SupabaseClient) {
   const { data, error } = await client
     .from('listings')
-    .select('*, auctions(*), sales(*)')
+    .select('*, auctions(*), sales(*)').returns<Database['public']['Tables']['listings']['Row'][]>()
   return { data, error }
 }
 
-export async function getListingById(client: SupabaseClient, listing_id: string) {
-  const { data, error } = await client.rpc('get_listing_by_id', { listing_id })
+export async function getListingById(client: SupabaseClient, listingId: string) {
+  const { data, error } = await client.rpc('get_listing_by_id', { listing_id: listingId }).returns<Database['public']['Functions']['get_listing_by_id']['Returns']>()
   return { data, error }
 }
 
@@ -51,7 +51,7 @@ export async function createAuction(
             listing_type: 'auction',
             status: 'pending',
         })
-        .select()
+        .select().returns<Database['public']['Tables']['listings']['Row'][]>()
 
     const listingId = listingData?.[0].id
     if (listingError || !listingId) return { data: null, listingError }
@@ -66,7 +66,7 @@ export async function createAuction(
             duration,
             type,
         })
-        .select()
+        .select().returns<Database['public']['Tables']['auctions']['Row'][]>()
     return { data, error }
 }
 
@@ -104,7 +104,7 @@ export async function createSale(
             listing_type: 'sale',
             status: 'pending',
         })
-        .select()
+        .select().returns<Database['public']['Tables']['listings']['Row'][]>()
 
     const listingId = listingData?.[0].id
     if (listingError || !listingId) return { data: null, listingError }
@@ -115,6 +115,6 @@ export async function createSale(
             listing_id: listingId,
             asking_price,
         })
-        .select()
+        .select().returns<Database['public']['Tables']['sales']['Row'][]>()
     return { data, error }
 }

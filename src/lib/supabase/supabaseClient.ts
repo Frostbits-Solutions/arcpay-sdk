@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from './database.types'
 
 export function createSupabaseClient(apikey: string) {
@@ -13,4 +13,14 @@ export function createSupabaseClient(apikey: string) {
       }
     }
   )
+}
+
+export async function deriveAccountIdFromKey(client: SupabaseClient, apiKey :string) {
+  if (apiKey) {
+    return client.rpc('get_key_account_id', {
+      key: apiKey,
+      origin: window.location.origin
+    }).returns<Database['public']['Functions']['get_key_account_id']['Returns']>()
+  }
+  throw new Error('Unable to derive account ID from key. No API key provided.')
 }
