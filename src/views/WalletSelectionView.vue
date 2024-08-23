@@ -5,6 +5,8 @@ import { ChevronRight, ChevronDown, CircleHelp, OctagonAlert, LoaderCircle } fro
 import { getShortAddress } from '@/lib/utils'
 import Jazzicon from '@/components/Jazzicon.vue'
 import { type WalletAccount, WalletId, type WalletManager, type WalletMetadata } from '@txnlab/use-wallet'
+//@ts-ignore
+import('@/kibisis-patch.js')
 
 interface WalletSelectionProvider {
   callback: ((account: WalletAccount) => void)
