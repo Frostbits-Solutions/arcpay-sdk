@@ -28,12 +28,13 @@ export default defineConfig({
       fileName: "arcpay-sdk"
     },
     rollupOptions: {
-      external: ["vue", "algosdk", "@txnlab/use-wallet"],
+      external: ["vue", "algosdk", "@txnlab/use-wallet", "radix-vue"],
       output: {
         globals: {
           vue: 'vue',
           algosdk: 'algosdk',
-          '@txnlab/use-wallet': 'useWallet'
+          '@txnlab/use-wallet': 'useWallet',
+          'radix-vue': 'radix-vue'
         },
       }
     },
