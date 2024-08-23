@@ -1,6 +1,6 @@
 {
   "name": "arcpay-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "license": "Apache-2.0 license",
   "files": [
@@ -22,7 +22,8 @@
   "exports": {
     ".": {
       "import": "./dist/arcpay-sdk.js",
-      "require": "./dist/arcpay-sdk.cjs"
+      "require": "./dist/arcpay-sdk.cjs",
+      "types": "./dist/main.d.ts"
     }
   },
   "scripts": {
@@ -42,7 +43,7 @@
     "@radix-icons/vue": "^1.0.0",
     "@supabase/supabase-js": "^2.42.7",
     "@txnlab/use-wallet": "^3.0.0",
-    "@vueuse/core": "^10.9.0",
+    "@vueuse/core": "^11.0.1",
     "@walletconnect/modal-sign-html": "^2.6.2",
     "@walletconnect/sign-client": "^2.14.0",
     "@walletconnect/web3wallet": "^1.11.2",
@@ -52,13 +53,13 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "color": "^4.2.3",
-    "lucide-vue-next": "^0.412.0",
+    "lucide-vue-next": "^0.429.0",
     "mersenne-twister": "^1.1.0",
     "pinia": "^2.1.7",
     "radix-vue": "^1.9.2",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "vite-plugin-css-injected-by-js": "^3.5.1",
     "vue": "^3.4.21",
     "vue-countup-v3": "^1.4.2",
