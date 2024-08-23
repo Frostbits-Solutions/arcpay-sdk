@@ -5,14 +5,18 @@ import App from './App.vue'
 import router from './router'
 import { ArcpayClient, type ArcpayClientOptions} from '@/Client'
 
+let client: undefined | ArcpayClient
 export const useArcpay = (options: ArcpayClientOptions):ArcpayClient => {
   return (() => {
-    const app = createApp(App)
-    app.use(router)
+    if (!client) {
+      const app = createApp(App)
+      app.use(router)
 
-    const id = uuidv4();
-    document.body.insertAdjacentHTML('beforeend', `<div id="arcpay-${id}"></div>`);
-    app.mount(`#arcpay-${id}`)
-    return new ArcpayClient(`arcpay-${id}`, app, options)
+      const id = uuidv4();
+      document.body.insertAdjacentHTML('beforeend', `<div id="arcpay-${id}"></div>`);
+      app.mount(`#arcpay-${id}`)
+      client = new ArcpayClient(`arcpay-${id}`, app, options)
+    }
+    return client
   })()
 }

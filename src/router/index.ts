@@ -1,7 +1,6 @@
 import {createMemoryHistory, createRouter} from 'vue-router'
 import WalletSelectionView from '@/views/WalletSelectionView.vue'
 import ModalView from '@/views/ModalView.vue'
-import TestView from '@/views/TestView.vue'
 import ListingCreationView from '@/views/ListingCreationView.vue'
 import SaleCreation from '@/components/ListingCreation/SaleCreation.vue'
 import AuctionCreation from '@/components/ListingCreation/AuctionCreation.vue'
@@ -19,10 +18,6 @@ const router = createRouter({
     {
       path: '/',
       component: IdleView
-    },
-    {
-      path: '/test',
-      component: TestView
     },
     {
       path: '/modal',
