@@ -1,7 +1,8 @@
 import { NetworkId, type SupportedWallet, WalletId } from '@txnlab/use-wallet'
-import {getAddressAssets, getAssetMetadata, getCreatedAppId} from '@/lib/algod/voi'
+import voi from '@/lib/algod/voi'
+import algo from '@/lib/algod/algo'
 import type { OnChainAssetMetadata } from '@/lib/types'
-import algosdk from "algosdk";
+import algosdk from "algosdk"
 
 export type PublicNetwork = VoiPublicNetwork | AlgorandPublicNetwork
 export type VoiPublicNetwork = 'voi:testnet' | 'voi:mainnet'
@@ -40,7 +41,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     services: {
       getAssetMetadata: (assetId: string) => getAssetMetadata(assetId, 'voi:testnet'),
       getAddressAssets: (address: string) => getAddressAssets(address, 'voi:testnet'),
-      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppId(algodClient, txId, 'voi:testnet')
+      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppIdVOI(algodClient, txId, 'voi:testnet')
     },
     nodeToken: '',
     nodePort: 443
@@ -60,7 +61,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     services: {
       getAssetMetadata: (assetId: string) => getAssetMetadata(assetId, 'voi:mainnet'),
       getAddressAssets: (address: string) => getAddressAssets(address, 'voi:mainnet'),
-      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppId(algodClient, txId, 'voi:mainnet')
+      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppIdVOI(algodClient, txId, 'voi:mainnet')
     },
     nodeToken: '',
     nodePort: 443
@@ -83,7 +84,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     services: {
       getAssetMetadata: (assetId: string) => getAssetMetadata(assetId, 'voi:testnet'),
       getAddressAssets: (address: string) => getAddressAssets(address, 'voi:testnet'),
-      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppId(algodClient, txId, 'voi:mainnet')
+      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppIdAlgo(algodClient, txId, 'voi:mainnet')
     },
     nodeToken: '',
     nodePort: 443
@@ -106,7 +107,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     services: {
       getAssetMetadata: (assetId: string) => getAssetMetadata(assetId, 'voi:mainnet'),
       getAddressAssets: (address: string) => getAddressAssets(address, 'voi:mainnet'),
-      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppId(algodClient, txId, 'voi:mainnet')
+      getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => getCreatedAppIdAlgo(algodClient, txId, 'voi:mainnet')
     },
     nodeToken: '',
     nodePort: 443

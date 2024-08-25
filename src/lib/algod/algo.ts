@@ -49,8 +49,8 @@ async function getAddressAssets(address: string, network: PublicNetwork): Promis
 
 async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {
   let url: string | undefined
-  if (network === 'voi:testnet') url = `https://testnet-idx.voi.nodly.io:443/v2/transactions/${txId}`
-  if (network === 'voi:mainnet') url = `https://testnet-idx.voi.nodly.io:443/v2/transactions/${txId}`
+  if (network === 'algo:testnet') url = `https://testnet-idx.algonode.cloud:443/v2/transactions/${txId}`
+  if (network === 'algo:mainnet') url = `https://mainnet-idx.algonode.cloud:443/v2/transactions/${txId}`
   if (!url) throw new Error('Invalid network')
 
   await algosdk.waitForConfirmation(
