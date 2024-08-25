@@ -112,10 +112,12 @@ export class Transaction {
 
   public optIn(assetIndex: number) {
     this._queue.push({ method: '_optIn', args: [assetIndex]})
+    return this
   }
 
   public transferAsset(assetIndex: number, amount: number, to?: string) {
     this._queue.push({ method: '_transferAsset', args: [assetIndex, amount, to]})
+    return this
   }
 
   // Sign and send transaction
