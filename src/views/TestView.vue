@@ -5,11 +5,7 @@ import { ref } from 'vue'
 
 const listingId = ref('')
 
-const arcpay = useArcpay({
-  network: 'voi:testnet',
-  apiKey: import.meta.env.VITE_DEBUG_API_KEY,
-  darkMode: false
-})
+const arcpay = useArcpay('voi:testnet')
 
 function create() {
   arcpay.create({accountId: 0, assetId:'29105406/583', listingType: 'sale'}).then((data) => {
