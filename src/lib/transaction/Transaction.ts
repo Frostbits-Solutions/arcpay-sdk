@@ -40,7 +40,7 @@ export interface TransactionConfirmation {
   appIndex: number | undefined
 }
 
-type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call' | '_delete'
+type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call' | '_delete' | '_transferAsset'
 
 type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number]
 type FundArgs = [amount?: number]
@@ -49,8 +49,9 @@ type PreValidateArgs = [accounts?: string[], foreignApps?: number[]]
 type PayArgs = [amount: number, to?: string]
 type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]]
 type DeleteArgs = []
+type TransferAssetsArgs = [assetIndex: number, amount: number, to?: string]
 
-type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs
+type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs
 
 interface QueueObject {
   method: QueueMethods,
@@ -134,6 +135,9 @@ export class Transaction {
           break
         case '_delete':
           await this._delete(...args as DeleteArgs)
+          break
+        case '_transferAsset':
+          await this._transferAsset(...args as TransferAssetsArgs)
           break
         default:
           throw new TransactionError(`Method ${method} not implemented`)
@@ -281,6 +285,24 @@ export class Transaction {
       suggestedParams
     }
     this._objs.push(appDeleteObj)
+  }
+
+  private async _transferAsset(assetIndex: number, amount: number, to?: string) {
+    if (!to) {
+      if (!this._appIndex) throw new TransactionError('Unable to pay: App index not set.')
+      to = algosdk.getApplicationAddress(this._appIndex)
+    }
+    if (!this._fromAddress) throw new TransactionError('Unable to pay: From address not set.')
+    const suggestedParams = await this._getSuggestedParams()
+    const transerAssetObj = {
+      type: TransactionType.axfer,
+      from: this._fromAddress,
+      to,
+      amount,
+      assetIndex,
+      suggestedParams,
+    }
+    this._objs.push(transerAssetObj)
   }
 
   private async _getTxns(): Promise<algosdk.Transaction[]> {
