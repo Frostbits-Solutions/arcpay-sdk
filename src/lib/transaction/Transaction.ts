@@ -40,7 +40,7 @@ export interface TransactionConfirmation {
   appIndex: number | undefined
 }
 
-type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call' | '_delete' | '_transferAsset'
+type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay' | '_call' | '_delete' | '_transferAsset' | '_optIn'
 
 type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number]
 type FundArgs = [amount?: number]
@@ -50,8 +50,9 @@ type PayArgs = [amount: number, to?: string]
 type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]]
 type DeleteArgs = []
 type TransferAssetsArgs = [assetIndex: number, amount: number, to?: string]
+type OptInArgs = [assetIndex: number]
 
-type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs
+type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs | OptInArgs
 
 interface QueueObject {
   method: QueueMethods,
@@ -109,6 +110,14 @@ export class Transaction {
     return this
   }
 
+  public optIn(assetIndex: number) {
+    this._queue.push({ method: '_optIn', args: [assetIndex]})
+  }
+
+  public transferAsset(assetIndex: number, amount: number, to?: string) {
+    this._queue.push({ method: '_transferAsset', args: [assetIndex, amount, to]})
+  }
+
   // Sign and send transaction
   public async send(transactionSigner: TransactionSigner): Promise<TransactionConfirmation> {
     for (const obj of this._queue) {
@@ -138,6 +147,9 @@ export class Transaction {
           break
         case '_transferAsset':
           await this._transferAsset(...args as TransferAssetsArgs)
+          break
+        case '_optIn':
+          await this._optIn(...args as OptInArgs)
           break
         default:
           throw new TransactionError(`Method ${method} not implemented`)
@@ -289,10 +301,10 @@ export class Transaction {
 
   private async _transferAsset(assetIndex: number, amount: number, to?: string) {
     if (!to) {
-      if (!this._appIndex) throw new TransactionError('Unable to pay: App index not set.')
+      if (!this._appIndex) throw new TransactionError('Unable to transfer asset: App index not set.')
       to = algosdk.getApplicationAddress(this._appIndex)
     }
-    if (!this._fromAddress) throw new TransactionError('Unable to pay: From address not set.')
+    if (!this._fromAddress) throw new TransactionError('Unable to transfer asset: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
     const transerAssetObj = {
       type: TransactionType.axfer,
@@ -303,6 +315,11 @@ export class Transaction {
       suggestedParams,
     }
     this._objs.push(transerAssetObj)
+  }
+
+  private async _optIn(assetIndex: number) {
+    if (!this._fromAddress) throw new TransactionError('Unable to opt in: From address not set.')
+    await this._transferAsset(assetIndex, 0, this._fromAddress)
   }
 
   private async _getTxns(): Promise<algosdk.Transaction[]> {
