@@ -9,10 +9,9 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import { useArcpay } from '/src/main.ts'
+      import { createClient } from '/src/main.ts'
 
-      useArcpay({
-        network: 'voi:testnet',
+      createClient('voi:testnet',{
         apiKey: import.meta.env.VITE_DEBUG_API_KEY,
         darkMode: false
       })

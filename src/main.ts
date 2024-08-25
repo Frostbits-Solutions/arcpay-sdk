@@ -4,19 +4,29 @@ import { v4 as uuidv4 } from 'uuid';
 import App from './App.vue'
 import router from './router'
 import { ArcpayClient, type ArcpayClientOptions} from '@/Client'
+import type {PublicNetwork} from "@/lib/algod/networks.config";
 
-let client: undefined | ArcpayClient
-export const useArcpay = (options: ArcpayClientOptions):ArcpayClient => {
+type Clients = Partial<Record<PublicNetwork,ArcpayClient>>
+
+const clients: Clients = {}
+export const createClient = (network: PublicNetwork, options: ArcpayClientOptions): ArcpayClient => {
   return (() => {
-    if (!client) {
+    if (!clients[network]) {
       const app = createApp(App)
       app.use(router)
 
       const id = uuidv4();
       document.body.insertAdjacentHTML('beforeend', `<div id="arcpay-${id}"></div>`);
       app.mount(`#arcpay-${id}`)
-      client = new ArcpayClient(`arcpay-${id}`, app, options)
+      clients[network] = new ArcpayClient(`arcpay-${id}`, app, network, options)
     }
-    return client
+    return clients[network] as ArcpayClient
+  })()
+}
+
+export const useArcpay = (network: PublicNetwork):ArcpayClient => {
+  return (() => {
+    if (!clients[network]) throw new Error(`No client initialized for network ${network}. Please call createClient first.`)
+    return clients[network] as ArcpayClient
   })()
 }

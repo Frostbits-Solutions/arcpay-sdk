@@ -23,7 +23,6 @@ import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
 
 export interface ArcpayClientOptions {
-  network: PublicNetwork
   apiKey?: string,
   client?: SupabaseClient,
   darkMode?: boolean
@@ -46,20 +45,20 @@ export class ArcpayClient {
   private readonly _networkConfig: NetworksConfig
   private readonly _walletManager: WalletManager
 
-  constructor(modalId: string, app: App, options: ArcpayClientOptions) {
-    if (!options.network) throw new Error('Network is required')
-    if (!networksConfig[options.network]) throw new Error(`Network ${options.network} is not supported`)
+  constructor(modalId: string, app: App, network: PublicNetwork, options: ArcpayClientOptions) {
+    if (!network) throw new Error('Network is required')
+    if (!networksConfig[network]) throw new Error(`Network ${network} is not supported`)
     this._id = modalId
     this._app = app
     this._appProvider = new AppProvider(app)
-    this._networkConfig = networksConfig[options.network]
+    this._networkConfig = networksConfig[network]
     this._walletManager = new WalletManager({
-      wallets: networksConfig[options.network].walletProviders as SupportedWallet[],
-      network: networksConfig[options.network].networkId,
+      wallets: networksConfig[network].walletProviders as SupportedWallet[],
+      network: networksConfig[network].networkId,
       algod: {
         token: '',
-        baseServer: networksConfig[options.network].nodeBaseURL,
-        port: networksConfig[options.network].nodePort
+        baseServer: networksConfig[network].nodeBaseURL,
+        port: networksConfig[network].nodePort
       }
     })
 
