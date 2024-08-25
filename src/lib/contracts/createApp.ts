@@ -23,7 +23,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         account.address,
         ...formatNftID(networkConfig, params),
         ...args,
-        await getContract(`${networkConfig.key}:voi_arc72_sale_approval:latest`),
+        await getContract(`${networkConfig.key}:${currency}_${params.asset.type.toLowerCase()}_${params.type}_approval:latest`),
         await getContract(`${networkConfig.key}:clear:latest`),
         '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
         0
