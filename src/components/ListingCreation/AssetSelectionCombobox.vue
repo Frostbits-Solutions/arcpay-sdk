@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import type { OnChainAssetMetadata } from '@/lib/types'
+import type { AssetMetadata } from '@/lib/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { WalletAccount } from '@txnlab/use-wallet'
 import type { NetworksConfig } from '@/lib/algod/networks.config'
@@ -26,7 +26,7 @@ import {WalletManager} from "@txnlab/use-wallet";
 const props = defineProps<{account: WalletAccount | undefined, defaultValue: string | undefined}>()
 const network = inject<NetworksConfig>('network')
 const walletManager = inject<WalletManager>('walletManager')
-const assets = ref<OnChainAssetMetadata[]>([])
+const assets = ref<AssetMetadata[]>([])
 const open = ref(false)
 const value = ref('')
 const loading = ref(true)

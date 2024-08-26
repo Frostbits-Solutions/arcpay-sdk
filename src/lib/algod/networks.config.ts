@@ -1,8 +1,8 @@
 import { NetworkId, type SupportedWallet, WalletId } from '@txnlab/use-wallet'
 import voi from '@/lib/algod/voi'
 import algo from '@/lib/algod/algo'
-import type { OnChainAssetMetadata } from '@/lib/types'
-import algosdk from "algosdk"
+import type { AssetMetadata } from '@/lib/types'
+import algosdk from "algosdk";
 
 export type PublicNetwork = VoiPublicNetwork | AlgorandPublicNetwork
 export type VoiPublicNetwork = 'voi:testnet' | 'voi:mainnet'
@@ -17,8 +17,8 @@ export type NetworksConfig = {
   nodeBaseURL: string
   walletProviders: SupportedWallet[]
   services: {
-    getAssetMetadata: (assetId: string) => Promise<OnChainAssetMetadata>
-    getAddressAssets: (algodClient: algosdk.Algodv2,address: string) => Promise<OnChainAssetMetadata[]>
+    getAssetMetadata: (assetId: string) => Promise<AssetMetadata>
+    getAddressAssets: (algodClient: algosdk.Algodv2, address: string) => Promise<AssetMetadata[]>
     getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => Promise<number>
   }
   nodeToken: string

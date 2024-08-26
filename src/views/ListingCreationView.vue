@@ -6,7 +6,7 @@ import { computed, inject, onMounted, ref, type VNodeRef } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import type {WalletAccount} from "@txnlab/use-wallet";
-import type { OnChainAssetMetadata } from '@/lib/types'
+import type { AssetMetadata } from '@/lib/types'
 import router from '@/router'
 
 interface ListingCreationProvider {
@@ -21,7 +21,7 @@ const { args, callback } = inject<{ListingCreation: ListingCreationProvider}>('a
 const assetSelectionComboboxRef = ref<VNodeRef | null>(null)
 const ListingCreationComponentRef = ref<VNodeRef | null>(null)
 
-const selectedAsset = computed<OnChainAssetMetadata>(() => {
+const selectedAsset = computed<AssetMetadata>(() => {
   return assetSelectionComboboxRef.value?.selectedAsset
 })
 
