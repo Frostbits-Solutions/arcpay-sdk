@@ -550,7 +550,7 @@ export const interfaces:Interfaces = {
   },
   algo: {
     algo: {
-      asa: {
+      ASA: {
         sale: {
           create: (
             algod: Algodv2,
@@ -564,7 +564,7 @@ export const interfaces:Interfaces = {
             accountFees: number
           ) => new Transaction(algod, {fromAddress})
             .createApp([
-              longToByteArray(nftID, 32),
+              longToByteArray(nftID, 8),
               longToByteArray(price * 1_000_000, 8),
               algosdk.decodeAddress(accountFeesAddress).publicKey,
               longToByteArray(accountFees, 8)
@@ -577,9 +577,9 @@ export const interfaces:Interfaces = {
             nftID: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
-            .fund()
-            .transferAsset(nftID, 1)
+            .fund(500_000)
             .call('fund', [])
+            .transferAsset(nftID, 1)
             .send(signer),
           buy: (
             algod: Algodv2,

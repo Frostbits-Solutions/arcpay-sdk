@@ -40,6 +40,10 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
       .map(async (asset) => {
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
 
+        if (info.params.url.includes('ipfs://')) {
+          info.params.url = info.params.url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+        }
+
         return {
           type: 'ASA',
           id: asset['asset-id'].toString(),
