@@ -22,6 +22,7 @@ interface Wallet {
   connect: (args?: Record<string, any>) => Promise<WalletAccount[]>
   disconnect: () => Promise<void>
   setActive: () => void
+  resumeSession: () => Promise<void>
   setActiveAccount: (address: string) => void
 }
 
@@ -38,12 +39,13 @@ const wallets = computed(() => {
       metadata: wallet.metadata,
       accounts: [],
       activeAccount: null,
-      isConnected: false,
-      isActive: false,
+      isConnected: wallet.isConnected,
+      isActive: wallet.isActive,
       connect: (args) => wallet.connect(args),
       disconnect: () => wallet.disconnect(),
       setActive: () => wallet.setActive(),
-      setActiveAccount: (addr) => wallet.setActiveAccount(addr)
+      setActiveAccount: (addr) => wallet.setActiveAccount(addr),
+      resumeSession: () => wallet.resumeSession()
     }
   })
 })
@@ -65,6 +67,9 @@ const getConnectArgs = (wallet: Wallet) => {
 async function selectWallet(wallet: Wallet) {
   activeWallet.value = wallet
   accountLoading.value = true
+  if (wallet.isConnected) {
+    console.log('connected', wallet.isConnected, await wallet.resumeSession())
+  }
   activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   accountLoading.value = false
   if (activeWallet.value?.accounts.length === 0) {

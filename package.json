@@ -40,6 +40,8 @@
   "dependencies": {
     "@agoralabs-sh/algorand-provider": "^1.1.0",
     "@agoralabs-sh/avm-web-provider": "^1.6.2",
+    "@blockshake/defly-connect": "^1.1.6",
+    "@perawallet/connect": "^1.3.4",
     "@radix-icons/vue": "^1.0.0",
     "@supabase/supabase-js": "^2.42.7",
     "@txnlab/use-wallet": "^3.0.0",

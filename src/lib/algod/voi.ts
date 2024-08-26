@@ -3,7 +3,7 @@ import type { PublicNetwork } from '@/lib/algod/networks.config'
 import type { AssetMetadata } from '@/lib/types'
 import algosdk from "algosdk";
 
-export async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
+async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
   let url
   if (network === 'voi:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
   if (network === 'voi:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -26,7 +26,7 @@ export async function getAssetMetadata(assetId: string, network: PublicNetwork):
   }
 }
 
-export async function getAddressAssets(address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
+async function getAddressAssets(address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
   let url
   if (network === 'voi:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
   if (network === 'voi:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -49,7 +49,7 @@ export async function getAddressAssets(address: string, network: PublicNetwork):
   })
 }
 
-export async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {
+async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {
   let url: string | undefined
   if (network === 'voi:testnet') url = `https://testnet-idx.voi.nodly.io:443/v2/transactions/${txId}`
   if (network === 'voi:mainnet') url = `https://testnet-idx.voi.nodly.io:443/v2/transactions/${txId}`
@@ -86,4 +86,10 @@ export async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string
     })
   }
   return await getTxExponentialBackOff()
+}
+
+export default {
+  getAssetMetadata,
+  getAddressAssets,
+  getCreatedAppId
 }
