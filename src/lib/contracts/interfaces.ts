@@ -550,7 +550,7 @@ export const interfaces:Interfaces = {
   },
   algo: {
     algo: {
-      asa: {
+      ASA: {
         sale: {
           create: (
             algod: Algodv2,
