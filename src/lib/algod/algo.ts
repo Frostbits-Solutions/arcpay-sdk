@@ -35,12 +35,12 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
   const assets = account.assets
     // @ts-ignore
       .filter((asset) => asset.amount > 0)
-    // @ts-ignore
+  // @ts-ignore
       .map(async (asset) => {
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
 
         return {
-          id: asset['asset-id'],
+          id: asset['asset-id'].toString(),
           name: info.params.name,
           description: info.params.name,
           thumbnail: info.params.url,
