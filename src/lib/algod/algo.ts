@@ -1,9 +1,9 @@
 import axios from 'axios'
 import type { PublicNetwork } from '@/lib/algod/networks.config'
-import type { OnChainAssetMetadata } from '@/lib/types'
+import type { AssetMetadata } from '@/lib/types'
 import algosdk from "algosdk";
 
-async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<OnChainAssetMetadata> {
+async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
   let url
   if (network === 'algo:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
   if (network === 'algo:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -16,6 +16,7 @@ async function getAssetMetadata(assetId: string, network: PublicNetwork): Promis
   const metadata = JSON.parse(response.data.tokens[0].metadata)
 
   return {
+    type: 'ASA',
     id: assetId,
     name: metadata.name,
     description: metadata.description,
@@ -25,7 +26,7 @@ async function getAssetMetadata(assetId: string, network: PublicNetwork): Promis
   }
 }
 
-async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, network: PublicNetwork): Promise<OnChainAssetMetadata[]> {
+async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
   let url
   if (network === 'algo:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
   if (network === 'algo:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -40,6 +41,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
 
         return {
+          type: 'ASA',
           id: asset['asset-id'].toString(),
           name: info.params.name,
           description: info.params.name,
