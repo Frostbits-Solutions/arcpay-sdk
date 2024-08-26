@@ -21,9 +21,11 @@ import type { OnChainAssetMetadata } from '@/lib/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { WalletAccount } from '@txnlab/use-wallet'
 import type { NetworksConfig } from '@/lib/algod/networks.config'
+import {WalletManager} from "@txnlab/use-wallet";
 
 const props = defineProps<{account: WalletAccount | undefined, defaultValue: string | undefined}>()
 const network = inject<NetworksConfig>('network')
+const walletManager = inject<WalletManager>('walletManager')
 const assets = ref<OnChainAssetMetadata[]>([])
 const open = ref(false)
 const value = ref('')
@@ -33,9 +35,9 @@ const selectedAsset = computed(() => {
 })
 
 function getAssets() {
-  if (network && props.account?.address) {
+  if (network && walletManager && props.account?.address) {
     loading.value = true
-    network.services.getAddressAssets(props.account.address).then((data) => {
+    network.services.getAddressAssets(walletManager.algodClient, props.account.address).then((data) => {
       assets.value = data
       if (assets.value.findIndex((asset) => asset.id === props.defaultValue) !== -1) {
         value.value = props.defaultValue || ''
