@@ -1,9 +1,9 @@
 import axios from 'axios'
 import type { PublicNetwork } from '@/lib/algod/networks.config'
-import type { OnChainAssetMetadata } from '@/lib/types'
+import type { AssetMetadata } from '@/lib/types'
 import algosdk from "algosdk";
 
-export async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<OnChainAssetMetadata> {
+export async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
   let url
   if (network === 'voi:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
   if (network === 'voi:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -18,6 +18,7 @@ export async function getAssetMetadata(assetId: string, network: PublicNetwork):
   return {
     id: assetId,
     name: metadata.name,
+    type: 'ARC72',
     description: metadata.description,
     thumbnail: metadata.image,
     thumbnailMIMEType: metadata.image_mimetype,
@@ -25,7 +26,7 @@ export async function getAssetMetadata(assetId: string, network: PublicNetwork):
   }
 }
 
-export async function getAddressAssets(address: string, network: PublicNetwork): Promise<OnChainAssetMetadata[]> {
+export async function getAddressAssets(address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
   let url
   if (network === 'voi:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
   if (network === 'voi:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -40,6 +41,7 @@ export async function getAddressAssets(address: string, network: PublicNetwork):
       id: `${token.contractId}/${token.tokenId}`,
       name: metadata.name,
       description: metadata.description,
+      type: 'ARC72',
       thumbnail: metadata.image,
       thumbnailMIMEType: metadata.image_mimetype,
       properties: metadata.properties
