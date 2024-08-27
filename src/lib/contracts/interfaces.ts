@@ -81,6 +81,12 @@ export interface Arc72Interface {
   dutch: DutchInterface;
 }
 
+export interface ASAInterface {
+  sale: SaleInterface;
+  auction: AuctionInterface;
+  dutch: DutchInterface;
+}
+
 export interface VoiInterface {
   voi: {
     arc72: Arc72Interface;
@@ -89,6 +95,12 @@ export interface VoiInterface {
   arc200: {
     arc72: Arc72Interface;
     rwa: RwaInterface;
+  };
+}
+
+export interface AlgoInterface {
+  algo: {
+    ASA: ASAInterface;
   };
 }
 
@@ -111,7 +123,7 @@ export interface CommonInterface {
 
 export interface Interfaces {
   voi: VoiInterface;
-  algo: {}
+  algo: AlgoInterface;
   common: CommonInterface;
 }
 
@@ -630,6 +642,16 @@ export const interfaces:Interfaces = {
             .call('fund', [])
             .transferAsset(nftID, 1)
             .send(signer),
+          bid: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            appIndex: number,
+            price: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .pay(price)
+            .call('bid', [])
+            .send(signer)
         },
         dutch: {
           create: (
@@ -665,13 +687,25 @@ export const interfaces:Interfaces = {
             .call('fund', [])
             .transferAsset(nftID, 1)
             .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            appIndex: number,
+            sellerAddress: string,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .preValidate([sellerAddress], [])
+            .optIn(nftID)
+            .pay(price)
+            .call('buy', [], [feesAppAddress], [feesAppId])
+            .send(signer)
         }
       }
     },
-    asa: {
-      asa: {
-      }
-    }
   },
   common: {
     close: (
