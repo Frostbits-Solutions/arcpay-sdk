@@ -17,7 +17,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
 
     // Create application
     load(appProvider, 'Creating app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
-    const transactionConfirmation: TransactionConfirmation = await chainInterface[currency][params.asset.type.toLowerCase()][params.type].create(
+    const transactionConfirmation: TransactionConfirmation = await chainInterface[currency][params.asset.type][params.type].create(
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,

@@ -597,6 +597,74 @@ export const interfaces:Interfaces = {
             .pay(price)
             .call('buy', [], [feesAppAddress], [feesAppId])
             .send(signer)
+        },
+        auction : {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            startPrice: number,
+            duration: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, { fromAddress })
+            .createApp([
+              longToByteArray(nftID, 8),
+              longToByteArray(startPrice * 1_000_000, 8),
+              longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8)
+            ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .fund()
+            .call('fund', [])
+            .transferAsset(nftID, 1)
+            .send(signer),
+        },
+        dutch: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            priceMin: number,
+            priceMax: number,
+            duration: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, { fromAddress })
+            .createApp([
+              longToByteArray(nftID, 8),
+              longToByteArray(priceMax * 1_000_000, 8),
+              longToByteArray(priceMin * 1_000_000, 8),
+              longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8)
+            ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .fund()
+            .call('fund', [])
+            .transferAsset(nftID, 1)
+            .send(signer),
         }
       }
     },
