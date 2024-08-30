@@ -7,7 +7,7 @@ import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {SupabaseClient} from "@supabase/supabase-js";
 
 export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, accountId: number, account: WalletAccount, params: ListingCreationParams): Promise<number> {
-    const chainInterface = interfaces[networkConfig.chain] as VoiInterface
+    const chainInterface = interfaces[networkConfig.chain]
     const currency = params.currency?.type || networkConfig.chain
 
     const args = []

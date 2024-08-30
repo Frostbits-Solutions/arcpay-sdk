@@ -77,6 +77,20 @@ export class ArcpayClient {
     this._app.provide('walletManager', this._walletManager)
     this._app.provide('network', this._networkConfig)
     this._app.provide('supabase', this._client)
+    this._app.provide('appProvider', this._appProvider)
+  }
+
+  public getWalletManager() {
+    return this._walletManager
+  }
+  public getNetworkConfig() {
+    return this._networkConfig
+  }
+  public getClient() {
+    return this._client
+  }
+  public getAppProvider() {
+    return this._appProvider
   }
 
   public toggleDarkMode(bool?: boolean) {
@@ -176,6 +190,7 @@ export class ArcpayClient {
         )
         if (error) throw new Error(`Error creating dutch auction: ${error.message}`)
         listingId = data?.[0]?.listing_id
+        console.log(data)
       }
 
       if (!listingId) throw new Error(`Unexpected error: Listing ID is undefined`)

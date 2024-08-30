@@ -28,6 +28,8 @@ interface Wallet {
 
 const manager = inject<WalletManager>('walletManager')
 const { callback } = inject<{WalletSelection: WalletSelectionProvider}>('appProvider')?.['WalletSelection'] || {}
+
+console.log(inject<{WalletSelection: WalletSelectionProvider}>('appProvider'))
 const error = ref<string | undefined>()
 const activeWallet = ref<Wallet | undefined>()
 const accountLoading = ref<boolean>(false)
