@@ -104,7 +104,8 @@ export interface AlgoInterface {
   };
   ASA: {
     ASA: ASAInterface;
-  }
+    rwa: RwaInterface
+  };
 }
 
 export interface CommonInterface {
@@ -851,6 +852,51 @@ export const interfaces:Interfaces = {
             .pay(price)
             .call('buy', [], [feesAppAddress], [feesAppId])
             .send(signer)
+        }
+      },
+      rwa: {
+        sale: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            rwaId: string,
+            rwaName: string,
+            price: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, { fromAddress })
+            .createApp([
+              longToByteArray(price * 1_000_000, 8),
+              new TextEncoder().encode(rwaId),
+              new TextEncoder().encode(rwaName),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8),
+            ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [])
+            .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            appIndex: number,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .pay(price)
+            .call('buy', [],[feesAppAddress], [feesAppId])
+            .send(signer),
         }
       }
     },
