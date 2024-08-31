@@ -775,6 +775,8 @@ export const interfaces:Interfaces = {
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             nftID: number,
             startPrice: number,
             duration: number,
@@ -785,21 +787,24 @@ export const interfaces:Interfaces = {
           ) => new Transaction(algod, {fromAddress})
             .createApp([
               longToByteArray(nftID, 8),
-              longToByteArray(startPrice * 1_000_000, 8),
+              longToByteArray(startPrice * asaDecimals, 8),
               longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
               algosdk.decodeAddress(accountFeesAddress).publicKey,
-              longToByteArray(accountFees, 8)
+              longToByteArray(accountFees, 8),
+              longToByteArray(asaID, 8),
             ], approvalProgram, clearProgram)
             .send(signer),
           fund: (
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             nftID: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
             .fund()
-            .call('fund', [])
+            .call('fund', [], [], [], [asaID])
             .transferAsset(nftID, 1)
             .send(signer),
           bid: (
@@ -818,6 +823,8 @@ export const interfaces:Interfaces = {
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             nftID: number,
             priceMin: number,
             priceMax: number,
@@ -829,28 +836,33 @@ export const interfaces:Interfaces = {
           ) => new Transaction(algod, {fromAddress})
             .createApp([
               longToByteArray(nftID, 8),
-              longToByteArray(priceMax * 1_000_000, 8),
-              longToByteArray(priceMin * 1_000_000, 8),
+              longToByteArray(priceMax * asaDecimals, 8),
+              longToByteArray(priceMin * asaDecimals, 8),
               longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
               algosdk.decodeAddress(accountFeesAddress).publicKey,
-              longToByteArray(accountFees, 8)
+              longToByteArray(accountFees, 8),
+              longToByteArray(asaID, 8),
             ], approvalProgram, clearProgram)
             .send(signer),
           fund: (
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             nftID: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
             .fund()
-            .call('fund', [])
+            .call('fund', [], [],[], [asaID])
             .transferAsset(nftID, 1)
             .send(signer),
           buy: (
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             nftID: number,
             appIndex: number,
             sellerAddress: string,
@@ -860,8 +872,8 @@ export const interfaces:Interfaces = {
           ) => new Transaction(algod, {fromAddress, appIndex})
             .preValidate([sellerAddress], [])
             .optIn(nftID)
-            .pay(price)
-            .call('buy', [], [feesAppAddress], [feesAppId])
+            .pay(price, undefined, asaDecimals)
+            .call('buy', [], [feesAppAddress], [feesAppId], [asaID, nftID])
             .send(signer)
         }
       },
@@ -920,10 +932,12 @@ export const interfaces:Interfaces = {
       appIndex: number,
       feesAppAddress: string,
       feesAppId: number,
-      nftID?: number
+      nftID?: number,
+      asaID?: number,
     ) => {
       const foreignAssets = []
       if (nftID) foreignAssets.push(nftID)
+      if (asaID) foreignAssets.push(asaID)
       return new Transaction(algod, {fromAddress, appIndex})
         .preValidate()
         .call('close', [], [fromAddress, feesAppAddress], [appIndex, feesAppId], foreignAssets)
@@ -934,10 +948,12 @@ export const interfaces:Interfaces = {
       signer: TransactionSigner,
       fromAddress: string,
       appIndex: number,
-      nftID?: number
+      nftID?: number,
+      asaID?: number,
     ) => {
       const foreignAssets = []
       if (nftID) foreignAssets.push(nftID)
+      if (asaID) foreignAssets.push(asaID)
       return new Transaction(algod, { fromAddress, appIndex })
         .delete(foreignAssets)
         .send(signer)
