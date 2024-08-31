@@ -45,7 +45,7 @@ type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay
 type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number]
 type FundArgs = [amount?: number]
 type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, foreignApps: number[], args: (string | number)[]]
-type PreValidateArgs = [accounts?: string[], foreignApps?: number[]]
+type PreValidateArgs = [accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
 type PayArgs = [amount: number, to?: string, decimals?: number]
 type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
 type DeleteArgs = [foreignAssets?: number[]]
@@ -90,8 +90,8 @@ export class Transaction {
     return this
   }
 
-  public preValidate(accounts?: string[], foreignApps?: number[]) {
-    this._queue.push({ method: '_preValidate', args: [ accounts, foreignApps ] })
+  public preValidate(accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
+    this._queue.push({ method: '_preValidate', args: [ accounts, foreignApps, foreignAssets] })
     return this
   }
 
@@ -231,7 +231,7 @@ export class Transaction {
     this._objs.push(appCallObj)
   }
 
-  private async _preValidate(accounts?: string[], foreignApps?: number[]) {
+  private async _preValidate(accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
     if (!this._fromAddress) throw new TransactionError('Unable to pre-validate: From address not set.')
     if (!this._appIndex) throw new TransactionError('Unable to pre-validate: App index not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -245,6 +245,7 @@ export class Transaction {
     }
     if (accounts) preValidateObj.accounts = accounts
     if (foreignApps) preValidateObj.foreignApps = foreignApps
+    if (foreignAssets) preValidateObj.foreignApps = foreignAssets
     this._objs.push(preValidateObj)
   }
 

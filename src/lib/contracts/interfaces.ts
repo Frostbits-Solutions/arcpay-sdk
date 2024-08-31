@@ -943,9 +943,9 @@ export const interfaces:Interfaces = {
       if (asaID) foreignAssets.push(asaID)
       const accounts = [fromAddress, feesAppAddress]
       if (sellerAddress) accounts.push(sellerAddress)
-      
+
       return new Transaction(algod, {fromAddress, appIndex})
-        .preValidate()
+        .preValidate(undefined, [appIndex, feesAppId], foreignAssets)
         .call('close', [], accounts, [appIndex, feesAppId], foreignAssets)
         .send(signer)
     },
