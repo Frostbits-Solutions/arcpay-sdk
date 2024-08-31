@@ -727,8 +727,7 @@ export const interfaces:Interfaces = {
             accountFeesAddress: string,
             accountFees: number
           ) => {
-            console.log()
-            new Transaction(algod, {fromAddress})
+            return new Transaction(algod, {fromAddress})
               .createApp([
                 longToByteArray(nftID, 8),
                 longToByteArray(price * 1_000_000, 8),
