@@ -121,7 +121,8 @@ export interface CommonInterface {
     algod: Algodv2,
     signer: TransactionSigner,
     fromAddress: string,
-    appIndex: number
+    appIndex: number,
+    nftID?: number
   ) => Promise<TransactionConfirmation>;
 }
 
