@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { useArcpay } from '@/main'
 import { Button } from '@/components/ui/button'
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 const listingId = ref('')
 
 const arcpay = useArcpay('algo:testnet')
 
-async function create() {
-  console.log(arcpay)
+function create() {
   arcpay.create({accountId: 0, assetId:'29105406/583', listingType: 'sale'}).then((data) => {
     console.log('Listing created', data)
   }).catch((error) => {
@@ -16,7 +15,7 @@ async function create() {
   })
 }
 
-async function buy() {
+function buy() {
   if (listingId.value) {
     arcpay.buy(listingId.value).then((data) => {
       console.log('Listing bought', data)
