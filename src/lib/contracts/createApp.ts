@@ -50,7 +50,6 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
 function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationParams) {
     const args = []
     try {
-        if ( params.currency?.type === 'asa') {
         if ( params.currency?.type === 'ASA') {
             if (networkConfig.chain === 'voi') {
                 const [nftAppId, nftId] = params.currency.id.split('/')
