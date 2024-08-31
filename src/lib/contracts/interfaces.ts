@@ -885,6 +885,8 @@ export const interfaces:Interfaces = {
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             rwaId: string,
             rwaName: string,
             price: number,
@@ -894,33 +896,40 @@ export const interfaces:Interfaces = {
             accountFees: number
           ) => new Transaction(algod, { fromAddress })
             .createApp([
-              longToByteArray(price * 1_000_000, 8),
+              longToByteArray(price * asaDecimals, 8),
               new TextEncoder().encode(rwaId),
               new TextEncoder().encode(rwaName),
               algosdk.decodeAddress(accountFeesAddress).publicKey,
               longToByteArray(accountFees, 8),
+              longToByteArray(asaID, 8),
             ], approvalProgram, clearProgram)
             .send(signer),
           fund: (
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
             .fund()
-            .call('fund', [])
+            .call('fund', [], [], [], [asaID])
             .send(signer),
           buy: (
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            rwaID: number,
             appIndex: number,
+            sellerAddress: string,
             price: number,
             feesAppAddress: string,
             feesAppId: number
           ) => new Transaction(algod, { fromAddress, appIndex })
-            .pay(price)
-            .call('buy', [],[feesAppAddress], [feesAppId])
+            .transferAsset(asaID, price * asaDecimals)
+            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, rwaID])
             .send(signer),
         }
       }

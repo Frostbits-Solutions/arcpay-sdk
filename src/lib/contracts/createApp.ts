@@ -76,6 +76,9 @@ function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParam
         } else {
             args.push(parseInt(params.asset.id))
         }
+        if (params.asset.type === 'rwa') {
+            args.push(params.asset.name)
+        }
     } catch (e) {
         throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
     }
