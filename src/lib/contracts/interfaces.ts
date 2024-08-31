@@ -743,6 +743,7 @@ export const interfaces:Interfaces = {
             signer: TransactionSigner,
             fromAddress: string,
             asaID: number,
+            asaDecimals: number,
             nftID: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
