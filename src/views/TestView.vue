@@ -50,7 +50,14 @@ async function create() {
     },
     price: 1,
     duration: 1000,
-    currency: undefined
+    currency: {
+      chain: 'algo:testnet',
+      type: 'ASA',
+      created_at: '',
+      id: '',
+      name: '',
+      ticker: ''
+    }
   }))
 }
 
@@ -75,16 +82,16 @@ async function buy() {
     return
   }
 
-  const res = await interfaces["algo"]["algo"]["ASA"]["auction"].bid(
+  const res = await interfaces["algo"]["ASA"]["ASA"]["sale"].buy(
     walletManager.algodClient,
     walletManager.transactionSigner,
     walletManager.activeAddress,
-    //717821637, //nftID: number, remove for bid
+    717821637, //nftID: number, remove for bid
     718572552, //appIndex: number,
-    // "", //sellerAddress: string, remove for bid
+     "", //sellerAddress: string, remove for bid
     1, //price: number,
-    // "", //feesAppAddress: string, remove for bid
-    // 0 //feesAppId: number   remove for bid
+     "", //feesAppAddress: string, remove for bid
+     0 //feesAppId: number   remove for bid
   )
   console.log(res)
 }
