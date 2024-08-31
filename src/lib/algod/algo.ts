@@ -81,7 +81,7 @@ async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, netwo
   await algosdk.waitForConfirmation(
       algodClient,
       txId,
-      12)
+      20)
 
   const getTxExponentialBackOff = (tryNumber: number = 0): Promise<number> => {
     if (tryNumber > 5) {
