@@ -726,15 +726,18 @@ export const interfaces:Interfaces = {
             clearProgram: string,
             accountFeesAddress: string,
             accountFees: number
-          ) => new Transaction(algod, {fromAddress})
-            .createApp([
-              longToByteArray(nftID, 8),
-              longToByteArray(price * 1_000_000, 8),
-              algosdk.decodeAddress(accountFeesAddress).publicKey,
-              longToByteArray(accountFees, 8),
-              longToByteArray(asaID, 8),
-            ], approvalProgram, clearProgram)
-            .send(signer),
+          ) => {
+            console.log()
+            new Transaction(algod, {fromAddress})
+              .createApp([
+                longToByteArray(nftID, 8),
+                longToByteArray(price * 1_000_000, 8),
+                algosdk.decodeAddress(accountFeesAddress).publicKey,
+                longToByteArray(accountFees, 8),
+                longToByteArray(asaID, 8),
+              ], approvalProgram, clearProgram)
+              .send(signer)
+          },
           fund: (
             algod: Algodv2,
             signer: TransactionSigner,
