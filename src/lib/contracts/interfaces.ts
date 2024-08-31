@@ -910,6 +910,7 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             asaID: number,
             asaDecimals: number,
+            rwaId: string,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
             .fund()
