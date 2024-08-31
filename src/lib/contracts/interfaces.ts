@@ -720,6 +720,7 @@ export const interfaces:Interfaces = {
             signer: TransactionSigner,
             fromAddress: string,
             asaID: number,
+            asaDecimals: number,
             nftID: number,
             price: number,
             approvalProgram: string,
@@ -730,7 +731,7 @@ export const interfaces:Interfaces = {
             return new Transaction(algod, {fromAddress})
               .createApp([
                 longToByteArray(nftID, 8),
-                longToByteArray(price * 1_000_000, 8),
+                longToByteArray(price * asaDecimals, 8),
                 algosdk.decodeAddress(accountFeesAddress).publicKey,
                 longToByteArray(accountFees, 8),
                 longToByteArray(asaID, 8),

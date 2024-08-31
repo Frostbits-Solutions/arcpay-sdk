@@ -56,7 +56,8 @@ async function create() {
       created_at: '',
       id: '718663983',
       name: '',
-      ticker: ''
+      ticker: '',
+      decimals: 1,
     }
   }))
 }

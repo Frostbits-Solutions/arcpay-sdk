@@ -58,6 +58,7 @@ function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationPa
             } else {
                 args.push(parseInt(params.currency.id))
             }
+            args.push(params.currency?.decimals)
         }
     } catch (e) {
         throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
