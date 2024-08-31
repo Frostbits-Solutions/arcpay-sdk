@@ -97,7 +97,7 @@ export class ArcpayClient {
     // WARNING: account_id can be 0
     if (typeof accountId === 'undefined') {
       const { data, error } = await deriveAccountIdFromKey(this._client, this._apiKey as string)
-      if (error) throw new Error(`Unable to derive account ID from key. ${error.message}`)
+      if (data === null || error) throw new Error(`Unable to derive account ID from key. This is likely because of an invalid API Key. Make sure the key allowed origin is ${window.location.origin}. You can create new API keys from the arcpay dashboard`)
       accountId = data
     }
 
@@ -163,7 +163,7 @@ export class ArcpayClient {
             1,
             params.asset.thumbnail,
             params.asset.type,
-            this._networkConfig.key as VoiPublicNetwork,
+            this._networkConfig.key,
             params.currency?.id || '0',
             options?.listingName || params.asset.name || params.asset.id,
             account.address,
