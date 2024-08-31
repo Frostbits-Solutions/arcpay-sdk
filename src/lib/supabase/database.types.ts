@@ -493,7 +493,7 @@ export type Database = {
     }
     Enums: {
       accounts_users_roles: "admin" | "moderator" | "member"
-      assets_types: "ARC72" | "OFFCHAIN" | "ASA"
+      assets_types: "arc72" | "offchain" | "asa"
       auctions_type: "english" | "dutch"
       chains: "voi:testnet" | "voi:mainnet" | "algo:testnet" | "algo:mainnet"
       currency_type: "algo" | "asa" | "voi" | "arc200"

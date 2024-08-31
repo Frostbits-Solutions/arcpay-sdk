@@ -18,7 +18,7 @@ async function getAssetMetadata(assetId: string, network: PublicNetwork): Promis
   return {
     id: assetId,
     name: metadata.name,
-    type: 'ARC72',
+    type: 'arc72',
     description: metadata.description,
     thumbnail: metadata.image,
     thumbnailMIMEType: metadata.image_mimetype,
@@ -41,7 +41,7 @@ async function getAddressAssets(address: string, network: PublicNetwork): Promis
       id: `${token.contractId}/${token.tokenId}`,
       name: metadata.name,
       description: metadata.description,
-      type: 'ARC72',
+      type: 'arc72',
       thumbnail: metadata.image,
       thumbnailMIMEType: metadata.image_mimetype,
       properties: metadata.properties
@@ -61,7 +61,7 @@ async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, netwo
       12)
 
   const getTxExponentialBackOff = (tryNumber: number = 0): Promise<number> => {
-    if (tryNumber > 5) {
+    if (tryNumber > 10) {
       throw new Error(`Failed to fetch application index for txID ${txId}`)
     }
     return new Promise<number>((resolve, reject) => {
@@ -82,7 +82,7 @@ async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, netwo
               reject(error)
             }
           })
-      }, tryNumber * 300)
+      }, tryNumber * 500)
     })
   }
   return await getTxExponentialBackOff()

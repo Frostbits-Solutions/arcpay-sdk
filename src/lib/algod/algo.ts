@@ -16,7 +16,7 @@ async function getAssetMetadata(assetId: string, network: PublicNetwork): Promis
   const metadata = JSON.parse(response.data.tokens[0].metadata)
 
   return {
-    type: 'ASA',
+    type: 'asa',
     id: assetId,
     name: metadata.name,
     description: metadata.description,
@@ -45,7 +45,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
         }
 
         return {
-          type: 'ASA',
+          type: 'asa',
           id: asset['asset-id'].toString(),
           name: info.params.name,
           description: info.params.name,
