@@ -706,7 +706,7 @@ export const interfaces:Interfaces = {
             .preValidate([sellerAddress], [])
             .optIn(nftID)
             .pay(price)
-            .call('buy', [], [feesAppAddress], [feesAppId])
+            .call('buy', [], [feesAppAddress], [feesAppId], [nftID])
             .send(signer)
         }
       }
