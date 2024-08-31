@@ -245,7 +245,7 @@ export class Transaction {
     }
     if (accounts) preValidateObj.accounts = accounts
     if (foreignApps) preValidateObj.foreignApps = foreignApps
-    if (foreignAssets) preValidateObj.foreignApps = foreignAssets
+    if (foreignAssets) preValidateObj.foreignAssets = foreignAssets
     this._objs.push(preValidateObj)
   }
 
