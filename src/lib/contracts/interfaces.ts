@@ -811,10 +811,12 @@ export const interfaces:Interfaces = {
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID,
+            asaDecimals,
             appIndex: number,
             price: number
           ) => new Transaction(algod, {fromAddress, appIndex})
-            .pay(price)
+            .transferAsset(asaID, price * asaDecimals)
             .call('bid', [])
             .send(signer)
         },
