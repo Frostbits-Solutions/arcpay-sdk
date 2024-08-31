@@ -45,14 +45,14 @@ type QueueMethods = '_createApp' | '_fund' | '_approve' | '_preValidate' | '_pay
 type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgram: string, numGlobalInts?: number, numGlobalByteSlices?: number, numLocalInts?: number, numLocalByteSlices?: number]
 type FundArgs = [amount?: number]
 type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, foreignApps: number[], args: (string | number)[]]
-type PreValidateArgs = [accounts?: string[], foreignApps?: number[]]
-type PayArgs = [amount: number, to?: string]
-type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]]
-type DeleteArgs = []
+type PreValidateArgs = [accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
+type PayArgs = [amount: number, to?: string, decimals?: number]
+type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
+type DeleteArgs = [foreignAssets?: number[]]
 type TransferAssetsArgs = [assetIndex: number, amount: number, to?: string]
 type OptInArgs = [assetIndex: number]
 
-type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs | OptInArgs
+type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs | OptInArgs | DeleteArgs
 
 interface QueueObject {
   method: QueueMethods,
@@ -90,23 +90,23 @@ export class Transaction {
     return this
   }
 
-  public preValidate(accounts?: string[], foreignApps?: number[]) {
-    this._queue.push({ method: '_preValidate', args: [ accounts, foreignApps ] })
+  public preValidate(accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
+    this._queue.push({ method: '_preValidate', args: [ accounts, foreignApps, foreignAssets] })
     return this
   }
 
-  public pay(amount: number, to?: string) {
-    this._queue.push({ method: '_pay', args: [ amount, to ] })
+  public pay(amount: number, to?: string, decimals?: number) {
+    this._queue.push({ method: '_pay', args: [ amount, to, decimals] })
     return this
   }
 
-  public call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]) {
-    this._queue.push({ method: '_call', args: [ functionName, args, accounts, foreignApps ] })
+  public call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
+    this._queue.push({ method: '_call', args: [ functionName, args, accounts, foreignApps, foreignAssets ] })
     return this
   }
 
-  public delete() {
-    this._queue.push({ method: '_delete', args: [] })
+  public delete(foreignAssets?: number[]) {
+    this._queue.push({ method: '_delete', args: [ foreignAssets ] })
     return this
   }
 
@@ -231,7 +231,7 @@ export class Transaction {
     this._objs.push(appCallObj)
   }
 
-  private async _preValidate(accounts?: string[], foreignApps?: number[]) {
+  private async _preValidate(accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
     if (!this._fromAddress) throw new TransactionError('Unable to pre-validate: From address not set.')
     if (!this._appIndex) throw new TransactionError('Unable to pre-validate: App index not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -245,17 +245,21 @@ export class Transaction {
     }
     if (accounts) preValidateObj.accounts = accounts
     if (foreignApps) preValidateObj.foreignApps = foreignApps
+    if (foreignAssets) preValidateObj.foreignAssets = foreignAssets
     this._objs.push(preValidateObj)
   }
 
-  private async _pay(amount: number, to?: string) {
+  private async _pay(amount: number, to?: string, decimals?: number) {
     if (!to) {
       if (!this._appIndex) throw new TransactionError('Unable to pay: App index not set.')
       to = algosdk.getApplicationAddress(this._appIndex)
     }
+    if (!decimals) {
+      decimals = 1_000_000
+    }
     if (!this._fromAddress) throw new TransactionError('Unable to pay: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
-    const microAlgoAmount = amount * 1_000_000
+    const microAlgoAmount = amount * decimals
     const payObj: PaymentObject = {
       type: TransactionType.pay,
       from: this._fromAddress,
@@ -266,7 +270,7 @@ export class Transaction {
     this._objs.push(payObj)
   }
 
-  private async _call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]) {
+  private async _call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
     if (!this._appIndex) throw new TransactionError('Unable to call: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to call: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -281,10 +285,12 @@ export class Transaction {
     }
     if (accounts) appCallObj.accounts = accounts
     if (foreignApps) appCallObj.foreignApps = foreignApps
+    if (foreignAssets) appCallObj.foreignAssets = foreignAssets
+
     this._objs.push(appCallObj)
   }
 
-  private async _delete() {
+  private async _delete(foreignAssets?: number[]) {
     if (!this._appIndex) throw new TransactionError('Unable to delete app: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to delete app: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -298,6 +304,11 @@ export class Transaction {
       foreignApps: [this._appIndex],
       suggestedParams
     }
+
+    if (foreignAssets) {
+      appDeleteObj.foreignAssets = foreignAssets
+    }
+
     this._objs.push(appDeleteObj)
   }
 
@@ -332,6 +343,7 @@ export class Transaction {
 
     // Get accounts accessed by the app and add them to the app object
     if (results?.txnGroups[0]?.unnamedResourcesAccessed?.accounts) {
+      let accountStart = 0
       for (const obj of this._objs) {
         if (obj.type !== TransactionType.appl) {
           continue
@@ -339,11 +351,15 @@ export class Transaction {
 
         const appObj = obj as AppObject
         const accounts = results?.txnGroups[0].unnamedResourcesAccessed.accounts
+        const nextStart = accountStart + 4 - (appObj.accounts?.length || 0)
+
+        const newAccounts = accounts.slice(accountStart, nextStart)
         if (appObj.accounts) {
-          appObj.accounts = Array.from(new Set([...appObj.accounts, ...accounts]))
+          appObj.accounts = Array.from(new Set([...appObj.accounts, ...newAccounts]))
         } else {
-          appObj.accounts = accounts
+          appObj.accounts = newAccounts
         }
+        accountStart = nextStart
       }
     }
 

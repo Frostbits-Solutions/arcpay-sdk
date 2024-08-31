@@ -5,7 +5,7 @@ import { ref } from 'vue'
 
 const listingId = ref('')
 
-const arcpay = useArcpay('voi:testnet')
+const arcpay = useArcpay('algo:testnet')
 
 function create() {
   arcpay.create({accountId: 0, assetId:'29105406/583', listingType: 'sale'}).then((data) => {
@@ -24,6 +24,15 @@ function buy() {
     })
   }
 }
+
+async function close () {
+
+}
+
+async function cancel () {
+
+}
+
 </script>
 
 <template>
@@ -31,6 +40,8 @@ function buy() {
     <div class="ap-flex ap-gap-4 ap-p-4">
       <Button @click="create" variant="default">create</Button>
       <Button @click="buy" variant="default">buy</Button>
+      <Button @click="cancel" variant="default">cancel</Button>
+      <Button @click="close" variant="default">close</Button>
       <input type="text" v-model="listingId" placeholder="listing id"/>
       <Button @click="arcpay.toggleDarkMode()" variant="secondary">toggle dark mode</Button>
     </div>

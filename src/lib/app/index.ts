@@ -9,7 +9,7 @@ export {
   selectWallet,
   createListing,
   type CreateListingOptions,
-  type ListingCreationParams
+  type ListingCreationParams,
 }
 
 export function closeDialog() {

@@ -81,6 +81,12 @@ export interface Arc72Interface {
   dutch: DutchInterface;
 }
 
+export interface ASAInterface {
+  sale: SaleInterface;
+  auction: AuctionInterface;
+  dutch: DutchInterface;
+}
+
 export interface VoiInterface {
   voi: {
     arc72: Arc72Interface;
@@ -92,6 +98,17 @@ export interface VoiInterface {
   };
 }
 
+export interface AlgoInterface {
+  algo: {
+    ASA: ASAInterface;
+    rwa: RwaInterface;
+  };
+  ASA: {
+    ASA: ASAInterface;
+    rwa: RwaInterface;
+  };
+}
+
 export interface CommonInterface {
   close: (
     algod: Algodv2,
@@ -99,19 +116,21 @@ export interface CommonInterface {
     fromAddress: string,
     appIndex: number,
     feesAppAddress: string,
-    feesAppId: number
+    feesAppId: number,
+    nftID?: number
   ) => Promise<TransactionConfirmation>;
   cancel: (
     algod: Algodv2,
     signer: TransactionSigner,
     fromAddress: string,
-    appIndex: number
+    appIndex: number,
+    nftID?: number
   ) => Promise<TransactionConfirmation>;
 }
 
 export interface Interfaces {
   voi: VoiInterface;
-  algo: {}
+  algo: AlgoInterface;
   common: CommonInterface;
 }
 
@@ -595,15 +614,373 @@ export const interfaces:Interfaces = {
             .preValidate([sellerAddress], [])
             .optIn(nftID)
             .pay(price)
-            .call('buy', [], [feesAppAddress], [feesAppId])
+            .call('buy', [], [feesAppAddress, sellerAddress], [feesAppId], [nftID])
             .send(signer)
+        },
+        auction: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            startPrice: number,
+            duration: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, {fromAddress})
+            .createApp([
+              longToByteArray(nftID, 8),
+              longToByteArray(startPrice * 1_000_000, 8),
+              longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8)
+            ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [])
+            .transferAsset(nftID, 1)
+            .send(signer),
+          bid: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            appIndex: number,
+            price: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .pay(price)
+            .call('bid', [])
+            .send(signer)
+        },
+        dutch: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            priceMin: number,
+            priceMax: number,
+            duration: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, {fromAddress})
+            .createApp([
+              longToByteArray(nftID, 8),
+              longToByteArray(priceMax * 1_000_000, 8),
+              longToByteArray(priceMin * 1_000_000, 8),
+              longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8)
+            ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [])
+            .transferAsset(nftID, 1)
+            .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            nftID: number,
+            appIndex: number,
+            sellerAddress: string,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .preValidate([sellerAddress], [])
+            .optIn(nftID)
+            .pay(price)
+            .call('buy', [], [feesAppAddress, sellerAddress], [feesAppId], [nftID])
+            .send(signer)
+        }
+      },
+      rwa: {
+        sale: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            rwaId: string,
+            rwaName: string,
+            price: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, { fromAddress })
+            .createApp([
+              longToByteArray(price * 1_000_000, 8),
+              new TextEncoder().encode(rwaId),
+              new TextEncoder().encode(rwaName),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8),
+            ], approvalProgram, clearProgram)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [])
+            .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            appIndex: number,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .pay(price)
+            .call('buy', [],[feesAppAddress], [feesAppId])
+            .send(signer),
         }
       }
     },
-    asa: {
-      asa: {
+    ASA: {
+      ASA: {
+        sale: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            price: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => {
+            return new Transaction(algod, {fromAddress})
+              .createApp([
+                longToByteArray(nftID, 8),
+                longToByteArray(price * asaDecimals, 8),
+                algosdk.decodeAddress(accountFeesAddress).publicKey,
+                longToByteArray(accountFees, 8),
+                longToByteArray(asaID, 8),
+              ], approvalProgram, clearProgram)
+              .send(signer)
+          },
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund(500_000)
+            .call('fund', [], [],[], [asaID])
+            .transferAsset(nftID, 1)
+            .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            appIndex: number,
+            sellerAddress: string,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .preValidate([sellerAddress], [])
+            .optIn(nftID)
+            .transferAsset(asaID, price * asaDecimals)
+            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
+            .send(signer)
+        },
+        auction: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            startPrice: number,
+            duration: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, {fromAddress})
+            .createApp([
+              longToByteArray(nftID, 8),
+              longToByteArray(startPrice * asaDecimals, 8),
+              longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8),
+              longToByteArray(asaID, 8),
+            ], approvalProgram, clearProgram, 9)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [], [], [], [asaID])
+            .transferAsset(nftID, 1)
+            .send(signer),
+          bid: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID,
+            asaDecimals,
+            appIndex: number,
+            price: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .transferAsset(asaID, price * asaDecimals)
+            .call('bid', [])
+            .send(signer)
+        },
+        dutch: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            priceMin: number,
+            priceMax: number,
+            duration: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, {fromAddress})
+            .createApp([
+              longToByteArray(nftID, 8),
+              longToByteArray(priceMax * asaDecimals, 8),
+              longToByteArray(priceMin * asaDecimals, 8),
+              longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
+              algosdk.decodeAddress(accountFeesAddress).publicKey,
+              longToByteArray(accountFees, 8),
+              longToByteArray(asaID, 8),
+            ], approvalProgram, clearProgram, 9)
+            .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [], [],[], [asaID])
+            .transferAsset(nftID, 1)
+            .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            nftID: number,
+            appIndex: number,
+            sellerAddress: string,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .preValidate([sellerAddress], [])
+            .optIn(nftID)
+            .transferAsset(asaID, price * asaDecimals)
+            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
+            .send(signer)
+        }
+      },
+      rwa: {
+        sale: {
+          create: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            rwaId: string,
+            rwaName: string,
+            price: number,
+            approvalProgram: string,
+            clearProgram: string,
+            accountFeesAddress: string,
+            accountFees: number
+          ) => new Transaction(algod, { fromAddress })
+              .createApp([
+                longToByteArray(price * asaDecimals, 8),
+                new TextEncoder().encode(rwaId),
+                new TextEncoder().encode(rwaName),
+                algosdk.decodeAddress(accountFeesAddress).publicKey,
+                longToByteArray(accountFees, 8),
+                longToByteArray(asaID, 8),
+              ], approvalProgram, clearProgram)
+              .send(signer),
+          fund: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            rwaId: string,
+            rwaName: string,
+            appIndex: number
+          ) => new Transaction(algod, {fromAddress, appIndex})
+            .fund()
+            .call('fund', [], [], [], [asaID])
+            .send(signer),
+          buy: (
+            algod: Algodv2,
+            signer: TransactionSigner,
+            fromAddress: string,
+            asaID: number,
+            asaDecimals: number,
+            appIndex: number,
+            sellerAddress: string,
+            price: number,
+            feesAppAddress: string,
+            feesAppId: number
+          ) => new Transaction(algod, { fromAddress, appIndex })
+            .transferAsset(asaID, price * asaDecimals)
+            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID])
+            .send(signer),
+        }
       }
-    }
+    },
   },
   common: {
     close: (
@@ -612,18 +989,36 @@ export const interfaces:Interfaces = {
       fromAddress: string,
       appIndex: number,
       feesAppAddress: string,
-      feesAppId: number
-    ) => new Transaction(algod, { fromAddress, appIndex })
-      .preValidate()
-      .call('close', [], [fromAddress, feesAppAddress], [appIndex, feesAppId])
-      .send(signer),
+      feesAppId: number,
+      nftID?: number,
+      asaID?: number,
+      sellerAddress?: string
+    ) => {
+      const foreignAssets = []
+      if (nftID) foreignAssets.push(nftID)
+      if (asaID) foreignAssets.push(asaID)
+      const accounts = [fromAddress, feesAppAddress]
+      if (sellerAddress) accounts.push(sellerAddress)
+
+      return new Transaction(algod, {fromAddress, appIndex})
+        .preValidate(undefined, [appIndex, feesAppId], foreignAssets)
+        .call('close', [], accounts, [appIndex, feesAppId], foreignAssets)
+        .send(signer)
+    },
     cancel: (
       algod: Algodv2,
       signer: TransactionSigner,
       fromAddress: string,
       appIndex: number,
-    ) => new Transaction(algod, { fromAddress, appIndex })
-      .delete()
-      .send(signer),
+      nftID?: number,
+      asaID?: number,
+    ) => {
+      const foreignAssets = []
+      if (nftID) foreignAssets.push(nftID)
+      if (asaID) foreignAssets.push(asaID)
+      return new Transaction(algod, { fromAddress, appIndex })
+        .delete(foreignAssets)
+        .send(signer)
+    },
   }
 }

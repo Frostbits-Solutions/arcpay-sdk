@@ -11,9 +11,13 @@
     <script type="module">
       import { createClient } from '/src/main.ts'
 
-      createClient('voi:testnet',{
+      createClient('algo:testnet',{
         apiKey: import.meta.env.VITE_DEBUG_API_KEY,
-        darkMode: false
+        darkMode: true
+      })
+      createClient('algo:mainnet',{
+        apiKey: import.meta.env.VITE_DEBUG_API_KEY,
+        darkMode: true
       })
     </script>
   </body>
