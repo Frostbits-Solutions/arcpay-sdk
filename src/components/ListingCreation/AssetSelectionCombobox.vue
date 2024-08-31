@@ -88,7 +88,7 @@ onMounted(async () => {
         />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="ap-p-0 ap-w-[333px]" side="right" :side-offset="-333">
+    <PopoverContent class="ap-p-0 ap-w-[333px] ap-h-[333px]" side="right" :side-offset="-333">
       <Command>
         <CommandInput class="ap-h-9" placeholder="Search by asset id" />
         <CommandEmpty>No asset found.</CommandEmpty>

@@ -18,7 +18,7 @@ const duration = ref<number>(7)
 
 const params = computed(() => {
   return {
-    type: 'sale',
+    type: 'dutch',
     priceMin: priceMin.value,
     priceMax: priceMax.value,
     duration: duration.value * 24,

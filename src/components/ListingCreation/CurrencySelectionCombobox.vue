@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { type Database } from '@/lib/supabase/database.types'
 import { getCurrencies } from '@/lib/supabase/currencies'
-import type { NetworksConfig } from '@/lib/algod/networks.config'
+import type {NetworksConfig} from '@/lib/algod/networks.config'
 
 const supabase = inject<SupabaseClient>('supabase')
 const network = inject<NetworksConfig>('network')
@@ -31,7 +31,7 @@ const selectedCurrency = computed(() => {
   return currencies.value.find((currency) => currency.ticker === value.value)
 })
 const open = ref(false)
-const value = ref('voi')
+const value = ref<string | undefined>(network?.chain)
 const loading = ref(true)
 
 function fetchCurrencies() {

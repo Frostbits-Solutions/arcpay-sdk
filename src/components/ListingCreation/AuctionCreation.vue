@@ -17,7 +17,7 @@ const duration = ref<number>(7)
 
 const params = computed(() => {
   return {
-    type: 'sale',
+    type: 'auction',
     price: price.value,
     duration: duration.value * 24,
     currency: currencySelectorRef.value?.selectedCurrency
