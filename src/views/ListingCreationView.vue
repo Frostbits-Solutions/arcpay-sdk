@@ -85,6 +85,10 @@ onMounted(() => {
 
 <style scoped>
 .router-link-exact-active {
-  border-color: hsl(var(--primary));
+  border-color: transparent;
+  background-image: linear-gradient(hsl(var(--background)), hsl(var(--background))),
+  var(--gradient);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
 }
 </style>
