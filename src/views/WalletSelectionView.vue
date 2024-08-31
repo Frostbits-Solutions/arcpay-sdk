@@ -28,6 +28,7 @@ interface Wallet {
 
 const manager = inject<WalletManager>('walletManager')
 const { callback } = inject<{WalletSelection: WalletSelectionProvider}>('appProvider')?.['WalletSelection'] || {}
+
 const error = ref<string | undefined>()
 const activeWallet = ref<Wallet | undefined>()
 const accountLoading = ref<boolean>(false)
@@ -68,7 +69,7 @@ async function selectWallet(wallet: Wallet) {
   activeWallet.value = wallet
   accountLoading.value = true
   if (wallet.isConnected) {
-    console.log('connected', wallet.isConnected, await wallet.resumeSession())
+    await wallet.resumeSession()
   }
   activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   accountLoading.value = false

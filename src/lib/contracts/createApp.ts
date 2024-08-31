@@ -1,13 +1,13 @@
 import {type WalletAccount, WalletManager} from "@txnlab/use-wallet";
 import {AppProvider, type ListingCreationParams, load} from "@/lib/app";
-import {interfaces, type VoiInterface} from "@/lib/contracts/interfaces";
+import {interfaces} from "@/lib/contracts/interfaces";
 import type {TransactionConfirmation} from "@/lib/transaction/Transaction";
 import getContract from "@/lib/contracts/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {SupabaseClient} from "@supabase/supabase-js";
 
 export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, accountId: number, account: WalletAccount, params: ListingCreationParams): Promise<number> {
-    const chainInterface = interfaces[networkConfig.chain] as VoiInterface
+    const chainInterface = interfaces[networkConfig.chain]
     const currency = params.currency?.type || networkConfig.chain
 
     const args = []
@@ -17,13 +17,14 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
 
     // Create application
     load(appProvider, 'Creating app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
-    const transactionConfirmation: TransactionConfirmation = await chainInterface[currency][params.asset.type.toLowerCase()][params.type].create(
+    const transactionConfirmation: TransactionConfirmation = await chainInterface[currency][params.asset.type][params.type].create(
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
+        ...formatCurrency(networkConfig, params),
         ...formatNftID(networkConfig, params),
         ...args,
-        await getContract(`${networkConfig.key}:${currency}_${params.asset.type.toLowerCase()}_${params.type}_approval:latest`),
+        await getContract(`${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
         await getContract(`${networkConfig.key}:clear:latest`),
         '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
         0
@@ -39,6 +40,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
+        ...formatCurrency(networkConfig, params),
         ...formatNftID(networkConfig, params),
         appIndex
     )
@@ -46,14 +48,38 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     return appIndex
 }
 
+function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationParams) {
+    const args = []
+    try {
+        if ( params.currency?.type === 'ASA') {
+            if (networkConfig.chain === 'voi') {
+                const [nftAppId, nftId] = params.currency.id.split('/')
+                args.push(parseInt(nftAppId), parseInt(nftId))
+            } else {
+                args.push(parseInt(params.currency.id))
+            }
+            args.push(params.currency?.decimals)
+        }
+    } catch (e) {
+        throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
+    }
+    return args
+
+}
+
 function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParams): number[] {
     const args = []
     try {
-        if (networkConfig.chain === 'voi') {
-            const [nftAppId, nftId] = params.asset.id.split('/')
-            args.push(parseInt(nftAppId), parseInt(nftId))
+        if (params.asset.type === 'rwa') {
+            args.push(params.asset.name)
+            args.push(params.asset.description)
         } else {
-            args.push(parseInt(params.asset.id))
+            if (networkConfig.chain === 'voi') {
+                const [nftAppId, nftId] = params.asset.id.split('/')
+                args.push(parseInt(nftAppId), parseInt(nftId))
+            } else {
+                args.push(parseInt(params.asset.id))
+            }
         }
     } catch (e) {
         throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
