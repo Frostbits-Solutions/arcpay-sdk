@@ -51,6 +51,7 @@ function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationPa
     const args = []
     try {
         if ( params.currency?.type === 'asa') {
+        if ( params.currency?.type === 'ASA') {
             if (networkConfig.chain === 'voi') {
                 const [nftAppId, nftId] = params.currency.id.split('/')
                 args.push(parseInt(nftAppId), parseInt(nftId))

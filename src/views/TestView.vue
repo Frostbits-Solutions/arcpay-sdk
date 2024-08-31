@@ -38,7 +38,7 @@ async function create() {
   }
 
   console.log(await createApp(networksConfig, appProvider, walletManager, client, 1, walletManager.activeAccount,  {
-    type: 'auction',
+    type: 'sale',
     asset: {
       id: "717821637",
       name: "tesrdtg",
