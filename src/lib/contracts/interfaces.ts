@@ -767,7 +767,7 @@ export const interfaces:Interfaces = {
             .preValidate([sellerAddress], [])
             .optIn(nftID)
             .transferAsset(asaID, price * asaDecimals)
-            .call('buy', [], [feesAppAddress], [feesAppId], [asaID, nftID])
+            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
             .send(signer)
         },
         auction: {
