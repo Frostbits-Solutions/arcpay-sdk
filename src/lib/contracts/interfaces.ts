@@ -977,7 +977,7 @@ export const interfaces:Interfaces = {
             feesAppId: number
           ) => new Transaction(algod, { fromAddress, appIndex })
             .transferAsset(asaID, price * asaDecimals)
-            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, rwaID])
+            .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID])
             .send(signer),
         }
       }
