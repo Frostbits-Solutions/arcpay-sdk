@@ -1,6 +1,6 @@
 import {type WalletAccount, WalletManager} from "@txnlab/use-wallet";
 import {AppProvider, type ListingCreationParams, load} from "@/lib/app";
-import {interfaces, type VoiInterface} from "@/lib/contracts/interfaces";
+import {interfaces} from "@/lib/contracts/interfaces";
 import type {TransactionConfirmation} from "@/lib/transaction/Transaction";
 import getContract from "@/lib/contracts/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
@@ -21,6 +21,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
+        ...formatCurrency(networkConfig, params),
         ...formatNftID(networkConfig, params),
         ...args,
         await getContract(`${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
@@ -44,6 +45,24 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     )
 
     return appIndex
+}
+
+function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationParams) {
+    const args = []
+    try {
+        if ( params.currency?.type === 'asa') {
+            if (networkConfig.chain === 'voi') {
+                const [nftAppId, nftId] = params.currency.id.split('/')
+                args.push(parseInt(nftAppId), parseInt(nftId))
+            } else {
+                args.push(parseInt(params.currency.id))
+            }
+        }
+    } catch (e) {
+        throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
+    }
+    return args
+
 }
 
 function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParams): number[] {
