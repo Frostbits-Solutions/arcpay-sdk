@@ -2,13 +2,15 @@ import {type WalletAccount, WalletManager} from "@txnlab/use-wallet";
 import {AppProvider, type ListingCreationParams, load} from "@/lib/app";
 import {interfaces} from "@/lib/contracts/interfaces";
 import type {TransactionConfirmation} from "@/lib/transaction/Transaction";
-import getContract from "@/lib/contracts/contracts";
+import getContract from "@/lib/supabase/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {SupabaseClient} from "@supabase/supabase-js";
 
 export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, accountId: number, account: WalletAccount, params: ListingCreationParams): Promise<number> {
-    const chainInterface = interfaces[networkConfig.chain]
-    const currency = params.currency?.type || networkConfig.chain
+    const chain = networkConfig.chain
+    const chainInterface = interfaces[chain]
+    const currency = params.currency?.type
+    if (!currency) throw new Error(`Unexpected error: Invalid currency ${params.currency?.name}`)
 
     const args = []
     if (params.type === 'sale') args.push(...formatSaleArgs(params))
@@ -17,6 +19,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
 
     // Create application
     load(appProvider, 'Creating app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
+    //@ts-ignore
     const transactionConfirmation: TransactionConfirmation = await chainInterface[currency][params.asset.type][params.type].create(
         walletManager.algodClient,
         walletManager.transactionSigner,
@@ -24,8 +27,8 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         ...formatCurrency(networkConfig, params),
         ...formatNftID(networkConfig, params),
         ...args,
-        await getContract(`${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
-        await getContract(`${networkConfig.key}:clear:latest`),
+        await getContract(client, `${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
+        await getContract(client,`${networkConfig.key}:clear:latest`),
         '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
         0
     )
@@ -36,6 +39,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     load(appProvider, 'Funding app', 'Transaction 2 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
 
     // Fund created app
+    //@ts-ignore
     await chainInterface[currency][params.asset.type][params.type].fund(
         walletManager.algodClient,
         walletManager.transactionSigner,
@@ -51,28 +55,23 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
 function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationParams) {
     const args = []
     try {
-        if ( params.currency?.type === 'ASA') {
-            if (networkConfig.chain === 'voi') {
-                const [nftAppId, nftId] = params.currency.id.split('/')
-                args.push(parseInt(nftAppId), parseInt(nftId))
-            } else {
-                args.push(parseInt(params.currency.id))
-            }
-            args.push(params.currency?.decimals)
+        if (params.currency?.type === 'asa') {
+            args.push(parseInt(params.currency.id))
+            args.push(params.currency.decimals || 1_000_000)
         }
     } catch (e) {
-        throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
+        throw new Error(`Invalid currency id ${params.currency?.id}. ${e}`)
     }
     return args
 
 }
 
-function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParams): number[] {
+function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParams): (number | string)[] {
     const args = []
     try {
-        if (params.asset.type === 'rwa') {
+        if (params.asset.type === 'offchain') {
+            args.push(params.asset.id)
             args.push(params.asset.name)
-            args.push(params.asset.description)
         } else {
             if (networkConfig.chain === 'voi') {
                 const [nftAppId, nftId] = params.asset.id.split('/')

@@ -8,7 +8,7 @@ const listingId = ref('')
 const arcpay = useArcpay('algo:testnet')
 
 function create() {
-  arcpay.create({accountId: 0, assetId:'29105406/583', listingType: 'sale'}).then((data) => {
+  arcpay.create({assetId:'29105406/583'}).then((data) => {
     console.log('Listing created', data)
   }).catch((error) => {
     console.error(error)
@@ -36,7 +36,7 @@ async function cancel () {
 </script>
 
 <template>
-  <div class="ap-w-[100dvw] ap-h-[100dvh]">
+  <div>
     <div class="ap-flex ap-gap-4 ap-p-4">
       <Button @click="create" variant="default">create</Button>
       <Button @click="buy" variant="default">buy</Button>

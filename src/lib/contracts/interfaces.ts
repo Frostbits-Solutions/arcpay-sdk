@@ -88,24 +88,26 @@ export interface ASAInterface {
 }
 
 export interface VoiInterface {
+  chain: 'voi',
   voi: {
     arc72: Arc72Interface;
-    rwa: RwaInterface;
+    offchain: RwaInterface;
   };
   arc200: {
     arc72: Arc72Interface;
-    rwa: RwaInterface;
+    offchain: RwaInterface;
   };
 }
 
 export interface AlgoInterface {
+  chain: 'algo',
   algo: {
-    ASA: ASAInterface;
-    rwa: RwaInterface;
+    asa: ASAInterface;
+    offchain: RwaInterface;
   };
-  ASA: {
-    ASA: ASAInterface;
-    rwa: RwaInterface;
+  asa: {
+    asa: ASAInterface;
+    offchain: RwaInterface;
   };
 }
 
@@ -136,6 +138,7 @@ export interface Interfaces {
 
 export const interfaces:Interfaces = {
   voi: {
+    chain: 'voi',
     voi: {
       arc72: {
         sale: {
@@ -287,7 +290,7 @@ export const interfaces:Interfaces = {
             .send(signer)
         }
       },
-      rwa: {
+      offchain: {
         sale: {
           create: (
             algod: Algodv2,
@@ -512,7 +515,7 @@ export const interfaces:Interfaces = {
             .send(signer)
         }
       },
-      rwa: {
+      offchain: {
         sale: {
           create: (
             algod: Algodv2,
@@ -568,8 +571,9 @@ export const interfaces:Interfaces = {
     }
   },
   algo: {
+    chain: 'algo',
     algo: {
-      ASA: {
+      asa: {
         sale: {
           create: (
             algod: Algodv2,
@@ -712,7 +716,7 @@ export const interfaces:Interfaces = {
             .send(signer)
         }
       },
-      rwa: {
+      offchain: {
         sale: {
           create: (
             algod: Algodv2,
@@ -758,8 +762,8 @@ export const interfaces:Interfaces = {
         }
       }
     },
-    ASA: {
-      ASA: {
+    asa: {
+      asa: {
         sale: {
           create: (
             algod: Algodv2,
@@ -810,7 +814,7 @@ export const interfaces:Interfaces = {
             feesAppAddress: string,
             feesAppId: number
           ) => new Transaction(algod, {fromAddress, appIndex})
-            .preValidate([sellerAddress], [])
+            .preValidate([sellerAddress], [], [asaID, nftID])
             .optIn(nftID)
             .transferAsset(asaID, price * asaDecimals)
             .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
@@ -918,14 +922,14 @@ export const interfaces:Interfaces = {
             feesAppAddress: string,
             feesAppId: number
           ) => new Transaction(algod, {fromAddress, appIndex})
-            .preValidate([sellerAddress], [])
+            .preValidate([sellerAddress], [], [asaID, nftID])
             .optIn(nftID)
             .transferAsset(asaID, price * asaDecimals)
             .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
             .send(signer)
         }
       },
-      rwa: {
+      offchain: {
         sale: {
           create: (
             algod: Algodv2,

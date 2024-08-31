@@ -3,7 +3,7 @@ export interface AssetMetadata {
   name: string
   description: string
   thumbnail: string
-  type: 'ARC72' | 'ASA' | 'OFFCHAIN'
+  type: 'arc72' | 'asa' | 'offchain'
   thumbnailMIMEType: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif'
   properties: { [key:string]: string }
 }

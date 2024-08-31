@@ -193,38 +193,85 @@ export type Database = {
           },
         ]
       }
+      contracts: {
+        Row: {
+          byte_code: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          byte_code: string
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          byte_code?: string
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      contracts_tags: {
+        Row: {
+          contract_id: number | null
+          created_at: string
+          tag: string
+        }
+        Insert: {
+          contract_id?: number | null
+          created_at?: string
+          tag: string
+        }
+        Update: {
+          contract_id?: number | null
+          created_at?: string
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_tags_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       currencies: {
         Row: {
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
-          type: Database["public"]["Enums"]["currency_type"]
+          decimals: number | null
           fees_address: string | null
           icon: string | null
           id: string
           name: string
           ticker: string
+          type: Database["public"]["Enums"]["currency_type"]
           updated_at: string | null
         }
         Insert: {
           chain: Database["public"]["Enums"]["chains"]
           created_at?: string
-          type: Database["public"]["Enums"]["currency_type"]
+          decimals?: number | null
           fees_address?: string | null
           icon?: string | null
           id: string
           name: string
           ticker: string
+          type: Database["public"]["Enums"]["currency_type"]
           updated_at?: string | null
         }
         Update: {
           chain?: Database["public"]["Enums"]["chains"]
           created_at?: string
-          type?: Database["public"]["Enums"]["currency_type"]
+          decimals?: number | null
           fees_address?: string | null
           icon?: string | null
           id?: string
           name?: string
           ticker?: string
+          type?: Database["public"]["Enums"]["currency_type"]
           updated_at?: string | null
         }
         Relationships: []
@@ -493,7 +540,7 @@ export type Database = {
     }
     Enums: {
       accounts_users_roles: "admin" | "moderator" | "member"
-      assets_types: "ARC72" | "OFFCHAIN" | "ASA"
+      assets_types: "arc72" | "offchain" | "asa"
       auctions_type: "english" | "dutch"
       chains: "voi:testnet" | "voi:mainnet" | "algo:testnet" | "algo:mainnet"
       currency_type: "algo" | "asa" | "voi" | "arc200"
