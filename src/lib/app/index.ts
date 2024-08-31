@@ -2,7 +2,6 @@ import {ref} from 'vue'
 import {AppProvider} from '@/lib/app/AppProvider'
 import {selectWallet} from '@/lib/app/selectWallet'
 import {createListing, type CreateListingOptions, type ListingCreationParams} from '@/lib/app/createListing'
-import {type BuyParams} from '@/lib/app/buyListing'
 import router from '@/router'
 
 export {
@@ -11,7 +10,6 @@ export {
   createListing,
   type CreateListingOptions,
   type ListingCreationParams,
-  type BuyParams
 }
 
 export function closeDialog() {

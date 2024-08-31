@@ -399,8 +399,6 @@ export class Transaction {
         }
       }
     }
-
-    console.log("a montrer à chaf", this._objs)
     return this._objs.map(this._getTxn)
   }
 
