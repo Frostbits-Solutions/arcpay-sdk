@@ -766,7 +766,7 @@ export const interfaces:Interfaces = {
           ) => new Transaction(algod, {fromAddress, appIndex})
             .preValidate([sellerAddress], [])
             .optIn(nftID)
-            .pay(price, undefined, asaDecimals)
+            .transferAsset(asaID, price * asaDecimals)
             .call('buy', [], [feesAppAddress], [feesAppId], [asaID, nftID])
             .send(signer)
         },
