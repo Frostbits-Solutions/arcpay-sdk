@@ -936,13 +936,17 @@ export const interfaces:Interfaces = {
       feesAppId: number,
       nftID?: number,
       asaID?: number,
+      sellerAddress?: string
     ) => {
       const foreignAssets = []
       if (nftID) foreignAssets.push(nftID)
       if (asaID) foreignAssets.push(asaID)
+      const accounts = [fromAddress, feesAppAddress]
+      if (sellerAddress) accounts.push(sellerAddress)
+      
       return new Transaction(algod, {fromAddress, appIndex})
         .preValidate()
-        .call('close', [], [fromAddress, feesAppAddress], [appIndex, feesAppId], foreignAssets)
+        .call('close', [], accounts, [appIndex, feesAppId], foreignAssets)
         .send(signer)
     },
     cancel: (
