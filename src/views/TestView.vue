@@ -74,7 +74,7 @@ async function buy() {
     return
   }
 
-  const res = await interfaces["algo"]["algo"]["ASA"]["auction"].buy(
+  const res = await interfaces["algo"]["algo"]["ASA"]["auction"].bid(
     walletManager.algodClient,
     walletManager.transactionSigner,
     walletManager.activeAddress,
