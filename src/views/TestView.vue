@@ -79,7 +79,7 @@ async function buy() {
     walletManager.algodClient,
     walletManager.transactionSigner,
     walletManager.activeAddress,
-    717821637, //nftID: number,
+    //717821637, //nftID: number, remove for bid
     718572552, //appIndex: number,
     // "", //sellerAddress: string, remove for bid
     1, //price: number,
