@@ -37,7 +37,7 @@ async function create() {
   }
 
   console.log(await createApp(networksConfig, appProvider, walletManager, client, 1, walletManager.activeAccount,  {
-    type: 'dutch',
+    type: 'auction',
     asset: {
       id: "717821637",
       name: "tesrdtg",
@@ -47,8 +47,7 @@ async function create() {
       thumbnailMIMEType: 'image/png',
       properties: { }
     },
-    priceMin: 1,
-    priceMax: 2,
+    price: 1,
     duration: 1000,
     currency: undefined
   }))
@@ -75,7 +74,7 @@ async function buy() {
     return
   }
 
-  const res = await interfaces["algo"]["algo"]["ASA"]["dutch"].buy(
+  const res = await interfaces["algo"]["algo"]["ASA"]["auction"].buy(
     walletManager.algodClient,
     walletManager.transactionSigner,
     walletManager.activeAddress,
