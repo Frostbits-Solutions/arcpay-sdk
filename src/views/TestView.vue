@@ -38,7 +38,7 @@ async function create() {
   }
 
   console.log(await createApp(networksConfig, appProvider, walletManager, client, 1, walletManager.activeAccount,  {
-    type: 'dutch',
+    type: 'auction',
     asset: {
       id: "717821637",
       name: "tesrdtg",
@@ -48,6 +48,7 @@ async function create() {
       thumbnailMIMEType: 'image/png',
       properties: { }
     },
+    price: 1,
     priceMin: 1,
     priceMax: 2,
     duration: 1000,
@@ -84,18 +85,18 @@ async function buy() {
     return
   }
 
-  const res = await interfaces["algo"]["ASA"]["ASA"]["dutch"].buy(
+  const res = await interfaces["algo"]["ASA"]["ASA"]["auction"].bid(
     walletManager.algodClient,
     walletManager.transactionSigner,
     walletManager.activeAddress,
-    718663983, // ASAID
-    1, // asa decimals
-    717821637, //nftID: number, remove for bid
+    //718663983, // ASAID
+    //1, // asa decimals
+    //717821637, //nftID: number, remove for bid
     718572552, //appIndex: number,
-     "", //sellerAddress: string, remove for bid
+   //  "", //sellerAddress: string, remove for bid
     1, //price: number,
-     "", //feesAppAddress: string, remove for bid
-     0 //feesAppId: number   remove for bid
+   //  "", //feesAppAddress: string, remove for bid
+   //  0 //feesAppId: number   remove for bid
   )
   console.log(res)
 }
