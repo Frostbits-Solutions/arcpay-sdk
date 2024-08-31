@@ -969,7 +969,6 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             asaID: number,
             asaDecimals: number,
-            rwaID: number,
             appIndex: number,
             sellerAddress: string,
             price: number,
