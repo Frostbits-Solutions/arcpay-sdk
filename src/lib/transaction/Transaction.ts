@@ -48,11 +48,11 @@ type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, fore
 type PreValidateArgs = [accounts?: string[], foreignApps?: number[]]
 type PayArgs = [amount: number, to?: string]
 type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
-type DeleteArgs = []
+type DeleteArgs = [foreignAssets?: number[]]
 type TransferAssetsArgs = [assetIndex: number, amount: number, to?: string]
 type OptInArgs = [assetIndex: number]
 
-type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs | OptInArgs
+type QueueArgs =  CreateAppArgs | FundArgs | ApproveArgs | PreValidateArgs | PayArgs | CallArgs | TransferAssetsArgs | OptInArgs | DeleteArgs
 
 interface QueueObject {
   method: QueueMethods,
@@ -105,8 +105,8 @@ export class Transaction {
     return this
   }
 
-  public delete() {
-    this._queue.push({ method: '_delete', args: [] })
+  public delete(foreignAssets?: number[]) {
+    this._queue.push({ method: '_delete', args: [ foreignAssets ] })
     return this
   }
 
@@ -286,7 +286,7 @@ export class Transaction {
     this._objs.push(appCallObj)
   }
 
-  private async _delete() {
+  private async _delete(foreignAssets?: number[]) {
     if (!this._appIndex) throw new TransactionError('Unable to delete app: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to delete app: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -300,6 +300,11 @@ export class Transaction {
       foreignApps: [this._appIndex],
       suggestedParams
     }
+
+    if (foreignAssets) {
+      appDeleteObj.foreignAssets = foreignAssets
+    }
+
     this._objs.push(appDeleteObj)
   }
 

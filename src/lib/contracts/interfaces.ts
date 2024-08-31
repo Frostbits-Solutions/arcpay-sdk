@@ -918,8 +918,13 @@ export const interfaces:Interfaces = {
       signer: TransactionSigner,
       fromAddress: string,
       appIndex: number,
-    ) => new Transaction(algod, { fromAddress, appIndex })
-      .delete()
-      .send(signer),
+      nftID?: number
+    ) => {
+      const foreignAssets = []
+      if (nftID) foreignAssets.push(nftID)
+      return new Transaction(algod, { fromAddress, appIndex })
+        .delete(foreignAssets)
+        .send(signer)
+    },
   }
 }
