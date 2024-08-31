@@ -342,6 +342,7 @@ export class Transaction {
 
     // Get accounts accessed by the app and add them to the app object
     if (results?.txnGroups[0]?.unnamedResourcesAccessed?.accounts) {
+      let accountStart = 0
       for (const obj of this._objs) {
         if (obj.type !== TransactionType.appl) {
           continue
@@ -349,11 +350,15 @@ export class Transaction {
 
         const appObj = obj as AppObject
         const accounts = results?.txnGroups[0].unnamedResourcesAccessed.accounts
+        const nextStart = accountStart + 4 - (appObj.accounts?.length || 0)
+
+        const newAccounts = accounts.slice(accountStart, nextStart)
         if (appObj.accounts) {
-          appObj.accounts = Array.from(new Set([...appObj.accounts, ...accounts]))
+          appObj.accounts = Array.from(new Set([...appObj.accounts, ...newAccounts]))
         } else {
-          appObj.accounts = accounts
+          appObj.accounts = newAccounts
         }
+        accountStart = nextStart
       }
     }
 
