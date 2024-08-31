@@ -792,7 +792,7 @@ export const interfaces:Interfaces = {
               algosdk.decodeAddress(accountFeesAddress).publicKey,
               longToByteArray(accountFees, 8),
               longToByteArray(asaID, 8),
-            ], approvalProgram, clearProgram)
+            ], approvalProgram, clearProgram, 9)
             .send(signer),
           fund: (
             algod: Algodv2,
