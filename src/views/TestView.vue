@@ -5,6 +5,7 @@ import {inject, ref} from 'vue'
 import {interfaces} from "@/lib/contracts/interfaces";
 import {WalletId, WalletManager} from "@txnlab/use-wallet";
 import {createApp} from "@/lib/contracts/createApp";
+import {Algodv2, TransactionSigner} from "algosdk";
 
 const listingId = ref('')
 
@@ -80,10 +81,10 @@ async function buy() {
     walletManager.activeAddress,
     717821637, //nftID: number,
     718572552, //appIndex: number,
-    "", //sellerAddress: string,
+    // "", //sellerAddress: string, remove for bid
     1, //price: number,
-    "", //feesAppAddress: string,
-    0 //feesAppId: number
+    // "", //feesAppAddress: string, remove for bid
+    // 0 //feesAppId: number   remove for bid
   )
   console.log(res)
 }
