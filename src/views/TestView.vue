@@ -60,14 +60,7 @@ async function buy() {
   //     console.error(error)
   //   })
   // }
-  const walletManager = inject<WalletManager>('walletManager')
-
-
-  console.log('buy')
-  if (walletManager === undefined) {
-    console.log('no wallet manager')
-    return
-  }
+  const walletManager = arcpay.getWalletManager()
 
   const peraWallet = walletManager.getWallet(WalletId.PERA)
   if(peraWallet?.isConnected){
@@ -89,8 +82,58 @@ async function buy() {
     "", //sellerAddress: string,
     1, //price: number,
     "", //feesAppAddress: string,
-    "" //feesAppId: number
+    0 //feesAppId: number
   )
+  console.log(res)
+}
+
+async function close () {
+  const walletManager = arcpay.getWalletManager()
+
+  const peraWallet = walletManager.getWallet(WalletId.PERA)
+  if(peraWallet?.isConnected){
+    await peraWallet?.resumeSession()
+  }
+  await peraWallet?.connect()
+
+  if (walletManager.activeAddress === null) {
+    console.log('no active address')
+    return
+  }
+
+  const res = await interfaces["common"].close(
+    walletManager.algodClient,
+    walletManager.transactionSigner,
+    walletManager.activeAddress,
+    718572552, //appIndex: number,
+    "", //feesAppAddress: string,
+    0 //feesAppId: number
+  )
+
+  console.log(res)
+}
+
+async function cancel () {
+  const walletManager = arcpay.getWalletManager()
+
+  const peraWallet = walletManager.getWallet(WalletId.PERA)
+  if(peraWallet?.isConnected){
+    await peraWallet?.resumeSession()
+  }
+  await peraWallet?.connect()
+
+  if (walletManager.activeAddress === null) {
+    console.log('no active address')
+    return
+  }
+
+  const res = await interfaces["common"].cancel(
+    walletManager.algodClient,
+    walletManager.transactionSigner,
+    walletManager.activeAddress,
+    718572552, //appIndex: number
+  )
+
   console.log(res)
 }
 
@@ -101,6 +144,8 @@ async function buy() {
     <div class="ap-flex ap-gap-4 ap-p-4">
       <Button @click="create" variant="default">create</Button>
       <Button @click="buy" variant="default">buy</Button>
+      <Button @click="cancel" variant="default">cancel</Button>
+      <Button @click="close" variant="default">close</Button>
       <input type="text" v-model="listingId" placeholder="listing id"/>
       <Button @click="arcpay.toggleDarkMode()" variant="secondary">toggle dark mode</Button>
     </div>
