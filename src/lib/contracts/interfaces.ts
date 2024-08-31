@@ -741,17 +741,19 @@ export const interfaces:Interfaces = {
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
             nftID: number,
             appIndex: number
           ) => new Transaction(algod, {fromAddress, appIndex})
             .fund(500_000)
-            .call('fund', [])
+            .call('fund', [], [],[], [asaID])
             .transferAsset(nftID, 1)
             .send(signer),
           buy: (
             algod: Algodv2,
             signer: TransactionSigner,
             fromAddress: string,
+            asaID: number,
             nftID: number,
             appIndex: number,
             sellerAddress: string,
@@ -762,7 +764,7 @@ export const interfaces:Interfaces = {
             .preValidate([sellerAddress], [])
             .optIn(nftID)
             .pay(price)
-            .call('buy', [], [feesAppAddress], [feesAppId])
+            .call('buy', [], [feesAppAddress], [feesAppId], [asaID, nftID])
             .send(signer)
         },
         auction: {

@@ -40,6 +40,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
+        ...formatCurrency(networkConfig, params),
         ...formatNftID(networkConfig, params),
         appIndex
     )
