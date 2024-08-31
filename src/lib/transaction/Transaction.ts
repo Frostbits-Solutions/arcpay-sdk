@@ -47,7 +47,7 @@ type FundArgs = [amount?: number]
 type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, foreignApps: number[], args: (string | number)[]]
 type PreValidateArgs = [accounts?: string[], foreignApps?: number[]]
 type PayArgs = [amount: number, to?: string]
-type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]]
+type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
 type DeleteArgs = []
 type TransferAssetsArgs = [assetIndex: number, amount: number, to?: string]
 type OptInArgs = [assetIndex: number]
@@ -100,8 +100,8 @@ export class Transaction {
     return this
   }
 
-  public call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]) {
-    this._queue.push({ method: '_call', args: [ functionName, args, accounts, foreignApps ] })
+  public call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
+    this._queue.push({ method: '_call', args: [ functionName, args, accounts, foreignApps, foreignAssets ] })
     return this
   }
 
@@ -266,7 +266,7 @@ export class Transaction {
     this._objs.push(payObj)
   }
 
-  private async _call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[]) {
+  private async _call(functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]) {
     if (!this._appIndex) throw new TransactionError('Unable to call: App index not set.')
     if (!this._fromAddress) throw new TransactionError('Unable to call: From address not set.')
     const suggestedParams = await this._getSuggestedParams()
@@ -281,6 +281,8 @@ export class Transaction {
     }
     if (accounts) appCallObj.accounts = accounts
     if (foreignApps) appCallObj.foreignApps = foreignApps
+    if (foreignAssets) appCallObj.foreignAssets = foreignAssets
+
     this._objs.push(appCallObj)
   }
 
