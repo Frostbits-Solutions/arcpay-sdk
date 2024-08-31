@@ -70,14 +70,16 @@ function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationPa
 function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParams): number[] {
     const args = []
     try {
-        if (networkConfig.chain === 'voi') {
-            const [nftAppId, nftId] = params.asset.id.split('/')
-            args.push(parseInt(nftAppId), parseInt(nftId))
-        } else {
-            args.push(parseInt(params.asset.id))
-        }
         if (params.asset.type === 'rwa') {
             args.push(params.asset.name)
+            args.push(params.asset.description)
+        } else {
+            if (networkConfig.chain === 'voi') {
+                const [nftAppId, nftId] = params.asset.id.split('/')
+                args.push(parseInt(nftAppId), parseInt(nftId))
+            } else {
+                args.push(parseInt(params.asset.id))
+            }
         }
     } catch (e) {
         throw new Error(`Invalid asset id ${params.asset.id}. ${e}`)
