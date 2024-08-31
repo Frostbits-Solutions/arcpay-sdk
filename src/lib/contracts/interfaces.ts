@@ -941,15 +941,15 @@ export const interfaces:Interfaces = {
             accountFeesAddress: string,
             accountFees: number
           ) => new Transaction(algod, { fromAddress })
-            .createApp([
-              longToByteArray(price * asaDecimals, 8),
-              new TextEncoder().encode(rwaId),
-              new TextEncoder().encode(rwaName),
-              algosdk.decodeAddress(accountFeesAddress).publicKey,
-              longToByteArray(accountFees, 8),
-              longToByteArray(asaID, 8),
-            ], approvalProgram, clearProgram)
-            .send(signer),
+              .createApp([
+                longToByteArray(price * asaDecimals, 8),
+                new TextEncoder().encode(rwaId),
+                new TextEncoder().encode(rwaName),
+                algosdk.decodeAddress(accountFeesAddress).publicKey,
+                longToByteArray(accountFees, 8),
+                longToByteArray(asaID, 8),
+              ], approvalProgram, clearProgram)
+              .send(signer),
           fund: (
             algod: Algodv2,
             signer: TransactionSigner,
