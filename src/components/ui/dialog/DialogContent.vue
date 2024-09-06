@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue'
+import {type HTMLAttributes, computed, inject} from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -12,6 +12,7 @@ import {
 import { Cross2Icon } from '@radix-icons/vue'
 import { cn } from '@/lib/utils'
 import { useRoute } from 'vue-router'
+import type {NetworksConfig} from "@/lib/algod/networks.config";
 
 const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<DialogContentEmits>()
@@ -22,8 +23,8 @@ const delegatedProps = computed(() => {
   return delegated
 })
 const route = useRoute()
-
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const network: NetworksConfig | undefined = inject('network')
 </script>
 
 <template>
@@ -31,6 +32,9 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     <DialogOverlay
       class="ap-fixed ap-inset-0 ap-z-50 ap-bg-slate-100/80 dark:ap-bg-slate-900/80 ap-backdrop-blur-md data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
     >
+      <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4">
+        Connected to {{ network?.key}}
+      </div>
       <div class="ap-absolute ap-bottom-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-justify-center ap-w-full">
         Powered by<img src="@/assets/logo.png" alt="Arcpay logo" class="ap-w-4 ap-h-4 ap-ml-1 ap-mr-0.5"/>arcpay.
       </div>

@@ -17,14 +17,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import type { OnChainAssetMetadata } from '@/lib/types'
+import type { AssetMetadata } from '@/lib/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { WalletAccount } from '@txnlab/use-wallet'
 import type { NetworksConfig } from '@/lib/algod/networks.config'
+import {WalletManager} from "@txnlab/use-wallet";
 
 const props = defineProps<{account: WalletAccount | undefined, defaultValue: string | undefined}>()
 const network = inject<NetworksConfig>('network')
-const assets = ref<OnChainAssetMetadata[]>([])
+const walletManager = inject<WalletManager>('walletManager')
+const assets = ref<AssetMetadata[]>([])
 const open = ref(false)
 const value = ref('')
 const loading = ref(true)
@@ -33,9 +35,9 @@ const selectedAsset = computed(() => {
 })
 
 function getAssets() {
-  if (network && props.account?.address) {
+  if (network && walletManager && props.account?.address) {
     loading.value = true
-    network.services.getAddressAssets(props.account.address).then((data) => {
+    network.services.getAddressAssets(walletManager.algodClient, props.account.address).then((data) => {
       assets.value = data
       if (assets.value.findIndex((asset) => asset.id === props.defaultValue) !== -1) {
         value.value = props.defaultValue || ''
@@ -86,7 +88,7 @@ onMounted(async () => {
         />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="ap-p-0 ap-w-[333px]" side="right" :side-offset="-333">
+    <PopoverContent class="ap-p-0 ap-w-[333px] ap-h-[333px]" side="right" :side-offset="-333">
       <Command>
         <CommandInput class="ap-h-9" placeholder="Search by asset id" />
         <CommandEmpty>No asset found.</CommandEmpty>

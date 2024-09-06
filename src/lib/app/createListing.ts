@@ -2,7 +2,7 @@ import type { AppProvider } from '@/lib/app/AppProvider'
 import type { WalletAccount } from "@txnlab/use-wallet";
 import router from '@/router'
 import type { Database } from '@/lib/supabase/database.types'
-import type { OnChainAssetMetadata } from '@/lib/types'
+import type { AssetMetadata } from '@/lib/types'
 
 export type ListingType = 'sale' | 'auction' | 'dutch'
 
@@ -14,22 +14,22 @@ export interface CreateListingOptions {
 
 export interface SaleParams {
   type: 'sale',
-  asset: OnChainAssetMetadata,
+  asset: AssetMetadata,
   price: number,
   currency: Database['public']['Tables']['currencies']['Row'] | undefined
 }
 
 export interface AuctionParams {
-  type: 'sale',
-  asset: OnChainAssetMetadata,
+  type: 'auction',
+  asset: AssetMetadata,
   price: number,
   duration: number,
   currency: Database['public']['Tables']['currencies']['Row'] | undefined
 }
 
 export interface DutchParams {
-  type: 'sale',
-  asset: OnChainAssetMetadata,
+  type: 'dutch',
+  asset: AssetMetadata,
   priceMin: number,
   priceMax: number,
   duration: number,

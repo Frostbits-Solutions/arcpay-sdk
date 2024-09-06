@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { type Database } from '@/lib/supabase/database.types'
 import { getCurrencies } from '@/lib/supabase/currencies'
-import type { NetworksConfig } from '@/lib/algod/networks.config'
+import type {NetworksConfig} from '@/lib/algod/networks.config'
 
 const supabase = inject<SupabaseClient>('supabase')
 const network = inject<NetworksConfig>('network')
@@ -31,7 +31,7 @@ const selectedCurrency = computed(() => {
   return currencies.value.find((currency) => currency.ticker === value.value)
 })
 const open = ref(false)
-const value = ref('voi')
+const value = ref<string | undefined>(network?.chain)
 const loading = ref(true)
 
 function fetchCurrencies() {
@@ -67,6 +67,7 @@ onMounted(() => {
         role="combobox"
         :aria-expanded="open"
         class="ap-justify-between ap-w-[120px] ap-p-1"
+        size="lg"
       >
         <template v-if="!value">
           Select currency
@@ -99,7 +100,7 @@ onMounted(() => {
                 open = false
               }">
               <div class="ap-flex ap-items-center ap-gap-1 ap-min-w-0">
-                <img :src="selectedCurrency?.icon || defaultCurrencyIcon" :alt="`${currency.ticker} icon`" class="ap-h-5 ap-w-5 ap-rounded-full ap-bg-border" />
+                <img :src="currency?.icon || defaultCurrencyIcon" :alt="`${currency.ticker} icon`" class="ap-h-5 ap-w-5 ap-rounded-full ap-bg-border" />
                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
                   <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ currency.ticker.toUpperCase() }}</div>
                   ID: {{ currency.id }}

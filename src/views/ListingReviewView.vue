@@ -4,9 +4,10 @@ import CountUp from 'vue-countup-v3'
 import type { ListingParams } from '@/lib/app/reviewListing'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-vue-next'
+import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
 
 interface ListingReviewProvider {
-  callback: () => void
+  callback: (price: number, error?: Error) => void
   args: {
     listingParams: ListingParams
   }
@@ -33,28 +34,7 @@ const nftNavigatorLink = computed(() => {
         <span
           class="ap-ms-1 ap-text-xl ap-font-normal ap-text-gray-500 dark:ap-text-gray-400">{{ listingParams.listing_currency !== '0' ? `ARC200(${listingParams.listing_currency})` : 'VOI' }}</span>
       </div>
-      <div>
-        <span v-if="['pending'].includes(listingParams.status || '')"
-              class="ap-inline-flex ap-items-center ap-bg-gray-100 ap-text-gray-800 ap-text-xs ap-font-medium ap-px-2.5 ap-py-1.5 ap-rounded-full dark:ap-bg-gray-700 dark:ap-text-gray-300">
-          <span class="ap-w-2 ap-h-2 ap-me-1 ap-bg-gray-500 ap-rounded-full"></span>
-          {{ listingParams.status }}
-        </span>
-        <span v-if="['active'].includes(listingParams.status || '')"
-              class="ap-inline-flex ap-items-center ap-bg-purple-100 ap-text-purple-800 ap-text-xs ap-font-medium ap-px-2.5 ap-py-1.5 ap-rounded-full dark:ap-bg-purple-900 dark:ap-text-purple-300">
-          <span class="ap-w-2 ap-h-2 ap-me-1 ap-bg-purple-500 ap-rounded-full"></span>
-          {{ listingParams.status }}
-        </span>
-        <span v-if="['closed'].includes(listingParams.status || '')"
-              class="ap-inline-flex ap-items-center ap-bg-green-100 ap-text-green-800 ap-text-xs ap-font-medium ap-px-2.5 ap-py-1.5 ap-rounded-full dark:ap-bg-green-900 dark:ap-text-green-300">
-          <span class="ap-w-2 ap-h-2 ap-me-1 ap-bg-green-500 ap-rounded-full"></span>
-          {{ listingParams.status }}
-        </span>
-        <span v-if="['cancelled'].includes(listingParams.status || '')"
-              class="ap-inline-flex ap-items-center ap-bg-red-100 ap-text-red-800 ap-text-xs ap-font-medium ap-px-2.5 ap-py-1.5 ap-rounded-full dark:ap-bg-red-900 dark:ap-text-red-300">
-          <span class="ap-w-2 ap-h-2 ap-me-1 ap-bg-red-500 ap-rounded-full"></span>
-          {{ listingParams.status }}
-        </span>
-      </div>
+      <ListingStatusChip :listing-params="listingParams"/>
     </div>
     <a
       :href="nftNavigatorLink"
@@ -68,7 +48,7 @@ const nftNavigatorLink = computed(() => {
       />
     </a>
     <div class="ap-flex ap-justify-center ap-items-center ap-w-full ap-mt-6">
-      <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl" @click="callback" v-if="listingParams.status === 'active'">
+      <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl" @click="callback(listingParams?.asking_price || 1)" v-if="listingParams.status === 'active'">
         <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
         <span class="text">Buy {{listingParams.listing_name}}</span>
         <span class="circle"></span>
