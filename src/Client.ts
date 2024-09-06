@@ -20,6 +20,7 @@ import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
 import {createApp} from "@/lib/contracts/createApp";
 import {buy} from "@/lib/contracts/buy";
+import {Transaction} from "@/lib/transaction/Transaction";
 
 export interface ArcpayClientOptions {
   apiKey?: string,
@@ -208,6 +209,22 @@ export class ArcpayClient {
       }
     } catch (error) {
       //@ts-ignore
+      const message = error.message || 'Unknown Error'
+      displayError(this._appProvider, 'Error', message, () => {
+        closeDialog()
+      })
+      throw error
+    }
+  }
+  public async testAppCall(params): Promise<Transaction> {
+  try {
+    await selectWallet(this._appProvider)
+    const transactionConfirmation = new Transaction(this._walletManager.algodClient, {fromAddress: params.fromAddress, appIndex: params.appIndex})
+      .call(params.appName, params.args, params.accounts, params.foreignApps, params.foreignAssets)
+      .send(this._walletManager.transactionSigner)
+      return transactionConfirmation
+    } catch (error) {
+  //@ts-ignore
       const message = error.message || 'Unknown Error'
       displayError(this._appProvider, 'Error', message, () => {
         closeDialog()
