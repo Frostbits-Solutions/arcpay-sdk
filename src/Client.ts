@@ -10,17 +10,16 @@ import {
   type CreateListingOptions,
   displayError,
   type ListingCreationParams,
-  load,
   selectWallet,
   success
 } from '@/lib/app'
 import { type SupportedWallet, type WalletAccount, WalletManager} from '@txnlab/use-wallet'
-import { interfaces, type VoiInterface } from '@/lib/contracts/interfaces'
 import {createAuction, createSale, getListingById, getListings} from '@/lib/supabase/listings'
 import type {ListingType} from '@/lib/app/createListing'
 import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
 import {createApp} from "@/lib/contracts/createApp";
+import {buy} from "@/lib/contracts/buy";
 
 export interface ArcpayClientOptions {
   apiKey?: string,
@@ -106,7 +105,7 @@ export class ArcpayClient {
       const account: WalletAccount = await selectWallet(this._appProvider)
       const params: ListingCreationParams = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
       // Create application
-      const appIndex = await createApp(this._networkConfig, this._appProvider, this._walletManager, this._client, accountId, account, params)
+      const appIndex = await createApp(this._networkConfig, this._appProvider, this._walletManager, this._client, account, params)
       // Save listing in DB
       let listingId: string | undefined
       if (params.type === 'sale') {
@@ -198,25 +197,11 @@ export class ArcpayClient {
       const { data: listingParams, error } = await getListingById(this._client, id)
       if (error) throw new Error(`Unable to fetch listing: ${error.message}`)
 
-      if (listingParams && listingParams.asset_id && listingParams.listing_type === 'sale') {
-        await reviewListing(this._appProvider, listingParams)
+      if (listingParams && listingParams.asset_id) {
+        const price = await reviewListing(this._appProvider, listingParams)
         const account: WalletAccount = await selectWallet(this._appProvider)
-        const chain = interfaces[this._networkConfig.chain] as VoiInterface
-        const currency = listingParams.listing_currency !== '0' ? 'arc200' : 'voi'
-        const [nftAppId, _] = listingParams.asset_id.split('/')
-        load(this._appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction.')
-        const transactionConfirmation: TransactionConfirmation = await chain[currency]['arc72']['sale'].buy(
-          this._walletManager.algodClient,
-          this._walletManager.transactionSigner,
-          account.address,
-          parseInt(nftAppId),
-          listingParams.app_id,
-          listingParams.seller_address,
-          listingParams.asking_price,
-          'ZTVMV2EQNUU3HJQ3HUPBLXMPD3PLVQGCJ4SDGOM4BU2W4554UTMPDQ2TTU',
-          54881294,
-        )
-        success(this._appProvider, 'NFT purchased!', 'Check your wallet', () => {
+        const transactionConfirmation = await buy(this._networkConfig, this._appProvider, this._walletManager, this._client, account, listingParams, price)
+        success(this._appProvider, 'Success!', 'Transaction confirmed, check your wallet!', () => {
           closeDialog()
         })
         return transactionConfirmation
