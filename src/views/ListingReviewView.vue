@@ -28,7 +28,7 @@ const nftNavigatorLink = computed(() => {
 
 <template>
   <div class="ap-flex ap-flex-col ap-justify-start ap-gap-4 ap-items-center" v-if="listingParams">
-    <div class="ap-w-full ap-flex ap-justify-between ap-items-center ap-pt-1.5 ap-pr-10 ap-pl-4 ap-mb-2">
+    <div class="ap-w-full ap-flex ap-justify-between ap-items-center ap-pt-8 ap-mb-2">
       <div class="ap-flex ap-items-baseline ap-text-gray-900 dark:ap-text-white">
         <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight"><count-up :end-val="listingParams.asking_price?.toString() || 999" :decimalPlaces="2" :duration="1"></count-up></span>
         <span
@@ -48,7 +48,7 @@ const nftNavigatorLink = computed(() => {
       />
     </a>
     <div class="ap-flex ap-justify-center ap-items-center ap-w-full ap-mt-6">
-      <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl" @click="callback(listingParams?.asking_price || 1)" v-if="listingParams.status === 'active'">
+      <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl" v-if="listingParams.status === 'active'">
         <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
         <span class="text">Buy {{listingParams.listing_name}}</span>
         <span class="circle"></span>
@@ -141,7 +141,7 @@ const nftNavigatorLink = computed(() => {
 
 .animated-button:active {
   scale: 0.95;
-  box-shadow: 0 0 0 4px hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--border));
 }
 
 .animated-button:hover .circle {

@@ -30,7 +30,7 @@ const network: NetworksConfig | undefined = inject('network')
 <template>
   <DialogPortal disabled>
     <DialogOverlay
-      class="ap-fixed ap-inset-0 ap-z-50 ap-bg-slate-100/80 dark:ap-bg-slate-900/80 ap-backdrop-blur-md data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
+      class="ap-fixed ap-inset-0 ap-z-50 ap-bg-slate-100/60 dark:ap-bg-slate-900/60 ap-backdrop-blur-sm data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
     >
       <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4">
         Connected to {{ network?.key}}
@@ -43,10 +43,9 @@ const network: NetworksConfig | undefined = inject('network')
       v-bind="forwarded"
       :class="
         cn(
-          'ap-fixed ap-left-1/2 ap-top-1/2 ap-z-50 ap-table ap--translate-x-1/2 ap--translate-y-1/2 ap-duration-200 data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0 data-[state=closed]:ap-zoom-out-95 data-[state=open]:ap-zoom-in-95 data-[state=closed]:ap-slide-out-to-left-1/2 data-[state=closed]:ap-slide-out-to-top-[48%] data-[state=open]:ap-slide-in-from-left-1/2 data-[state=open]:ap-slide-in-from-top-[48%] ap-rounded-2xl ap-transition-all',
+          'ap-fixed ap-border ap-border-border ap-bg-background/20 ap-backdrop-blur-lg ap-shadow-2xl ap-left-1/2 ap-top-1/2 ap-z-50 ap-table ap--translate-x-1/2 ap--translate-y-1/2 ap-duration-200 data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0 data-[state=closed]:ap-zoom-out-95 data-[state=open]:ap-zoom-in-95 data-[state=closed]:ap-slide-out-to-left-1/2 data-[state=closed]:ap-slide-out-to-top-[48%] data-[state=open]:ap-slide-in-from-left-1/2 data-[state=open]:ap-slide-in-from-top-[48%] ap-rounded-2xl ap-transition-all',
           props.class,
           route.meta.fullSize ? 'ap-p-0 ap-overflow-hidden' : 'ap-p-6',
-          route.meta.transparent ? 'ap-p-0' : 'ap-border ap-border-border ap-bg-background ap-shadow-lg'
         )"
     >
       <slot />

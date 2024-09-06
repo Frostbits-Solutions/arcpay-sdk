@@ -35,7 +35,7 @@ const { callback, args } = inject<{ Error: ErrorProvider }>('appProvider')?.['Er
         <div v-if="args?.title" class="ap-text-md ap-font-semibold ap-text-foreground">{{ args.title }}</div>
         <div v-if="args?.description" class="ap-text-xs ap-text-muted-foreground ap-break-all">{{ args.description }}</div>
       </div>
-      <Button @click="callback" variant="secondary" size="lg" class="ap-mb-8 ap-grow-0 ap-w-24">Close</Button>
+      <Button @click="callback" variant="secondary" size="lg" class="ap-mb-8 ap-grow-0 ap-w-24 ap-bg-background">Close</Button>
     </div>
   </div>
 </template>
@@ -49,7 +49,6 @@ const { callback, args } = inject<{ Error: ErrorProvider }>('appProvider')?.['Er
   stroke-width: 2;
   stroke: url(#gradient);
   stroke-miterlimit: 10;
-  box-shadow: inset 0px 0px 0px rgb(255, 204, 112);
   animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
   position: relative;
   top: 5px;
@@ -63,7 +62,6 @@ const { callback, args } = inject<{ Error: ErrorProvider }>('appProvider')?.['Er
   stroke-width: 2;
   stroke-miterlimit: 10;
   stroke: url(#gradient);
-  fill: hsl(var(--background));
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
 
@@ -87,12 +85,6 @@ const { callback, args } = inject<{ Error: ErrorProvider }>('appProvider')?.['Er
 
   50% {
     transform: scale3d(1.1, 1.1, 1);
-  }
-}
-
-@keyframes fill {
-  100% {
-    box-shadow: inset 0px 0px 0px 30px rgb(255, 204, 112);
   }
 }
 </style>

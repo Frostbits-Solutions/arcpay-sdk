@@ -97,7 +97,7 @@ async function selectAccount(account: WalletAccount) {
 <template>
   <ul class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2" v-if="!activeWallet || accountLoading">
     <li v-for="wallet in wallets" :key="wallet.id">
-      <Button @click="selectWallet(wallet)" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between" :disabled="isConnectDisabled(wallet)">
+      <Button @click="selectWallet(wallet)" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between ap-bg-background hover:ap-bg-background" :disabled="isConnectDisabled(wallet)">
         <div class="ap-flex ap-items-center ap-w-full">
           <img :src="wallet.metadata.icon" :alt="wallet.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
           {{ wallet.metadata.name }}
@@ -113,7 +113,7 @@ async function selectAccount(account: WalletAccount) {
   </ul>
   <ul v-else class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2">
     <li>
-      <Button @click="disconnectWallet" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between">
+      <Button @click="disconnectWallet" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between ap-bg-background hover:ap-bg-background">
         <div class="ap-flex ap-items-center ap-w-full">
           <img :src="activeWallet?.metadata.icon" :alt="activeWallet?.metadata.name" class="ap-w-6 ap-h-6 ap-mr-2" />
           {{ activeWallet?.metadata.name }}
@@ -122,7 +122,7 @@ async function selectAccount(account: WalletAccount) {
       </Button>
     </li>
     <li v-for="(account, index) in activeWallet.accounts" :key="account.address" class="ap-animate-in ap-slide-in-from-bottom ap-fade-in" :style="`animation-delay: ${index * 50}ms; animation-fill-mode: both;`">
-      <Button @click="selectAccount(account)"  variant="ghost" class="ap-w-full ap-h-12 ap-justify-between">
+      <Button @click="selectAccount(account)"  variant="ghost" class="ap-w-full ap-h-12 ap-justify-between hover:ap-bg-background">
         <div class="ap-flex ap-items-center ap-w-full ap-text-xs ap-font-semibold">
           <Jazzicon :address="`0x${account.address}`" :diameter="25" class="ap-w-[25px] ap-h-[25px] ap-mr-2 ap-shadow ap-rounded-full" />
           <div class="ap-truncate">{{ account.name }}<span class="ap-text-muted-foreground ap-ml-2 ap-font-normal">{{ getShortAddress(account.address) }}</span></div>
