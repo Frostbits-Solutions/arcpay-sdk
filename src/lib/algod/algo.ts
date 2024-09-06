@@ -27,21 +27,13 @@ async function getAssetMetadata(assetId: string, network: PublicNetwork): Promis
 }
 
 async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
-  let url
-  if (network === 'algo:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
-  if (network === 'algo:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
-  if(!url) throw new Error('Invalid network')
-
   const account = await algodClient.accountInformation(address).do()
-  const assets = account.assets
-    // @ts-ignore
-      .filter((asset) => asset.amount > 0)
   // @ts-ignore
-      .map(async (asset) => {
+  const assets = account.assets.filter((asset) => asset.amount > 0).map(async (asset) => {
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
 
         if (info.params.url.includes('ipfs://')) {
-          info.params.url = info.params.url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+          info.params.url = info.params.url.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/')
         }
 
         return {
@@ -56,20 +48,6 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
       })
 
   return Promise.all(assets)
-  // const response = await axios.get(url, {params: {owner: address}});
-  // if (!response.data) throw new Error(`Failed to fetch assets metadata for address ${address}`)
-  //
-  // return response.data.tokens.map((token: any) => {
-  //   const metadata = JSON.parse(token.metadata)
-  //   return {
-  //     id: `${token.contractId}/${token.tokenId}`,
-  //     name: metadata.name,
-  //     description: metadata.description,
-  //     thumbnail: metadata.image,
-  //     thumbnailMIMEType: metadata.image_mimetype,
-  //     properties: metadata.properties
-  //   }
-  // })
 }
 
 async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {

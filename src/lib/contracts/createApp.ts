@@ -5,8 +5,9 @@ import type {TransactionConfirmation} from "@/lib/transaction/Transaction";
 import getContract from "@/lib/supabase/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {SupabaseClient} from "@supabase/supabase-js";
+import algosdk from "algosdk";
 
-export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, accountId: number, account: WalletAccount, params: ListingCreationParams): Promise<number> {
+export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, account: WalletAccount, params: ListingCreationParams): Promise<number> {
     const chain = networkConfig.chain
     const chainInterface = interfaces[chain]
     const currency = params.currency?.type
@@ -24,7 +25,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
-        ...formatCurrency(networkConfig, params),
+        ...formatCurrency(params),
         ...formatNftID(networkConfig, params),
         ...args,
         await getContract(client, `${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
@@ -44,7 +45,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
-        ...formatCurrency(networkConfig, params),
+        ...formatCurrency(params),
         ...formatNftID(networkConfig, params),
         appIndex
     )
@@ -52,12 +53,16 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     return appIndex
 }
 
-function formatCurrency(networkConfig: NetworksConfig, params: ListingCreationParams) {
+function formatCurrency(params: ListingCreationParams) {
     const args = []
     try {
         if (params.currency?.type === 'asa') {
             args.push(parseInt(params.currency.id))
             args.push(params.currency.decimals || 1_000_000)
+        }
+        if (params.currency?.type === 'arc200') {
+            args.push(parseInt(params.currency.id))
+            args.push(algosdk.getApplicationAddress(parseInt(params.currency.id)))
         }
     } catch (e) {
         throw new Error(`Invalid currency id ${params.currency?.id}. ${e}`)
@@ -87,19 +92,19 @@ function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParam
 }
 
 function formatSaleArgs(params: ListingCreationParams): number[] {
-    if (!('price' in params)) throw new Error(`Missing parameter price for creating a voi sale`)
+    if (!('price' in params)) throw new Error(`Missing parameter price for creating a sale`)
     return [params.price]
 }
 
 function formatAuctionArgs(params: ListingCreationParams): number[] {
-    if (!('price' in params)) throw new Error(`Missing parameter price for creating a voi auction`)
-    if (!('duration' in params)) throw new Error(`Missing parameter duration for creating a voi auction`)
+    if (!('price' in params)) throw new Error(`Missing parameter price for creating an auction`)
+    if (!('duration' in params)) throw new Error(`Missing parameter duration for creating an auction`)
     return [params.price, params.duration]
 }
 
 function formatDutchArgs(params: ListingCreationParams): number[] {
-    if (!('priceMin' in params)) throw new Error(`Missing parameter priceMin for creating a voi dutch`)
-    if (!('priceMax' in params)) throw new Error(`Missing parameter priceMax for creating a voi dutch`)
-    if (!('duration' in params)) throw new Error(`Missing parameter duration for creating a voi dutch`)
+    if (!('priceMin' in params)) throw new Error(`Missing parameter priceMin for creating a dutch auction`)
+    if (!('priceMax' in params)) throw new Error(`Missing parameter priceMax for creating a dutch auction`)
+    if (!('duration' in params)) throw new Error(`Missing parameter duration for creating a dutch auction`)
     return [params.priceMin, params.priceMax, params.duration]
 }

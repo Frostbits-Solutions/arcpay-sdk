@@ -53,20 +53,20 @@ onMounted(() => {
     <div class="ap-flex ap-flex-col ap-justify-between">
       <div>
         <div v-if="!args?.options?.listingType">
-          <Label class="ap-text-xs ap-text-muted-foreground ap-mb-1">Listing type</Label>
-          <div class="ap-grid ap-gap-[17px] ap-grid-cols-4 ap-w-[333px]">
+          <Label class="ap-text-xs ap-text-muted-foreground">Listing type</Label>
+          <div class="ap-grid ap-gap-[17px] ap-grid-cols-3 ap-w-[333px] ap-mt-2">
             <RouterLink :to="{name: 'sale-creation'}"
-                        class="ap-h-[66px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-popover hover:ap-bg-accent hover:ap-text-accent-foreground">
+                        class="ap-h-[99px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-popover hover:ap-bg-accent hover:ap-text-accent-foreground">
               <Receipt class="ap-h-5 ap-w-5" />
               Sale
             </RouterLink>
             <RouterLink :to="{name: 'auction-creation'}"
-                        class="ap-h-[66px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-popover hover:ap-bg-accent hover:ap-text-accent-foreground">
+                        class="ap-h-[99px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-popover hover:ap-bg-accent hover:ap-text-accent-foreground">
               <Gavel class="ap-h-5 ap-w-5" />
               Auction
             </RouterLink>
             <RouterLink :to="{name: 'dutch-creation'}"
-                        class="ap-text-center ap-h-[66px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-popover hover:ap-bg-accent hover:ap-text-accent-foreground">
+                        class="ap-text-center ap-h-[99px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-popover hover:ap-bg-accent hover:ap-text-accent-foreground">
               <HandCoins class="ap-h-5 ap-w-5" />
               Reverse
             </RouterLink>
@@ -78,7 +78,7 @@ onMounted(() => {
           </router-view>
         </div>
       </div>
-      <Button variant="default" size="lg" class="ap-w-full ap-mt-6" @click="createListing()">Create listing</Button>
+      <Button variant="default" size="lg" class="ap-w-full ap-mt-10" @click="createListing()">Create listing</Button>
     </div>
   </div>
 </template>

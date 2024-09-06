@@ -381,13 +381,13 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
+            arc200FeesAppId: number,
             nftAppID: number,
             appIndex: number,
             sellerAddress: string,
             price: number,
             feesAppAddress: string,
             feesAppId: number,
-            arc200FeesAppId: number
           ) => new Transaction(algod, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
@@ -499,13 +499,13 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
+            arc200FeesAppId: number,
             nftAppID: number,
             appIndex: number,
             sellerAddress: string,
             price: number,
             feesAppAddress: string,
-            feesAppId: number,
-            arc200FeesAppId: number
+            feesAppId: number
           ) => new Transaction(algod, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
@@ -556,11 +556,11 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
+            arc200FeesAppId: number,
             appIndex: number,
             price: number,
             feesAppAddress: string,
             feesAppId: number,
-            arc200FeesAppId: number
           ) => new Transaction(algod, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
