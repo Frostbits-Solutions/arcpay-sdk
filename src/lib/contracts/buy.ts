@@ -24,8 +24,8 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
             params.app_id,
             params.seller_address,
             price,
-            'ZTVMV2EQNUU3HJQ3HUPBLXMPD3PLVQGCJ4SDGOM4BU2W4554UTMPDQ2TTU',
-            54881294,
+            algosdk.getApplicationAddress(networkConfig.feesAppId),
+            networkConfig.feesAppId,
         )
         if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Buying listing failed.')
         return transactionConfirmation
