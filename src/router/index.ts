@@ -11,6 +11,8 @@ import SuccessView from '@/views/SuccessView.vue'
 import ListingReviewView from '@/views/ListingReviewView.vue'
 import SaleReview from '@/components/ListingReview/SaleReview.vue'
 import IdleView from '@/views/IdleView.vue'
+import AuctionReview from "@/components/ListingReview/AuctionReview.vue";
+import DutchReview from "@/components/ListingReview/DutchReview.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -90,15 +92,23 @@ const router = createRouter({
           name: 'listing-review',
           component: ListingReviewView,
           meta: {
-            closeable: true,
-            transparent: true
+            closeable: true
           },
-          redirect: {name: 'sale-review'},
           children: [
             {
               path: '/sale',
               name: 'sale-review',
               component: SaleReview
+            },
+            {
+              path: '/auction',
+              name: 'auction-review',
+              component: AuctionReview
+            },
+            {
+              path: '/dutch',
+              name: 'dutch-review',
+              component: DutchReview
             }
           ]
         },

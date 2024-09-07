@@ -32,7 +32,7 @@ defineExpose({
 
 <template>
   <div class="ap-mt-2">
-    <Label for="price" class="ap-text-xs ap-text-muted-foreground">Asking price</Label>
+    <Label for="price" class="ap-text-xs ap-text-muted-foreground">Start price</Label>
     <div class="ap-flex ap-gap-1 ap-items-center ap-mt-2">
       <NumberField
           id="price"
@@ -42,7 +42,7 @@ defineExpose({
         minimumFractionDigits: 2
       }"
           class="ap-flex-1"
-          @update:modelValue="(value) => price = value"
+          @update:modelValue="(value: number) => price = value"
       >
         <NumberFieldContent>
           <NumberFieldDecrement />
@@ -63,7 +63,7 @@ defineExpose({
         unit: 'day'
       }"
         class="ap-flex-1 ap-mt-2"
-        @update:modelValue="(value) => duration = value"
+        @update:modelValue="(value: number) => duration = value"
     >
       <NumberFieldContent>
         <NumberFieldDecrement />

@@ -156,9 +156,7 @@ export type Database = {
           id: number
           increment: number
           listing_id: string
-          max_price: number | null
-          min_price: number
-          type: Database["public"]["Enums"]["auctions_type"]
+          start_price: number
           updated_at: string | null
         }
         Insert: {
@@ -167,9 +165,7 @@ export type Database = {
           id?: number
           increment: number
           listing_id: string
-          max_price?: number | null
-          min_price: number
-          type: Database["public"]["Enums"]["auctions_type"]
+          start_price: number
           updated_at?: string | null
         }
         Update: {
@@ -178,9 +174,7 @@ export type Database = {
           id?: number
           increment?: number
           listing_id?: string
-          max_price?: number | null
-          min_price?: number
-          type?: Database["public"]["Enums"]["auctions_type"]
+          start_price?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -198,16 +192,19 @@ export type Database = {
           byte_code: string
           created_at: string
           id: number
+          name: string | null
         }
         Insert: {
           byte_code: string
           created_at?: string
           id?: number
+          name?: string | null
         }
         Update: {
           byte_code?: string
           created_at?: string
           id?: number
+          name?: string | null
         }
         Relationships: []
       }
@@ -276,6 +273,44 @@ export type Database = {
         }
         Relationships: []
       }
+      dutch_auctions: {
+        Row: {
+          created_at: string
+          duration: number
+          id: number
+          listing_id: string
+          max_price: number | null
+          min_price: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration: number
+          id?: number
+          listing_id: string
+          max_price?: number | null
+          min_price: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration?: number
+          id?: number
+          listing_id?: string
+          max_price?: number | null
+          min_price?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_dutch_auctions_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           account_id: number
@@ -287,13 +322,13 @@ export type Database = {
           asset_type: Database["public"]["Enums"]["assets_types"]
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
+          currency: string
           id: string
-          listing_currency: string
-          listing_name: string
-          listing_type: Database["public"]["Enums"]["listings_types"]
+          name: string
           seller_address: string
           status: Database["public"]["Enums"]["listings_statuses"]
           tags: string | null
+          type: Database["public"]["Enums"]["listings_types"]
           updated_at: string | null
           transactions: unknown | null
         }
@@ -307,13 +342,13 @@ export type Database = {
           asset_type: Database["public"]["Enums"]["assets_types"]
           chain: Database["public"]["Enums"]["chains"]
           created_at?: string
+          currency: string
           id?: string
-          listing_currency: string
-          listing_name: string
-          listing_type: Database["public"]["Enums"]["listings_types"]
+          name: string
           seller_address: string
           status: Database["public"]["Enums"]["listings_statuses"]
           tags?: string | null
+          type: Database["public"]["Enums"]["listings_types"]
           updated_at?: string | null
         }
         Update: {
@@ -326,19 +361,19 @@ export type Database = {
           asset_type?: Database["public"]["Enums"]["assets_types"]
           chain?: Database["public"]["Enums"]["chains"]
           created_at?: string
+          currency?: string
           id?: string
-          listing_currency?: string
-          listing_name?: string
-          listing_type?: Database["public"]["Enums"]["listings_types"]
+          name?: string
           seller_address?: string
           status?: Database["public"]["Enums"]["listings_statuses"]
           tags?: string | null
+          type?: Database["public"]["Enums"]["listings_types"]
           updated_at?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "listings_listing_currency_chain_fkey"
-            columns: ["listing_currency", "chain"]
+            columns: ["currency", "chain"]
             isOneToOne: false
             referencedRelation: "currencies"
             referencedColumns: ["id", "chain"]
@@ -354,24 +389,24 @@ export type Database = {
       }
       sales: {
         Row: {
-          asking_price: number
           created_at: string
           id: number
           listing_id: string
+          price: number
           updated_at: string | null
         }
         Insert: {
-          asking_price: number
           created_at?: string
           id?: number
           listing_id: string
+          price: number
           updated_at?: string | null
         }
         Update: {
-          asking_price?: number
           created_at?: string
           id?: number
           listing_id?: string
+          price?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -510,13 +545,13 @@ export type Database = {
           asset_type: Database["public"]["Enums"]["assets_types"]
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
+          currency: string
           id: string
-          listing_currency: string
-          listing_name: string
-          listing_type: Database["public"]["Enums"]["listings_types"]
+          name: string
           seller_address: string
           status: Database["public"]["Enums"]["listings_statuses"]
           tags: string | null
+          type: Database["public"]["Enums"]["listings_types"]
           updated_at: string | null
         }[]
       }
@@ -541,11 +576,10 @@ export type Database = {
     Enums: {
       accounts_users_roles: "admin" | "moderator" | "member"
       assets_types: "arc72" | "offchain" | "asa"
-      auctions_type: "english" | "dutch"
       chains: "voi:testnet" | "voi:mainnet" | "algo:testnet" | "algo:mainnet"
       currency_type: "algo" | "asa" | "voi" | "arc200"
       listings_statuses: "pending" | "active" | "closed" | "cancelled"
-      listings_types: "sale" | "auction"
+      listings_types: "sale" | "auction" | "dutch"
       transaction_type:
           | "create"
           | "fund"
@@ -563,22 +597,29 @@ export type Database = {
         status: Database["public"]["Enums"]["listings_statuses"] | null
         chain: Database["public"]["Enums"]["chains"] | null
         seller_address: string | null
-        listing_name: string | null
-        listing_currency: string | null
-        listing_type: Database["public"]["Enums"]["listings_types"] | null
+        name: string | null
+        type: Database["public"]["Enums"]["listings_types"] | null
         app_id: number | null
+        currency: string | null
+        currency_name: string | null
+        currency_ticker: string | null
+        currency_icon: string | null
+        currency_type: Database["public"]["Enums"]["currency_type"] | null
+        currency_fees_address: string | null
+        currency_decimals: number | null
         asset_id: string | null
         asset_thumbnail: string | null
         asset_type: Database["public"]["Enums"]["assets_types"] | null
         asset_qty: number | null
         asset_creator: string | null
         tags: string | null
-        min_price: number | null
-        max_price: number | null
-        increment: number | null
-        duration: number | null
-        auction_type: Database["public"]["Enums"]["auctions_type"] | null
-        asking_price: number | null
+        sale_price: number | null
+        auction_start_price: number | null
+        auction_increment: number | null
+        auction_duration: number | null
+        dutch_min_price: number | null
+        dutch_max_price: number | null
+        dutch_duration: number | null
       }
     }
   }

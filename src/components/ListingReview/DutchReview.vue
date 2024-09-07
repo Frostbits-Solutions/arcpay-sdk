@@ -1,13 +1,38 @@
 <script setup lang="ts">
 import CountUp from "vue-countup-v3";
 import type {ListingParams} from "@/lib/app/reviewListing";
+import {onMounted, ref} from "vue";
 import {ArrowRight} from "lucide-vue-next";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
 
-defineProps<{listingParams: ListingParams, previewLink: string}>()
+const props = defineProps<{listingParams: ListingParams, previewLink: string}>()
 const emit = defineEmits<{
   'action:buy': [price: number]
 }>()
+const price = ref<number>(0)
+const previousPrice = ref<number>(0)
+
+function getLatestPrice() {
+  if (props.listingParams && props.listingParams.created_at && props.listingParams.dutch_duration && props.listingParams.dutch_max_price && props.listingParams.dutch_min_price !== null) {
+    const startTime = new Date(props.listingParams.created_at).getTime()
+    const endTime = new Date(props.listingParams.created_at).getTime() + (props.listingParams.dutch_duration * 3_600_000)
+    const max = props.listingParams.dutch_max_price
+    const min = props.listingParams.dutch_min_price
+    const ratio = parseFloat(((max - min) / (endTime - startTime)).toFixed(10))
+    const now = Date.now() + new Date().getTimezoneOffset() * 60_000
+    const price = max - ((now - startTime) * ratio)
+    return price > min ? price : min
+  } return 0
+}
+
+onMounted(() => {
+  price.value = getLatestPrice()
+  setInterval(() => {
+    previousPrice.value = price.value
+    price.value = getLatestPrice()
+  }, 500)
+})
+
 </script>
 
 <template>
@@ -35,20 +60,22 @@ const emit = defineEmits<{
       />
     </a>
   </div>
-  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-w-full" @click="emit('action:buy', listingParams.sale_price)">
-    <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
-    <span class="text ap-flex ap-items-center ap-gap-1">
+  <div v-if="listingParams.status === 'active'" class="ap-flex ap-items-center">
+    <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-w-full" v-if="listingParams.status === 'active'" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
+      <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
+      <span class="text ap-flex ap-items-center ap-gap-1">
         Pay
         <div class="ap-flex ap-items-center">
           <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-            <count-up :end-val="listingParams.sale_price?.toString() || 0" :decimalPlaces="2" :duration="1"></count-up>
+            <count-up :start-val="previousPrice" :end-val="price" :decimalPlaces="2" :duration="1"></count-up>
           </span>
           <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_name }}</span>
       </div>
       </span>
-    <span class="circle"></span>
-    <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
-  </button>
+      <span class="circle"></span>
+      <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
+    </button>
+  </div>
 </template>
 
 <style scoped>

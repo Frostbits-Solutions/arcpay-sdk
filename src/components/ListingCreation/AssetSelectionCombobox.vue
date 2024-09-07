@@ -67,17 +67,14 @@ onMounted(async () => {
         variant="ghost"
         role="combobox"
         :aria-expanded="open"
-        :class="[
-            'ap-justify-between ap-w-[333px] ap-h-[333px] ap-flex ap-relative ap-rounded-3xl ap-p-0 ap-overflow-hidden ap-bg-background ap-shadow-2xl ap-border ap-border-border ap-transition hover:ap-bg-background',
-            !value?'ap-items-center':'ap-items-end '
-           ]">
-        <div :class="['ap-flex ap-items-center ap-gap-2 ap-min-w-0 ap-relative ap-z-10 ap-bg-background/50 ap-backdrop-blur-md ap-w-full ap-px-4 ap-py-3', !value?'ap-justify-center':'ap-justify-start']">
-          <div v-if="!value" class="ap-text-muted-foreground">
-            Click to select asset
-          </div>
-          <div v-else-if="selectedAsset" class="ap-text-xs ap-text-muted-foreground ap-min-w-0 ap-text-left">
-            <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ selectedAsset.name }}</div>
-            {{ selectedAsset.id }}
+        :class="['ap-w-[333px] ap-h-[333px] ap-flex ap-relative ap-rounded-3xl ap-p-0 ap-overflow-hidden ap-bg-background ap-shadow-2xl ap-border ap-border-border ap-transition hover:ap-bg-background', !value?'ap-items-center':'ap-items-end']">
+        <div v-if="!value" class="ap-text-muted-foreground ap-text-center">
+          Click to select asset
+        </div>
+        <div v-else-if="selectedAsset" class="ap-flex ap-flex-1 ap-min-w-0 ap-relative ap-z-10 ap-p-4">
+          <div class="ap-text-muted-foreground ap-min-w-0 ap-text-left">
+            <div class="ap-text-sm ap-inline-block ap-max-w-full ap-font-semibold ap-text-foreground ap-truncate ap-bg-background/50 ap-backdrop-blur-lg ap-px-1 ap-py-0.5 ap-rounded">{{ selectedAsset.name }}</div>
+            <div class="ap-text-xs  ap-table ap-bg-background/50 ap-backdrop-blur-lg ap-px-1 ap-py-0.5 ap-rounded">{{ selectedAsset.id }}</div>
           </div>
         </div>
         <img

@@ -14,7 +14,7 @@ import {
   success
 } from '@/lib/app'
 import { type SupportedWallet, type WalletAccount, WalletManager} from '@txnlab/use-wallet'
-import {createAuction, createSale, getListingById, getListings} from '@/lib/supabase/listings'
+import {createAuction, createDutchAuction, createSale, getListingById, getListings} from '@/lib/supabase/listings'
 import type {ListingType} from '@/lib/app/createListing'
 import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
@@ -113,7 +113,7 @@ export class ArcpayClient {
             this._client,
             accountId,
             appIndex,
-            'Unknown',
+            null,
             params.asset.id,
             1,
             params.asset.thumbnail,
@@ -133,7 +133,7 @@ export class ArcpayClient {
             this._client,
             accountId,
             appIndex,
-            'Unknown',
+            null,
             params.asset.id,
             1,
             params.asset.thumbnail,
@@ -145,15 +145,13 @@ export class ArcpayClient {
             options?.tags?.join(', ') || null,
             params.duration,
             params.price,
-            null,
             1,
-            'english'
         )
         if (error) throw new Error(`Error creating auction: ${error.message}`)
         listingId = data?.[0]?.listing_id
       }
       else if (params.type === 'dutch') {
-        const { data, error } = await createAuction(
+        const { data, error } = await createDutchAuction(
             this._client,
             accountId,
             appIndex,
@@ -169,9 +167,7 @@ export class ArcpayClient {
             options?.tags?.join(', ') || null,
             params.duration,
             params.priceMin,
-            params.priceMax,
-            1,
-            'dutch'
+            params.priceMax
         )
         if (error) throw new Error(`Error creating dutch auction: ${error.message}`)
         listingId = data?.[0]?.listing_id
@@ -200,7 +196,7 @@ export class ArcpayClient {
       if (listingParams && listingParams.asset_id) {
         const price = await reviewListing(this._appProvider, listingParams)
         const account: WalletAccount = await selectWallet(this._appProvider)
-        const transactionConfirmation = await buy(this._networkConfig, this._appProvider, this._walletManager, this._client, account, listingParams, price)
+        const transactionConfirmation = await buy(this._networkConfig, this._appProvider, this._walletManager, account, listingParams, price)
         success(this._appProvider, 'Success!', 'Transaction confirmed, check your wallet!', () => {
           closeDialog()
         })
