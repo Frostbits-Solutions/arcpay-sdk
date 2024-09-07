@@ -1,6 +1,6 @@
 import { createSupabaseClient, deriveAccountIdFromKey } from '@/lib/supabase/supabaseClient'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { NetworksConfig, PublicNetwork, VoiPublicNetwork } from '@/lib/algod/networks.config'
+import type { NetworksConfig, PublicNetwork } from '@/lib/algod/networks.config'
 import { networksConfig } from '@/lib/algod/networks.config'
 import type { App } from 'vue'
 import {
@@ -20,6 +20,8 @@ import type { TransactionConfirmation } from '@/lib/transaction/Transaction'
 import { reviewListing } from '@/lib/app/reviewListing'
 import {createApp} from "@/lib/contracts/createApp";
 import {buy} from "@/lib/contracts/buy";
+import {close} from "@/lib/contracts/close";
+import {cancel} from "@/lib/contracts/cancel";
 
 export interface ArcpayClientOptions {
   apiKey?: string,
@@ -198,6 +200,52 @@ export class ArcpayClient {
         const account: WalletAccount = await selectWallet(this._appProvider)
         const transactionConfirmation = await buy(this._networkConfig, this._appProvider, this._walletManager, account, listingParams, price)
         success(this._appProvider, 'Success!', 'Transaction confirmed, check your wallet!', () => {
+          closeDialog()
+        })
+        return transactionConfirmation
+      }
+    } catch (error) {
+      //@ts-ignore
+      const message = error.message || 'Unknown Error'
+      displayError(this._appProvider, 'Error', message, () => {
+        closeDialog()
+      })
+      throw error
+    }
+  }
+
+  public async close(id: string): Promise<TransactionConfirmation | undefined> {
+    try {
+      const { data: listingParams, error } = await getListingById(this._client, id)
+      if (error) throw new Error(`Unable to fetch listing: ${error.message}`)
+
+      if (listingParams && listingParams.asset_id) {
+        const account: WalletAccount = await selectWallet(this._appProvider)
+        const transactionConfirmation = await close(this._networkConfig, this._appProvider, this._walletManager, account, listingParams)
+        success(this._appProvider, 'Success!', 'Listing has been closed', () => {
+          closeDialog()
+        })
+        return transactionConfirmation
+      }
+    } catch (error) {
+      //@ts-ignore
+      const message = error.message || 'Unknown Error'
+      displayError(this._appProvider, 'Error', message, () => {
+        closeDialog()
+      })
+      throw error
+    }
+  }
+
+  public async cancel(id: string): Promise<TransactionConfirmation | undefined> {
+    try {
+      const { data: listingParams, error } = await getListingById(this._client, id)
+      if (error) throw new Error(`Unable to fetch listing: ${error.message}`)
+
+      if (listingParams && listingParams.asset_id) {
+        const account: WalletAccount = await selectWallet(this._appProvider)
+        const transactionConfirmation = await cancel(this._appProvider, this._walletManager, account, listingParams)
+        success(this._appProvider, 'Success!', 'Listing has been cancelled', () => {
           closeDialog()
         })
         return transactionConfirmation

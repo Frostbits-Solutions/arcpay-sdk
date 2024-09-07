@@ -50,7 +50,7 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
 }
 
 function formatCurrency(params: ListingParams): (number | string)[] {
-    const args = []
+    const args: (number | string)[] = []
     try {
         if (params.currency_type === 'asa') {
             args.push(parseInt(params.currency || '0'))
@@ -71,7 +71,7 @@ function formatCurrency(params: ListingParams): (number | string)[] {
 }
 
 function formatNftID(params: ListingParams): (number | string)[] {
-    const args = []
+    const args: (number | string)[] = []
     if (!params.asset_id) throw new Error(`asset_id is null`)
     try {
         if (params.asset_type === 'arc72') {
