@@ -73,7 +73,7 @@ onMounted(() => {
           Select currency
         </template>
         <template v-else-if="selectedCurrency">
-          <div class="ap-flex ap-items-center ap-gap-1 ap-min-w-0">
+          <div class="ap-flex ap-items-center ap-gap-1 ap-min-w-0 ap-px-1">
             <img :src="selectedCurrency?.icon || defaultCurrencyIcon" :alt="`${selectedCurrency.ticker} icon`" class="ap-h-5 ap-w-5 ap-rounded-full ap-bg-border" />
             <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
               <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ selectedCurrency.ticker.toUpperCase() }}</div>

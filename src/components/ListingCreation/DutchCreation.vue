@@ -34,7 +34,7 @@ defineExpose({
 
 <template>
   <div class="ap-mt-2">
-    <Label for="priceMin" class="ap-text-xs ap-text-muted-foreground">Asking price</Label>
+    <Label for="priceMin" class="ap-text-xs ap-text-muted-foreground">Price range</Label>
     <div class="ap-flex ap-gap-1 ap-items-top ap-mt-2 ap-w-[333px]">
       <div>
         <div class="ap-flex ap-items-center ap-gap-2">
@@ -47,7 +47,7 @@ defineExpose({
               minimumFractionDigits: 2
             }"
               class="ap-flex-1"
-              @update:modelValue="(value) => priceMin = value"
+              @update:modelValue="(value: number) => priceMin = value"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -66,7 +66,7 @@ defineExpose({
               minimumFractionDigits: 2
             }"
               class="ap-flex-1"
-              @update:modelValue="(value) => priceMax = value"
+              @update:modelValue="(value: number) => priceMax = value"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -89,7 +89,7 @@ defineExpose({
         unit: 'day'
       }"
         class="ap-flex-1 ap-mt-2"
-        @update:modelValue="(value) => duration = value"
+        @update:modelValue="(value: number) => duration = value"
     >
       <NumberFieldContent>
         <NumberFieldDecrement />

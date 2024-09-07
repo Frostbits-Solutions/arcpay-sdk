@@ -53,7 +53,6 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
   stroke-width: 2;
   stroke-miterlimit: 10;
   stroke: url(#gradient);
-  fill: hsl(var(--background));
   animation: stroke .6s linear forwards, rotate 0.9s linear .6s infinite;
   transform-origin: 50% 50%;
 }

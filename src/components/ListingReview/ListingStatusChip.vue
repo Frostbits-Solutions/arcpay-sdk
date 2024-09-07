@@ -14,7 +14,7 @@ defineProps<{
           {{ listingParams.status }}
         </span>
     <span v-if="['active'].includes(listingParams.status || '')"
-          class="ap-inline-flex ap-items-center ap-bg-purple-100 ap-text-purple-800 ap-text-xs ap-font-medium ap-px-2.5 ap-py-1.5 ap-rounded-full dark:ap-bg-purple-900 dark:ap-text-purple-300">
+          class="ap-inline-flex ap-items-center ap-bg-purple-100/60 ap-text-purple-800 ap-text-xs ap-font-medium ap-px-2.5 ap-py-1.5 ap-rounded-full dark:ap-bg-purple-900 dark:ap-text-purple-300">
           <span class="ap-w-2 ap-h-2 ap-me-1 ap-bg-purple-500 ap-rounded-full"></span>
           {{ listingParams.status }}
         </span>

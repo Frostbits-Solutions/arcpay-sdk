@@ -44,7 +44,7 @@ defineExpose({
       >
         <NumberFieldContent>
           <NumberFieldDecrement />
-          <NumberFieldInput />
+          <NumberFieldInput/>
           <NumberFieldIncrement />
         </NumberFieldContent>
       </NumberField>

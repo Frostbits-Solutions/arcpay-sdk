@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useRoute, useRouter } from 'vue-router'
+import {VisuallyHidden} from "radix-vue";
 const route = useRoute()
 const router = useRouter()
 
@@ -26,6 +27,9 @@ function handleClose(open: boolean) {
     }">
       <DialogHeader>
         <DialogTitle v-if="route.meta.title">{{ route.meta.title }}</DialogTitle>
+        <VisuallyHidden v-else>
+          <DialogTitle >{{ route.name }}</DialogTitle>
+        </VisuallyHidden>
         <DialogDescription>
           {{ route.meta.description }}
         </DialogDescription>
