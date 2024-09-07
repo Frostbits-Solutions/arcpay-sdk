@@ -23,7 +23,7 @@ const emit = defineEmits<{
       </div>
     </div>
   </div>
-  <div class="ap-flex ap-justify-center ap-my-10">
+  <div class="ap-flex ap-justify-center ap-mt-10 ap-mb-16">
     <a :href="previewLink"
        target="_blank"
        class="ap-block ap-max-w-[250px] ap-max-h-[250px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
