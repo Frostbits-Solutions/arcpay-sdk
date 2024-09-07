@@ -26,11 +26,23 @@ function buy() {
 }
 
 async function close () {
-
+  if (listingId.value) {
+    arcpay.close(listingId.value).then((data) => {
+      console.log('Listing closed', data)
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
 }
 
 async function cancel () {
-
+  if (listingId.value) {
+    arcpay.cancel(listingId.value).then((data) => {
+      console.log('Listing cancelled', data)
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
 }
 
 </script>

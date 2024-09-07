@@ -80,11 +80,35 @@ Creates a new listing. Calling this method will display the arcpay listing creat
 ---
 
 #### `client.buy`
-Buys a listing. Calling this method will display the arcpay purchase modal to the user.
+Buy / bid on a listing. Calling this method will display the arcpay purchase modal to the user.
 
 ##### Parameters
 
 - `id: string`: Listing ID to purchase.
+
+##### Returns
+
+- `Promise<TransactionConfirmation>`: A promise that resolves to the algosdk transaction confirmation object.
+---
+
+#### `client.close`
+Close a listing. Calling this method will display the sign modal to close the listing. Listings such as auctions must be closed by their creator / winner for the winner to receive the asset.
+
+##### Parameters
+
+- `id: string`: Listing ID to close.
+
+##### Returns
+
+- `Promise<TransactionConfirmation>`: A promise that resolves to the algosdk transaction confirmation object.
+---
+
+#### `client.cancel`
+Cancel a listing. Calling this method will display the sign modal to cancel the listing.
+
+##### Parameters
+
+- `id: string`: Listing ID to cancel.
 
 ##### Returns
 
