@@ -38,9 +38,10 @@ defineExpose({
           id="price"
           :model-value="price"
           :format-options="{
-        style: 'decimal',
-        minimumFractionDigits: 2
-      }"
+            style: 'decimal',
+            minimumFractionDigits: 2
+          }"
+          :min="1"
           class="ap-flex-1"
           @update:modelValue="(value: number) => price = value"
       >
@@ -59,9 +60,10 @@ defineExpose({
         id="duration"
         :model-value="duration"
         :format-options="{
-        style: 'unit',
-        unit: 'day'
-      }"
+          style: 'unit',
+          unit: 'day'
+        }"
+        :min="1"
         class="ap-flex-1 ap-mt-2"
         @update:modelValue="(value: number) => duration = value"
     >

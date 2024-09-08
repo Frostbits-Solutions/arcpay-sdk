@@ -136,7 +136,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-  <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
+  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
     <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
     <span class="text ap-flex ap-items-center ap-gap-1">
             Bid
