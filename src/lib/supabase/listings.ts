@@ -4,7 +4,7 @@ import type { Database } from '@/lib/supabase/database.types'
 export async function getListings(client: SupabaseClient) {
   const { data, error } = await client
     .from('listings')
-    .select('*, auctions(*), sales(*), dutch(*)').returns<Database['public']['Tables']['listings']['Row'][]>()
+    .select('*, auctions(*), sales(*), dutch_auctions(*)').returns<Database['public']['Tables']['listings']['Row'][]>()
   return { data, error }
 }
 

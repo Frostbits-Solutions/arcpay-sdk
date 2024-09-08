@@ -61,7 +61,7 @@ function formatCurrency(params: ListingParams): (number | string)[] {
             if (params.currency === null) throw new Error(`Arc200 ID cannot be null`)
             args.push(parseInt(params.currency))
             args.push(algosdk.getApplicationAddress(parseInt(params.currency)))
-            args.push(params.currency_fees_address)
+            //args.push(params.currency_fees_address)
         }
     } catch (e) {
         throw new Error(`Error while formatting currency args: ${e}`)

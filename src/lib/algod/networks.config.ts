@@ -31,7 +31,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     key: 'voi:testnet',
     chain: 'voi',
     networkId: NetworkId.TESTNET,
-    feesAppId: 87427033,
+    feesAppId: 87414541,
     blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
     nodeBaseURL: 'https://voitest-api.algorpc.pro/',
     walletProviders: [
@@ -52,7 +52,7 @@ export const networksConfig:{[key in PublicNetwork]: NetworksConfig} = {
     key: 'voi:mainnet',
     chain: 'voi',
     networkId: NetworkId.MAINNET,
-    feesAppId: 87427033,
+    feesAppId: 87414541,
     blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
     nodeBaseURL: 'https://voitest-api.algorpc.pro/',
     walletProviders: [
