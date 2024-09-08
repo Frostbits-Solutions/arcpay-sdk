@@ -12,7 +12,7 @@ import {computed, inject, onMounted, ref, watch} from "vue";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
 import {ArrowRight, LoaderCircle} from "lucide-vue-next";
 import type {Database} from "@/lib/supabase/database.types";
-import getTransactions, {subscribeToAppTransactions} from "@/lib/supabase/transaction";
+import {getTransactions} from "@/lib/supabase/transaction";
 import type {SupabaseClient} from "@supabase/supabase-js";
 import {getShortAddress} from "@/lib/utils";
 import Jazzicon from "@/components/Jazzicon.vue";
