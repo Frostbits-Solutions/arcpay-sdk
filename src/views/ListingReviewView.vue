@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import {computed, inject, onMounted} from 'vue'
+import {computed, inject, onBeforeUnmount, onMounted, ref} from 'vue'
 import type { ListingParams } from '@/lib/app/reviewListing'
 import {useRouter} from "vue-router";
+import {subscribeToAppTransactions} from "@/lib/supabase/transaction";
+import type {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
 
 interface ListingReviewProvider {
   callback: (price: number, error?: Error) => void
@@ -10,9 +12,11 @@ interface ListingReviewProvider {
   }
 }
 
+const client = inject<SupabaseClient>('supabase')
 const { callback, args } = inject<{ ListingReview: ListingReviewProvider }>('appProvider')?.['ListingReview'] || {}
 const listingParams = args?.listingParams
 const router = useRouter()
+const realtimeChannel = ref<RealtimeChannel>()
 
 const nftNavigatorLink = computed(() => {
   if(listingParams && listingParams.asset_id?.split('/')?.[1]) {
@@ -32,7 +36,20 @@ onMounted(() => {
   if (listingParams?.type === 'sale') router.push({name: 'sale-review'})
   if (listingParams?.type === 'auction') router.push({name: 'auction-review'})
   if (listingParams?.type === 'dutch') router.push({name: 'dutch-review'})
+  if (client && listingParams?.app_id) {
+    realtimeChannel.value = subscribeToAppTransactions(client, listingParams.app_id, (newTx) => {
+      console.log(newTx)
+    }, (count) => {
+      console.log(count)
+    })
+  }
 });
+
+onBeforeUnmount(() => {
+  if (realtimeChannel.value) {
+    realtimeChannel.value.unsubscribe()
+  }
+})
 </script>
 
 <template>
