@@ -35,7 +35,7 @@ const emit = defineEmits<{
       />
     </a>
   </div>
-  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-w-full" @click="emit('action:buy', listingParams.sale_price)">
+  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', listingParams?.sale_price || 0)">
     <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
     <span class="text ap-flex ap-items-center ap-gap-1">
         Pay
@@ -43,7 +43,7 @@ const emit = defineEmits<{
           <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
             <count-up :end-val="listingParams.sale_price?.toString() || 0" :decimalPlaces="2" :duration="1"></count-up>
           </span>
-          <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_name }}</span>
+          <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_ticker }}</span>
       </div>
       </span>
     <span class="circle"></span>

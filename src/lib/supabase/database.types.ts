@@ -239,37 +239,37 @@ export type Database = {
           chain: Database["public"]["Enums"]["chains"]
           created_at: string
           decimals: number | null
-          fees_address: string | null
           icon: string | null
           id: string
           name: string
           ticker: string
           type: Database["public"]["Enums"]["currency_type"]
           updated_at: string | null
+          visible: boolean
         }
         Insert: {
           chain: Database["public"]["Enums"]["chains"]
           created_at?: string
           decimals?: number | null
-          fees_address?: string | null
           icon?: string | null
           id: string
           name: string
           ticker: string
           type: Database["public"]["Enums"]["currency_type"]
           updated_at?: string | null
+          visible?: boolean
         }
         Update: {
           chain?: Database["public"]["Enums"]["chains"]
           created_at?: string
           decimals?: number | null
-          fees_address?: string | null
           icon?: string | null
           id?: string
           name?: string
           ticker?: string
           type?: Database["public"]["Enums"]["currency_type"]
           updated_at?: string | null
+          visible?: boolean
         }
         Relationships: []
       }
@@ -605,7 +605,6 @@ export type Database = {
         currency_ticker: string | null
         currency_icon: string | null
         currency_type: Database["public"]["Enums"]["currency_type"] | null
-        currency_fees_address: string | null
         currency_decimals: number | null
         asset_id: string | null
         asset_thumbnail: string | null

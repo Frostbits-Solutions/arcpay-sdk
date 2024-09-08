@@ -23,10 +23,10 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { type Database } from '@/lib/supabase/database.types'
 import { getCurrencies } from '@/lib/supabase/currencies'
 import type {NetworksConfig} from '@/lib/algod/networks.config'
-
+type Currency = Database['public']['Tables']['currencies']['Row']
 const supabase = inject<SupabaseClient>('supabase')
 const network = inject<NetworksConfig>('network')
-const currencies = ref<Database['public']['Tables']['currencies']['Row'][]>([])
+const currencies = ref<Currency[]>([])
 const selectedCurrency = computed(() => {
   return currencies.value.find((currency) => currency.ticker === value.value)
 })
@@ -90,12 +90,12 @@ onMounted(() => {
         <CommandList>
           <CommandGroup class="ap-w-[327px]">
             <CommandItem
-              v-for="currency in currencies"
+              v-for="currency in currencies.filter((c:Currency) => c.visible)"
               :key="currency.id"
               :value="currency.ticker"
-              @select="(ev) => {
-                if (typeof ev.detail.value === 'string') {
-                  value = ev.detail.value
+              @select="(e) => {
+                if (typeof e.detail.value === 'string') {
+                  value = e.detail.value
                 }
                 open = false
               }">

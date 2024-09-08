@@ -60,22 +60,20 @@ onMounted(() => {
       />
     </a>
   </div>
-  <div v-if="listingParams.status === 'active'" class="ap-flex ap-items-center">
-    <button class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-w-full" v-if="listingParams.status === 'active'" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
-      <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
-      <span class="text ap-flex ap-items-center ap-gap-1">
+  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
+    <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
+    <span class="text ap-flex ap-items-center ap-gap-1">
         Pay
         <div class="ap-flex ap-items-center">
           <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
             <count-up :start-val="previousPrice" :end-val="price" :decimalPlaces="2" :duration="1"></count-up>
           </span>
-          <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_name }}</span>
+          <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_ticker }}</span>
       </div>
       </span>
-      <span class="circle"></span>
-      <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
-    </button>
-  </div>
+    <span class="circle"></span>
+    <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
+  </button>
 </template>
 
 <style scoped>

@@ -95,14 +95,13 @@ export class ArcpayClient {
   public async create(options?: CreateOptions) {
     let accountId = options?.accountId
 
-    // WARNING: account_id can be 0
-    if (typeof accountId === 'undefined') {
+    if ( !accountId) {
       const { data, error } = await deriveAccountIdFromKey(this._client, this._apiKey as string)
       if (data === null || error) throw new Error(`Unable to derive account ID from key. This is likely because of an invalid API Key. Make sure the key allowed origin is ${window.location.origin}. You can create new API keys from the arcpay dashboard`)
       accountId = data
     }
 
-    if (typeof accountId === 'undefined') throw new Error('Unexpected error: Account ID is undefined')
+    if (!accountId) throw new Error('Unexpected error: Account ID is undefined')
     try {
       const account: WalletAccount = await selectWallet(this._appProvider)
       const params: ListingCreationParams = await createListing(this._appProvider, account, options satisfies CreateListingOptions | undefined)
