@@ -383,7 +383,6 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
-            arc200FeesAppId: number,
             nftAppID: number,
             appIndex: number,
             sellerAddress: string,
@@ -394,7 +393,7 @@ export const interfaces:Interfaces = {
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
             .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
-            .call('buy', [], [feesAppAddress], [feesAppId, arc200FeesAppId])
+            .call('buy', [], [feesAppAddress], [feesAppId])
             .send(signer),
         },
         auction: {
@@ -501,7 +500,6 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
-            arc200FeesAppId: number,
             nftAppID: number,
             appIndex: number,
             sellerAddress: string,
@@ -513,7 +511,7 @@ export const interfaces:Interfaces = {
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
             .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
             .preValidate()
-            .call('buy', [longToByteArray(price, 8)], [feesAppAddress], [feesAppId, arc200FeesAppId])
+            .call('buy', [longToByteArray(price, 8)], [feesAppAddress], [feesAppId])
             .send(signer)
         }
       },
@@ -558,7 +556,6 @@ export const interfaces:Interfaces = {
             fromAddress: string,
             arc200AppID: number,
             arc200AppAddress: string,
-            arc200FeesAppId: number,
             appIndex: number,
             price: number,
             feesAppAddress: string,
@@ -566,7 +563,7 @@ export const interfaces:Interfaces = {
           ) => new Transaction(algod, { fromAddress, appIndex })
             .pay(28500 / 1_000_000, arc200AppAddress)
             .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
-            .call('buy', [], [feesAppAddress], [feesAppId, arc200FeesAppId])
+            .call('buy', [], [feesAppAddress], [feesAppId])
             .send(signer)
         }
       }
