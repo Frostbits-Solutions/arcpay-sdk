@@ -12,7 +12,7 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
 </script>
 
 <template>
-  <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px]">
+  <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px] ap-mx-auto">
     <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
       <div style="transform: translate(6px, -5px)">
         <svg class="spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">

@@ -47,14 +47,14 @@ onMounted(() => {
 
 <template>
   <div class="ap-flex ap-flex-col ap-gap-2 ap-mt-4 md:ap-flex-row md:ap-gap-8">
-    <div class="ap-flex ap-flex-col ap-justify-center">
+    <div class="ap-flex ap-flex-col ap-justify-center ap-mx-auto">
       <AssetSelectionCombobox ref="assetSelectionComboboxRef" :account="args?.account" :default-value="args?.options?.assetId"/>
     </div>
-    <div class="ap-flex ap-flex-col ap-justify-between">
+    <div class="ap-flex ap-flex-col ap-justify-between ap-w-[333px] ap-mx-auto">
       <div>
         <div v-if="!args?.options?.listingType">
           <Label class="ap-text-xs ap-text-muted-foreground">Listing type</Label>
-          <div class="ap-grid ap-gap-[17px] ap-grid-cols-4 ap-w-[333px] ap-mt-2">
+          <div class="ap-grid ap-gap-[17px] ap-grid-cols-4 ap-mt-2">
             <RouterLink :to="{name: 'sale-creation'}"
                         class="ap-h-[74px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-background ap-text-muted-foreground hover:ap-text-foreground">
               <Receipt class="ap-h-5 ap-w-5" />

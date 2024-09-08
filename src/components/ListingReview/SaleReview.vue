@@ -11,33 +11,34 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="ap-flex ap-items-center ap-gap-2 ap-w-96">
-    <div>
-      <h1 class="ap-text-2xl ap-text-foreground ap-mr-1 ap-truncate ap-max-w-72 ap-pl-2">
-        {{ listingParams.name }}
-      </h1>
-      <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
-        <ListingStatusChip :listing-params="listingParams"/>
-        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.type}}</div>
-        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.asset_type}}</div>
+  <div class="ap-w-full sm:ap-w-96">
+    <div class="ap-flex ap-items-center ap-gap-2">
+      <div>
+        <h1 class="ap-text-2xl ap-text-foreground ap-mr-1 ap-truncate ap-max-w-72 ap-pl-2">
+          {{ listingParams.name }}
+        </h1>
+        <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
+          <ListingStatusChip :listing-params="listingParams"/>
+          <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.type}}</div>
+          <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.asset_type}}</div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="ap-flex ap-justify-center ap-mt-10 ap-mb-16">
-    <a :href="previewLink"
-       target="_blank"
-       class="ap-block ap-max-w-[250px] ap-max-h-[250px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
-      <img
-          v-if="listingParams.asset_thumbnail"
-          :src="listingParams.asset_thumbnail"
-          :alt="listingParams.asset_id || 'Asset'"
-          class="ap-object-contain ap-w-full ap-h-full"
-      />
-    </a>
-  </div>
-  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', listingParams?.sale_price || 0)">
-    <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
-    <span class="text ap-flex ap-items-center ap-gap-1">
+    <div class="ap-flex ap-justify-center ap-mt-10 ap-mb-16">
+      <a :href="previewLink"
+         target="_blank"
+         class="ap-block ap-max-w-[250px] ap-max-h-[250px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
+        <img
+            v-if="listingParams.asset_thumbnail"
+            :src="listingParams.asset_thumbnail"
+            :alt="listingParams.asset_id || 'Asset'"
+            class="ap-object-contain ap-w-full ap-h-full"
+        />
+      </a>
+    </div>
+    <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', listingParams?.sale_price || 0)">
+      <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
+      <span class="text ap-flex ap-items-center ap-gap-1">
         Pay
         <div class="ap-flex ap-items-center">
           <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
@@ -46,9 +47,10 @@ const emit = defineEmits<{
           <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_ticker }}</span>
       </div>
       </span>
-    <span class="circle"></span>
-    <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
-  </button>
+      <span class="circle"></span>
+      <ArrowRight class="ap-w-6 ap-h-6 arr-1"/>
+    </button>
+  </div>
 </template>
 
 <style scoped>

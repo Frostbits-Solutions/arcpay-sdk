@@ -95,7 +95,7 @@ async function selectAccount(account: WalletAccount) {
 </script>
 
 <template>
-  <ul class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2" v-if="!activeWallet || accountLoading">
+  <ul class="ap-w-[350px] ap-mx-auto ap-mt-6 ap-flex ap-flex-col ap-gap-2" v-if="!activeWallet || accountLoading">
     <li v-for="wallet in wallets" :key="wallet.id">
       <Button @click="selectWallet(wallet)" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between ap-bg-background hover:ap-bg-background" :disabled="isConnectDisabled(wallet)">
         <div class="ap-flex ap-items-center ap-w-full">
@@ -111,7 +111,7 @@ async function selectAccount(account: WalletAccount) {
       {{ error }}
     </li>
   </ul>
-  <ul v-else class="ap-w-[350px] ap-mt-6 ap-flex ap-flex-col ap-gap-2">
+  <ul v-else class="ap-w-[350px] ap-mx-auto ap-mt-6 ap-flex ap-flex-col ap-gap-2">
     <li>
       <Button @click="disconnectWallet" variant="secondary" class="ap-w-full ap-h-12 ap-justify-between ap-bg-background hover:ap-bg-background">
         <div class="ap-flex ap-items-center ap-w-full">
