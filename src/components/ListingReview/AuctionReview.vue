@@ -17,11 +17,12 @@ import type {SupabaseClient} from "@supabase/supabase-js";
 import {getShortAddress} from "@/lib/utils";
 import Jazzicon from "@/components/Jazzicon.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {Users} from "lucide-vue-next";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
 const client = inject<SupabaseClient>('supabase')
-const props = defineProps<{listingParams: ListingParams, previewLink: string}>()
+const props = defineProps<{listingParams: ListingParams, previewLink: string, presence: number}>()
 const emit = defineEmits<{ 'action:buy': [price: number] }>()
 const price = ref<number>(props.listingParams.auction_start_price || 1)
 const minPrice = ref<number>(props.listingParams.auction_start_price || 1)
@@ -60,10 +61,16 @@ onMounted(async () => {
     <h1 class="ap-text-2xl ap-text-foreground ap-mr-1 ap-truncate ap-max-w-72 ap-pl-2">
       {{ listingParams.name }}
     </h1>
-    <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
-      <ListingStatusChip :listing-params="listingParams"/>
-      <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.type}}</div>
-      <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.asset_type}}</div>
+    <div class="ap-flex ap-justify-between ap-items-center">
+      <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
+        <ListingStatusChip :listing-params="listingParams"/>
+        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.type}}</div>
+        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.asset_type}}</div>
+      </div>
+      <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm">
+        {{ presence}}
+        <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
+      </div>
     </div>
   </div>
   <div class="ap-mt-6 ap-flex ap-flex-col ap-justify-between ap-items-center sm:ap-flex-row sm:ap-items-stretch ap-mb-10 ap-gap-4">

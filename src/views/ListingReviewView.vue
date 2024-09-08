@@ -17,6 +17,8 @@ const { callback, args } = inject<{ ListingReview: ListingReviewProvider }>('app
 const listingParams = args?.listingParams
 const router = useRouter()
 const realtimeChannel = ref<RealtimeChannel>()
+const presenceTracker = ref<number>(0)
+const transactionsTracker = ref<string[]>()
 
 const nftNavigatorLink = computed(() => {
   if(listingParams && listingParams.asset_id?.split('/')?.[1]) {
@@ -40,7 +42,7 @@ onMounted(() => {
     realtimeChannel.value = subscribeToAppTransactions(client, listingParams.app_id, (newTx) => {
       console.log(newTx)
     }, (count) => {
-      console.log(count)
+      presenceTracker.value = count
     })
   }
 });
@@ -54,7 +56,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div id="review-settings" v-if="listingParams">
-    <router-view :listing-params="listingParams" :previewLink="nftNavigatorLink" @action:buy="(price: number) => handleBuy(price)"/>
+    <router-view :listing-params="listingParams" :previewLink="nftNavigatorLink" :presence="presenceTracker" @action:buy="(price: number) => handleBuy(price)"/>
   </div>
 </template>
 
