@@ -113,13 +113,15 @@ export interface AlgoInterface {
 
 export interface CommonInterface {
   close: (
-    algod: Algodv2,
-    signer: TransactionSigner,
-    fromAddress: string,
-    appIndex: number,
-    feesAppAddress: string,
-    feesAppId: number,
-    nftID?: number
+      algod: Algodv2,
+      signer: TransactionSigner,
+      fromAddress: string,
+      appIndex: number,
+      feesAppAddress: string,
+      feesAppId: number,
+      sellerAddress: string,
+      nftID?: number,
+      asaID?: number
   ) => Promise<TransactionConfirmation>;
   cancel: (
     algod: Algodv2,
@@ -994,9 +996,9 @@ export const interfaces:Interfaces = {
       appIndex: number,
       feesAppAddress: string,
       feesAppId: number,
+      sellerAddress: string,
       nftID?: number,
-      asaID?: number,
-      sellerAddress?: string
+      asaID?: number
     ) => {
       const foreignAssets = []
       if (nftID) foreignAssets.push(nftID)

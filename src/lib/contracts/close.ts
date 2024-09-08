@@ -9,10 +9,11 @@ import algosdk from "algosdk";
 type ListingParams = Database['public']['Functions']['get_listing_by_id']['Returns']
 
 export async function close(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, account: WalletAccount, params: ListingParams): Promise<TransactionConfirmation> {
-    const args: number[] = []
+    const args: (number)[] = []
     if (params.asset_type === 'asa' && params.asset_id) args.push(parseInt(params.asset_id))
     if (params.currency_type === 'asa' && params.currency) args.push(parseInt(params.currency))
     if (!params.app_id) throw new Error('Unexpected error: App ID is required to close listing.')
+    if (!params.seller_address) throw new Error('Unexpected error: Seller Address is required to close listing.')
 
     load(appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction.')
     const transactionConfirmation: TransactionConfirmation = await interfaces["common"].close(
@@ -22,8 +23,8 @@ export async function close(networkConfig: NetworksConfig, appProvider: AppProvi
         params.app_id,
         algosdk.getApplicationAddress(networkConfig.feesAppId),
         networkConfig.feesAppId,
-        ...args,
-        params.seller_address
+        params.seller_address,
+        ...args
     )
     if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Closing listing failed.')
     return transactionConfirmation
