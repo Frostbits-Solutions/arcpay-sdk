@@ -15,7 +15,7 @@ const previousPrice = ref<number>(0)
 function getLatestPrice() {
   if (props.listingParams && props.listingParams.created_at && props.listingParams.dutch_duration && props.listingParams.dutch_max_price && props.listingParams.dutch_min_price !== null) {
     const startTime = new Date(props.listingParams.created_at).getTime()
-    const endTime = new Date(props.listingParams.created_at).getTime() + (props.listingParams.dutch_duration * 3_600_000)
+    const endTime = startTime + (props.listingParams.dutch_duration * 3_600_000)
     const max = props.listingParams.dutch_max_price
     const min = props.listingParams.dutch_min_price
     const ratio = parseFloat(((max - min) / (endTime - startTime)).toFixed(10))
