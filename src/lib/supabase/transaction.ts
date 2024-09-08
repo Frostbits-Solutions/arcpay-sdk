@@ -15,12 +15,14 @@ export function subscribeToAppTransactions(
     const room = supabase.channel(`transactions:${app_id}`)
     room.on('presence', { event: 'sync' }, () => {
         const newState = room.presenceState()
-        console.log('sync', newState, room)
-    }).on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('join', key, newPresences, room.presenceState())
-    }).on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('leave', key, leftPresences, room.presenceState())
-    }).subscribe(async (status) => {
+        presenceCallback(Object.keys(newState).length)
+    }).on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'transactions', filter: `app_id=eq.${app_id}`},
+        (payload) => {
+            insertCallback(payload)
+        }
+    ).subscribe(async (status) => {
         if (status !== 'SUBSCRIBED') { return }
         await room.track({
             online_at: new Date().toISOString(),
