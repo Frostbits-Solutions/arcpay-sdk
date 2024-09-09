@@ -48,7 +48,12 @@ defineExpose({
               }"
               :min="1"
               class="ap-flex-1"
-              @update:modelValue="(value: number) => priceMin = value"
+              @update:modelValue="(value: number) => {
+                priceMin = value
+                if (priceMax <= priceMin) {
+                  priceMax = priceMin + 1
+                }
+              }"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -66,7 +71,7 @@ defineExpose({
                 style: 'decimal',
                 minimumFractionDigits: 2
               }"
-              :min="1"
+              :min="priceMin + 1"
               class="ap-flex-1"
               @update:modelValue="(value: number) => priceMax = value"
           >

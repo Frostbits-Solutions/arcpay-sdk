@@ -22,10 +22,10 @@ import {Users} from "lucide-vue-next";
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
 const client = inject<SupabaseClient>('supabase')
-const props = defineProps<{listingParams: ListingParams, previewLink: string, presence: number}>()
+const props = defineProps<{listingParams: ListingParams, previewLink: string, presence: number, txs: Transaction[]}>()
 const emit = defineEmits<{ 'action:buy': [price: number] }>()
-const price = ref<number>(props.listingParams.auction_start_price || 1)
-const minPrice = ref<number>(props.listingParams.auction_start_price || 1)
+const bid = ref<number>(props.listingParams.auction_start_price || 1)
+const minbid = ref<number>(props.listingParams.auction_start_price || 1)
 const transactions = ref<Transaction[]>([])
 const bids = computed(() => {
   return transactions.value.filter(tx => tx.type === 'bid').sort((a, b) => (b.amount || 0) - (a.amount || 0))
@@ -41,14 +41,19 @@ function formatAmount(amount: number | null | undefined) {
 }
 
 watch(() => highestBid.value, (value) => {
-  minPrice.value = price.value = value + (props.listingParams.auction_increment || 1)
+  minbid.value = bid.value = value + (props.listingParams.auction_increment || 1)
 })
+
+watch(() => props.txs, (value) => {
+  transactions.value.splice(transactions.value.length - (value.length - 1), value.length, ...value)
+},{deep:true})
 
 onMounted(async () => {
   if (client && props.listingParams.app_id) {
     const {data, error} = await getTransactions(client, props.listingParams.app_id)
     if (data) {
       transactions.value = data
+      minbid.value = bid.value = highestBid.value + (props.listingParams.auction_increment || 1)
     } else {
       console.error(error)
     }
@@ -118,14 +123,14 @@ onMounted(async () => {
       <div v-if="listingParams.status === 'active'">
         <span class="ap-text-muted-foreground ap-text-sm">Your bid:</span>
         <NumberField
-            id="priceMin"
-            :model-value="price"
+            id="bidMin"
+            :model-value="bid"
             :format-options="{
               style: 'decimal',
               minimumFractionDigits: 2
             }"
-            :min="minPrice"
-            @update:modelValue="(value: number) => price = value"
+            :min="minbid"
+            @update:modelValue="(value: number) => bid = value"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -136,13 +141,13 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
+  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(bid.toFixed(2)))">
     <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
     <span class="text ap-flex ap-items-center ap-gap-1">
             Bid
             <div class="ap-flex ap-items-center">
               <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-                <count-up :end-val="price" :decimalPlaces="2" :duration="1"></count-up>
+                <count-up :end-val="bid" :decimalPlaces="2" :duration="1"></count-up>
               </span>
               <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_ticker }}</span>
             </div>

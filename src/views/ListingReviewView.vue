@@ -4,7 +4,9 @@ import type { ListingParams } from '@/lib/app/reviewListing'
 import {useRouter} from "vue-router";
 import {subscribeToAppTransactions} from "@/lib/supabase/transaction";
 import type {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
+import type {Database} from "@/lib/supabase/database.types";
 
+type Transaction = Database['public']['Tables']['transactions']['Row']
 interface ListingReviewProvider {
   callback: (price: number, error?: Error) => void
   args: {
@@ -18,7 +20,7 @@ const listingParams = args?.listingParams
 const router = useRouter()
 const realtimeChannel = ref<RealtimeChannel>()
 const presenceTracker = ref<number>(0)
-const transactionsTracker = ref<string[]>()
+const transactionsTracker = ref<Transaction[]>([])
 
 const nftNavigatorLink = computed(() => {
   if(listingParams && listingParams.asset_id?.split('/')?.[1]) {
@@ -40,7 +42,7 @@ onMounted(() => {
   if (listingParams?.type === 'dutch') router.push({name: 'dutch-review'})
   if (client && listingParams?.app_id) {
     realtimeChannel.value = subscribeToAppTransactions(client, listingParams.app_id, (newTx) => {
-      console.log(newTx)
+      transactionsTracker.value.push(newTx.new as Transaction)
     }, (count) => {
       presenceTracker.value = count
     })
@@ -56,7 +58,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div id="review-settings" v-if="listingParams">
-    <router-view :listing-params="listingParams" :previewLink="nftNavigatorLink" :presence="presenceTracker" @action:buy="(price: number) => handleBuy(price)"/>
+    <router-view :listing-params="listingParams" :previewLink="nftNavigatorLink" :presence="presenceTracker" :txs="transactionsTracker" @action:buy="(price: number) => handleBuy(price)"/>
   </div>
 </template>
 
