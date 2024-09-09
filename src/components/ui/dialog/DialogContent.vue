@@ -30,7 +30,7 @@ const network: NetworksConfig | undefined = inject('network')
 <template>
   <DialogPortal disabled>
     <DialogOverlay
-      class="ap-fixed ap-inset-0 ap-z-50 ap-bg-slate-100/60 dark:ap-bg-slate-900/60 ap-backdrop-blur-sm data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
+      class="ap-fixed ap-inset-0 ap-z-50 ap-bg-slate-100/60 dark:ap-bg-slate-900/80 ap-backdrop-blur-sm data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
     >
       <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4">
         Connected to {{ network?.key}}
