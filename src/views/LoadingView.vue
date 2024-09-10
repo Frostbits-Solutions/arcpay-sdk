@@ -1,12 +1,14 @@
-<script setup lang="ts">
-import { computed, inject, ref, type Ref, watch } from 'vue'
+<script lang="ts" setup>
+import {computed, inject, type Ref} from 'vue'
+
 interface LoadProvider {
   args: {
     title: string
     description: string
   }
 }
-const loadProvider = inject<{Load: Ref<LoadProvider>}>('appProvider')?.['Load']
+
+const loadProvider = inject<{ Load: Ref<LoadProvider> }>('appProvider')?.['Load']
 const title = computed(() => loadProvider?.value.args?.title || 'Loading')
 const description = computed(() => loadProvider?.value.args?.description || 'Sit tight.')
 </script>
@@ -15,22 +17,24 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
   <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px] ap-mx-auto">
     <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
       <div style="transform: translate(6px, -5px)">
-        <svg class="spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <svg class="spinner" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="gradient">
-              <stop offset="0%" stop-color="rgb(65, 88, 208)" />
-              <stop offset="30%" stop-color="rgb(200, 80, 192)" />
-              <stop offset="100%" stop-color="rgb(255, 204, 112)" />
+              <stop offset="0%" stop-color="rgb(65, 88, 208)"/>
+              <stop offset="30%" stop-color="rgb(200, 80, 192)"/>
+              <stop offset="100%" stop-color="rgb(255, 204, 112)"/>
             </linearGradient>
           </defs>
-          <circle class="spinner__circle" cx="26" cy="26" r="25" fill="none" />
+          <circle class="spinner__circle" cx="26" cy="26" fill="none" r="25"/>
         </svg>
       </div>
     </div>
-    <div class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both ap-animate-out ap-slide-out-to-top-2">
+    <div
+        class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both ap-animate-out ap-slide-out-to-top-2">
       <div>
-        <div v-if="title" class="ap-text-md ap-font-semibold ap-text-foreground">{{title}}</div>
-        <div v-if="description" class="ap-text-xs ap-text-muted-foreground ap-whitespace-pre-line">{{description}}</div>
+        <div v-if="title" class="ap-text-md ap-font-semibold ap-text-foreground">{{ title }}</div>
+        <div v-if="description" class="ap-text-xs ap-text-muted-foreground ap-whitespace-pre-line">{{ description }}
+        </div>
       </div>
     </div>
   </div>
@@ -47,6 +51,7 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
   right: 5px;
   margin: 0 auto;
 }
+
 .spinner__circle {
   stroke-dasharray: 166;
   stroke-dashoffset: 166;

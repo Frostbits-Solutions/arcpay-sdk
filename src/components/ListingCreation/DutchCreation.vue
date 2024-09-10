@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import {
   NumberField,
@@ -7,9 +7,9 @@ import {
   NumberFieldIncrement,
   NumberFieldInput
 } from '@/components/ui/number-field'
-import { Label } from '@/components/ui/label'
+import {Label} from '@/components/ui/label'
 import CurrencySelectionCombobox from '@/components/ListingCreation/CurrencySelectionCombobox.vue'
-import { computed, ref } from 'vue'
+import {computed, ref} from 'vue'
 
 const currencySelectorRef = ref<typeof CurrencySelectionCombobox | null>(null)
 const priceMin = ref<number>(1)
@@ -34,19 +34,19 @@ defineExpose({
 
 <template>
   <div class="ap-mt-2">
-    <Label for="priceMin" class="ap-text-xs ap-text-muted-foreground">Price range</Label>
+    <Label class="ap-text-xs ap-text-muted-foreground" for="priceMin">Price range</Label>
     <div class="ap-flex ap-gap-1 ap-items-top ap-mt-2 ap-w-[333px]">
       <div>
         <div class="ap-flex ap-items-center ap-gap-2">
           <span class="ap-text-xs ap-text-muted-foreground/50">Min</span>
           <NumberField
               id="priceMin"
-              :model-value="priceMin"
               :format-options="{
                 style: 'decimal',
                 minimumFractionDigits: 2
               }"
               :min="1"
+              :model-value="priceMin"
               class="ap-flex-1"
               @update:modelValue="(value: number) => {
                 priceMin = value
@@ -56,9 +56,9 @@ defineExpose({
               }"
           >
             <NumberFieldContent>
-              <NumberFieldDecrement />
-              <NumberFieldInput />
-              <NumberFieldIncrement />
+              <NumberFieldDecrement/>
+              <NumberFieldInput/>
+              <NumberFieldIncrement/>
             </NumberFieldContent>
           </NumberField>
         </div>
@@ -66,19 +66,19 @@ defineExpose({
           <span class="ap-text-xs ap-text-muted-foreground/50">Max</span>
           <NumberField
               id="priceMax"
-              :model-value="priceMax"
               :format-options="{
                 style: 'decimal',
                 minimumFractionDigits: 2
               }"
               :min="priceMin + 1"
+              :model-value="priceMax"
               class="ap-flex-1"
               @update:modelValue="(value: number) => priceMax = value"
           >
             <NumberFieldContent>
-              <NumberFieldDecrement />
-              <NumberFieldInput />
-              <NumberFieldIncrement />
+              <NumberFieldDecrement/>
+              <NumberFieldInput/>
+              <NumberFieldIncrement/>
             </NumberFieldContent>
           </NumberField>
         </div>
@@ -87,22 +87,22 @@ defineExpose({
     </div>
   </div>
   <div class="ap-mt-2">
-    <Label for="duration" class="ap-text-xs ap-text-muted-foreground">Duration</Label>
+    <Label class="ap-text-xs ap-text-muted-foreground" for="duration">Duration</Label>
     <NumberField
         id="duration"
-        :model-value="duration"
         :format-options="{
           style: 'unit',
           unit: 'day'
         }"
         :min="1"
+        :model-value="duration"
         class="ap-flex-1 ap-mt-2"
         @update:modelValue="(value: number) => duration = value"
     >
       <NumberFieldContent>
-        <NumberFieldDecrement />
-        <NumberFieldInput />
-        <NumberFieldIncrement />
+        <NumberFieldDecrement/>
+        <NumberFieldInput/>
+        <NumberFieldIncrement/>
       </NumberFieldContent>
     </NumberField>
   </div>

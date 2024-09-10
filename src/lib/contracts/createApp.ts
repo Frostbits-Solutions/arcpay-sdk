@@ -1,6 +1,6 @@
 import {type WalletAccount, WalletManager} from "@txnlab/use-wallet";
 import {AppProvider, type ListingCreationParams, load} from "@/lib/app";
-import {interfaces} from "@/lib/contracts/interfaces";
+import {interfaces, type CurrencyInterface, type AssetInterface} from "@/lib/contracts/interfaces";
 import type {TransactionConfirmation} from "@/lib/transaction/Transaction";
 import getContract from "@/lib/supabase/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
@@ -9,9 +9,13 @@ import algosdk from "algosdk";
 
 export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, account: WalletAccount, params: ListingCreationParams): Promise<number> {
     const chain = networkConfig.chain
-    const chainInterface = interfaces[chain]
     const currency = params.currency?.type
     if (!currency) throw new Error(`Unexpected error: Invalid currency ${params.currency?.name}`)
+    const chainInterface = interfaces[chain]
+    // @ts-expect-error
+    const currencyInterface = chainInterface[currency] as CurrencyInterface
+    // @ts-expect-error
+    const assetInterface = currencyInterface[params.asset.type] as AssetInterface
 
     const args = []
     if (params.type === 'sale') args.push(...formatSaleArgs(params))
@@ -20,18 +24,17 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
 
     // Create application
     load(appProvider, 'Creating app', 'Transaction 1 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
-    //@ts-ignore
-    const transactionConfirmation: TransactionConfirmation = await chainInterface[currency][params.asset.type][params.type].create(
+    const transactionConfirmation: TransactionConfirmation = await assetInterface[params.type].create(
         walletManager.algodClient,
         walletManager.transactionSigner,
-        account.address,
-        ...formatCurrency(params),
-        ...formatNftID(networkConfig, params),
-        ...args,
         await getContract(client, `${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
         await getContract(client,`${networkConfig.key}:clear:latest`),
+        account.address,
         '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
-        0
+        0,
+        ...formatCurrency(params),
+        ...formatNftID(networkConfig, params),
+        ...args
     )
 
     // Get created app index
@@ -40,16 +43,14 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     load(appProvider, 'Funding app', 'Transaction 2 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
 
     // Fund created app
-    //@ts-ignore
-    await chainInterface[currency][params.asset.type][params.type].fund(
+    await assetInterface[params.type].fund(
         walletManager.algodClient,
         walletManager.transactionSigner,
         account.address,
+        appIndex,
         ...formatCurrency(params),
-        ...formatNftID(networkConfig, params),
-        appIndex
+        ...formatNftID(networkConfig, params)
     )
-
     return appIndex
 }
 
@@ -68,7 +69,6 @@ function formatCurrency(params: ListingCreationParams) {
         throw new Error(`Invalid currency id ${params.currency?.id}. ${e}`)
     }
     return args
-
 }
 
 function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParams): (number | string)[] {

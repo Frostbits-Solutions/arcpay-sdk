@@ -1,13 +1,8 @@
-<script setup lang="ts">
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { useRoute, useRouter } from 'vue-router'
+<script lang="ts" setup>
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} from '@/components/ui/dialog'
+import {useRoute, useRouter} from 'vue-router'
 import {VisuallyHidden} from "radix-vue";
+
 const route = useRoute()
 const router = useRouter()
 
@@ -28,7 +23,7 @@ function handleClose(open: boolean) {
       <DialogHeader>
         <DialogTitle v-if="route.meta.title">{{ route.meta.title }}</DialogTitle>
         <VisuallyHidden v-else>
-          <DialogTitle >{{ route.name }}</DialogTitle>
+          <DialogTitle>{{ route.name }}</DialogTitle>
         </VisuallyHidden>
         <DialogDescription>
           {{ route.meta.description }}

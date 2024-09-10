@@ -1,20 +1,20 @@
-<script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue'
-import type { ComboboxEmptyProps } from 'radix-vue'
-import { ComboboxEmpty } from 'radix-vue'
-import { cn } from '@/lib/utils'
+<script lang="ts" setup>
+import {computed, type HTMLAttributes} from 'vue'
+import type {ComboboxEmptyProps} from 'radix-vue'
+import {ComboboxEmpty} from 'radix-vue'
+import {cn} from '@/lib/utils'
 
 const props = defineProps<ComboboxEmptyProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
+  const {class: _, ...delegated} = props
 
   return delegated
 })
 </script>
 
 <template>
-  <ComboboxEmpty v-bind="delegatedProps" :class="cn('ap-py-6 ap-text-center ap-text-sm', props.class)">
-    <slot />
+  <ComboboxEmpty :class="cn('ap-py-6 ap-text-center ap-text-sm', props.class)" v-bind="delegatedProps">
+    <slot/>
   </ComboboxEmpty>
 </template>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import {
   NumberField,
@@ -7,9 +7,9 @@ import {
   NumberFieldIncrement,
   NumberFieldInput
 } from '@/components/ui/number-field'
-import { Label } from '@/components/ui/label'
+import {Label} from '@/components/ui/label'
 import CurrencySelectionCombobox from '@/components/ListingCreation/CurrencySelectionCombobox.vue'
-import { computed, ref } from 'vue'
+import {computed, ref} from 'vue'
 
 const currencySelectorRef = ref<typeof CurrencySelectionCombobox | null>(null)
 const price = ref<number>(100)
@@ -32,45 +32,45 @@ defineExpose({
 
 <template>
   <div class="ap-mt-2">
-    <Label for="price" class="ap-text-xs ap-text-muted-foreground">Start price</Label>
+    <Label class="ap-text-xs ap-text-muted-foreground" for="price">Start price</Label>
     <div class="ap-flex ap-gap-1 ap-items-center ap-mt-2">
       <NumberField
           id="price"
-          :model-value="price"
           :format-options="{
             style: 'decimal',
             minimumFractionDigits: 2
           }"
           :min="1"
+          :model-value="price"
           class="ap-flex-1"
           @update:modelValue="(value: number) => price = value"
       >
         <NumberFieldContent>
-          <NumberFieldDecrement />
-          <NumberFieldInput />
-          <NumberFieldIncrement />
+          <NumberFieldDecrement/>
+          <NumberFieldInput/>
+          <NumberFieldIncrement/>
         </NumberFieldContent>
       </NumberField>
       <CurrencySelectionCombobox ref="currencySelectorRef"/>
     </div>
   </div>
   <div class="ap-mt-2">
-    <Label for="duration" class="ap-text-xs ap-text-muted-foreground">Duration</Label>
+    <Label class="ap-text-xs ap-text-muted-foreground" for="duration">Duration</Label>
     <NumberField
         id="duration"
-        :model-value="duration"
         :format-options="{
           style: 'unit',
           unit: 'day'
         }"
         :min="1"
+        :model-value="duration"
         class="ap-flex-1 ap-mt-2"
         @update:modelValue="(value: number) => duration = value"
     >
       <NumberFieldContent>
-        <NumberFieldDecrement />
-        <NumberFieldInput />
-        <NumberFieldIncrement />
+        <NumberFieldDecrement/>
+        <NumberFieldInput/>
+        <NumberFieldIncrement/>
       </NumberFieldContent>
     </NumberField>
   </div>

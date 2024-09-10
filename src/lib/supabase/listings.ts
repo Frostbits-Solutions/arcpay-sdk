@@ -1,16 +1,19 @@
-import { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/lib/supabase/database.types'
+import {SupabaseClient} from '@supabase/supabase-js'
+import type {Database} from '@/lib/supabase/database.types'
 
 export async function getListings(client: SupabaseClient) {
-  const { data, error } = await client
-    .from('listings')
-    .select('*, auctions(*), sales(*), dutch_auctions(*)').returns<Database['public']['Tables']['listings']['Row'][]>()
-  return { data, error }
+    const {data, error} = await client
+        .from('listings')
+        .select('*, auctions(*), sales(*), dutch_auctions(*)').returns<Database['public']['Tables']['listings']['Row'][]>()
+    return {data, error}
 }
 
 export async function getListingById(client: SupabaseClient, listingId: string) {
-  const { data, error } = await client.rpc('get_listing_by_id', { listing_id: listingId }).returns<Database['public']['Functions']['get_listing_by_id']['Returns']>()
-  return { data, error }
+    const {
+        data,
+        error
+    } = await client.rpc('get_listing_by_id', {listing_id: listingId}).returns<Database['public']['Functions']['get_listing_by_id']['Returns']>()
+    return {data, error}
 }
 
 export async function createAuction(
@@ -31,7 +34,7 @@ export async function createAuction(
     start_price: Database["public"]["Tables"]["auctions"]["Row"]["start_price"],
     increment: Database["public"]["Tables"]["auctions"]["Row"]["increment"],
 ) {
-    const { data: listingData, error: listingError } = await client
+    const {data: listingData, error: listingError} = await client
         .from('listings')
         .insert({
             account_id,
@@ -52,9 +55,9 @@ export async function createAuction(
         .select().returns<Database['public']['Tables']['listings']['Row'][]>()
 
     const listingId = listingData?.[0].id
-    if (listingError || !listingId) return { data: null, listingError }
+    if (listingError || !listingId) return {data: null, listingError}
 
-    const { data, error } = await client
+    const {data, error} = await client
         .from('auctions')
         .insert({
             listing_id: listingId,
@@ -63,7 +66,7 @@ export async function createAuction(
             duration,
         })
         .select().returns<Database['public']['Tables']['auctions']['Row'][]>()
-    return { data, error }
+    return {data, error}
 }
 
 export async function createDutchAuction(
@@ -84,7 +87,7 @@ export async function createDutchAuction(
     min_price: Database["public"]["Tables"]["dutch_auctions"]["Row"]["min_price"],
     max_price: Database["public"]["Tables"]["dutch_auctions"]["Row"]["max_price"],
 ) {
-    const { data: listingData, error: listingError } = await client
+    const {data: listingData, error: listingError} = await client
         .from('listings')
         .insert({
             account_id,
@@ -105,9 +108,9 @@ export async function createDutchAuction(
         .select().returns<Database['public']['Tables']['listings']['Row'][]>()
 
     const listingId = listingData?.[0].id
-    if (listingError || !listingId) return { data: null, listingError }
+    if (listingError || !listingId) return {data: null, listingError}
 
-    const { data, error } = await client
+    const {data, error} = await client
         .from('dutch_auctions')
         .insert({
             listing_id: listingId,
@@ -116,7 +119,7 @@ export async function createDutchAuction(
             duration,
         })
         .select().returns<Database['public']['Tables']['auctions']['Row'][]>()
-    return { data, error }
+    return {data, error}
 }
 
 export async function createSale(
@@ -135,7 +138,7 @@ export async function createSale(
     tags: Database["public"]["Tables"]["listings"]["Row"]["tags"],
     price: Database["public"]["Tables"]["sales"]["Row"]["price"],
 ) {
-    const { data: listingData, error: listingError } = await client
+    const {data: listingData, error: listingError} = await client
         .from('listings')
         .insert({
             account_id,
@@ -156,14 +159,14 @@ export async function createSale(
         .select().returns<Database['public']['Tables']['listings']['Row'][]>()
 
     const listingId = listingData?.[0].id
-    if (listingError || !listingId) return { data: null, listingError }
+    if (listingError || !listingId) return {data: null, listingError}
 
-    const { data, error } = await client
+    const {data, error} = await client
         .from('sales')
         .insert({
             listing_id: listingId,
             price,
         })
         .select().returns<Database['public']['Tables']['sales']['Row'][]>()
-    return { data, error }
+    return {data, error}
 }
