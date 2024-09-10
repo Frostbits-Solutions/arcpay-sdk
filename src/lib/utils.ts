@@ -1,6 +1,7 @@
 import {ABIMethod} from 'algosdk'
 import {type ClassValue, clsx} from 'clsx'
 import {extendTailwindMerge} from "tailwind-merge";
+import type AlgodClient from "algosdk/dist/types/client/v2/algod/algod";
 
 const twMerge = extendTailwindMerge({
     prefix: "ap-",
@@ -47,3 +48,11 @@ export function encodeAppArgs(abiMethod: ABIMethod, args: any[]) {
     return [abiMethod.getSelector(), ...appArgs]
 }
 
+export async function getFeesAppIdFromState(algod: AlgodClient, appId: number): Promise<number> {
+    const appInfo = await algod.getApplicationByID(appId).do();
+    const globalState = appInfo.params['global-state'];
+    for (let i = 0; i < globalState.length; i++) {
+        if (atob(globalState[i].key) === 'fees_app_id') return globalState[i].value.uint as number
+    }
+    return -1
+}

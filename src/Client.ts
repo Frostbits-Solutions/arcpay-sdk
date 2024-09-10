@@ -218,7 +218,7 @@ export class ArcpayClient {
 
             if (listingParams && listingParams.asset_id) {
                 const account: WalletAccount = await selectWallet(this._appProvider)
-                const transactionConfirmation = await close(this._networkConfig, this._appProvider, this._walletManager, account, listingParams)
+                const transactionConfirmation = await close(this._appProvider, this._walletManager, account, listingParams)
                 success(this._appProvider, 'Success!', 'Listing has been closed', () => {
                     closeDialog()
                 })
