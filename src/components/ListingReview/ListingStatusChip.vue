@@ -6,7 +6,7 @@ const props = defineProps<{
   listingParams: ListingParams
 }>()
 
-const status = computed(()=> {
+const status = computed(() => {
   if (props.listingParams.created_at && props.listingParams.auction_duration && props.listingParams.status) {
     const now = Date.now()
     const endTime = new Date(props.listingParams.created_at).getTime() + new Date().getTimezoneOffset() * 60_000 + (props.listingParams.auction_duration * 3_600_000)

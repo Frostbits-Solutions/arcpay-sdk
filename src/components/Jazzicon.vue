@@ -1,9 +1,10 @@
 <template>
-  <div ref="jazzicon" />
+  <div ref="jazzicon"/>
 </template>
 <script>
 import MersenneTwister from 'mersenne-twister';
 import Color from 'color';
+
 export default {
   name: 'Jazzicon',
   props: {
@@ -115,7 +116,7 @@ export default {
       const firstRot = this.generator.random();
       const angle = Math.PI * 2 * firstRot;
       const velocity =
-        (diameter / total) * this.generator.random() + (i * diameter) / total;
+          (diameter / total) * this.generator.random() + (i * diameter) / total;
       const tx = Math.cos(angle) * velocity;
       const ty = Math.sin(angle) * velocity;
       const translate = 'translate(' + tx + ' ' + ty + ')';
@@ -123,7 +124,7 @@ export default {
       const secondRot = this.generator.random();
       const rot = firstRot * 360 + secondRot * 180;
       const rotate =
-        'rotate(' + rot.toFixed(1) + ' ' + center + ' ' + center + ')';
+          'rotate(' + rot.toFixed(1) + ' ' + center + ' ' + center + ')';
       const transform = translate + ' ' + rotate;
       shape.setAttributeNS(null, 'transform', transform);
       const fill = this.genColor(remainingColors);
@@ -140,7 +141,7 @@ export default {
     hueShift(colors, generator) {
       const wobble = 30;
       const amount = generator.random() * 30 - wobble / 2;
-      return colors.map(function(hex) {
+      return colors.map(function (hex) {
         const color = Color(hex);
         color.rotate(amount);
         return color.hex();

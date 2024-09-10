@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import CountUp from "vue-countup-v3";
 import type {ListingParams} from "@/lib/app/reviewListing";
 import {onMounted, ref} from "vue";
 import {ArrowRight, Users} from "lucide-vue-next";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
 
-const props = defineProps<{listingParams: ListingParams, previewLink: string, presence: number}>()
+const props = defineProps<{ listingParams: ListingParams, previewLink: string, presence: number }>()
 const emit = defineEmits<{
   'action:buy': [price: number]
 }>()
@@ -22,7 +22,8 @@ function getLatestPrice() {
     const now = Date.now() + new Date().getTimezoneOffset() * 60_000
     const price = max - ((now - startTime) * ratio)
     return price > min ? price : min
-  } return 0
+  }
+  return 0
 }
 
 onMounted(() => {
@@ -43,35 +44,43 @@ onMounted(() => {
     <div class="ap-flex ap-justify-between ap-items-center">
       <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
         <ListingStatusChip :listing-params="listingParams"/>
-        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.type}}</div>
-        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.asset_type}}</div>
+        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">
+          {{ listingParams.type }}
+        </div>
+        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">
+          {{ listingParams.asset_type }}
+        </div>
       </div>
       <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm">
-        {{ presence}}
+        {{ presence }}
         <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
       </div>
     </div>
     <div class="ap-flex ap-justify-center ap-mt-10 ap-mb-16">
       <a :href="previewLink"
-         target="_blank"
-         class="ap-block ap-max-w-[250px] ap-max-h-[250px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
+         class="ap-block ap-max-w-[250px] ap-max-h-[250px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border"
+         target="_blank">
         <img
             v-if="listingParams.asset_thumbnail"
-            :src="listingParams.asset_thumbnail"
             :alt="listingParams.asset_id || 'Asset'"
+            :src="listingParams.asset_thumbnail"
             class="ap-object-contain ap-w-full ap-h-full"
         />
       </a>
     </div>
-    <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(price.toFixed(2)))">
+    <button v-if="listingParams.status === 'active'"
+            class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
+            @click="emit('action:buy', parseFloat(price.toFixed(2)))">
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
       <span class="text ap-flex ap-items-center ap-gap-1">
           Pay
           <div class="ap-flex ap-items-center">
             <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-              <count-up :start-val="previousPrice" :end-val="price" :decimalPlaces="2" :duration="1"></count-up>
+              <count-up :decimalPlaces="2" :duration="1" :end-val="price" :start-val="previousPrice"></count-up>
             </span>
-            <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_ticker }}</span>
+            <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{
+                listingParams.currency_ticker
+              }}</span>
         </div>
         </span>
       <span class="circle"></span>

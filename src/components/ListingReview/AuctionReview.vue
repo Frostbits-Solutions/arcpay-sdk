@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import CountUp from "vue-countup-v3";
 import type {ListingParams} from "@/lib/app/reviewListing";
 import {
@@ -10,19 +10,18 @@ import {
 } from "@/components/ui/number-field";
 import {computed, inject, onMounted, ref, watch} from "vue";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
-import {ArrowRight, LoaderCircle} from "lucide-vue-next";
+import {ArrowRight, LoaderCircle, Users} from "lucide-vue-next";
 import type {Database} from "@/lib/supabase/database.types";
 import {getTransactions} from "@/lib/supabase/transaction";
 import type {SupabaseClient} from "@supabase/supabase-js";
 import {getShortAddress} from "@/lib/utils";
 import Jazzicon from "@/components/Jazzicon.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {Users} from "lucide-vue-next";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
 const client = inject<SupabaseClient>('supabase')
-const props = defineProps<{listingParams: ListingParams, previewLink: string, presence: number, txs: Transaction[]}>()
+const props = defineProps<{ listingParams: ListingParams, previewLink: string, presence: number, txs: Transaction[] }>()
 const emit = defineEmits<{ 'action:buy': [price: number] }>()
 const bid = ref<number>(props.listingParams.auction_start_price || 1)
 const minbid = ref<number>(props.listingParams.auction_start_price || 1)
@@ -46,7 +45,7 @@ watch(() => highestBid.value, (value) => {
 
 watch(() => props.txs, (value) => {
   transactions.value.splice(transactions.value.length - (value.length - 1), value.length, ...value)
-},{deep:true})
+}, {deep: true})
 
 onMounted(async () => {
   if (client && props.listingParams.app_id) {
@@ -69,24 +68,29 @@ onMounted(async () => {
     <div class="ap-flex ap-justify-between ap-items-center">
       <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
         <ListingStatusChip :listing-params="listingParams"/>
-        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.type}}</div>
-        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">{{listingParams.asset_type}}</div>
+        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">
+          {{ listingParams.type }}
+        </div>
+        <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">
+          {{ listingParams.asset_type }}
+        </div>
       </div>
       <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm">
-        {{ presence}}
+        {{ presence }}
         <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
       </div>
     </div>
   </div>
-  <div class="ap-mt-6 ap-flex ap-flex-col ap-justify-between ap-items-center sm:ap-flex-row sm:ap-items-stretch ap-mb-10 ap-gap-4">
+  <div
+      class="ap-mt-6 ap-flex ap-flex-col ap-justify-between ap-items-center sm:ap-flex-row sm:ap-items-stretch ap-mb-10 ap-gap-4">
     <div class="ap-flex ap-items-center">
       <a :href="previewLink"
-         target="_blank"
-         class="ap-block ap-max-w-[275px] ap-max-h-[275px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border">
+         class="ap-block ap-max-w-[275px] ap-max-h-[275px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border"
+         target="_blank">
         <img
             v-if="listingParams.asset_thumbnail"
-            :src="listingParams.asset_thumbnail"
             :alt="listingParams.asset_id || 'Asset'"
+            :src="listingParams.asset_thumbnail"
             class="ap-object-cover"
         />
       </a>
@@ -96,26 +100,31 @@ onMounted(async () => {
         <span class="ap-text-muted-foreground ap-text-sm">Latest bids:</span>
         <div class="ap-flex ap-items-center">
           <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-            <count-up :end-val="highestBid?.toString()" :decimalPlaces="2" :duration="1"></count-up>
+            <count-up :decimalPlaces="2" :duration="1" :end-val="highestBid?.toString()"></count-up>
           </span>
-          <span class="ap-ms-1 ap-text-xl ap-font-normal ap-text-gray-500 dark:ap-text-gray-400 ap-uppercase">{{ listingParams.currency_ticker }}</span>
+          <span class="ap-ms-1 ap-text-xl ap-font-normal ap-text-gray-500 dark:ap-text-gray-400 ap-uppercase">{{
+              listingParams.currency_ticker
+            }}</span>
         </div>
       </div>
       <ScrollArea class="ap-h-[136px] ap-bg-background/50 ap-rounded-md ap-p-2 ap-mt-1 ap-mb-2">
         <ol v-if="bids.length">
           <li v-for="tx in bids" :key="tx.id" class="ap-w-full ap-p-2 ap-flex ap-items-center ap-justify-between">
             <div class="ap-flex ap-items-center ap-w-full ap-text-xs ap-font-semibold">
-              <Jazzicon :address="`0x${tx.from_address}`" :diameter="20" class="ap-w-[20px] ap-h-[20px] ap-mr-2 ap-shadow ap-rounded-full" />
+              <Jazzicon :address="`0x${tx.from_address}`" :diameter="20"
+                        class="ap-w-[20px] ap-h-[20px] ap-mr-2 ap-shadow ap-rounded-full"/>
               <div class="ap-truncate ap-text-muted-foreground">
                 <div class="ap-text-xs ap-font-bold">{{ getShortAddress(tx.from_address) }}</div>
               </div>
             </div>
             <div class="ap-shrink-0">
-              <span class="ap-font-bold ap-mr-0.5">{{ formatAmount(tx.amount).toFixed(2) }}</span><span class="ap-uppercase ap-text-muted-foreground ap-text-xs">{{ listingParams.currency_ticker }}</span>
+              <span class="ap-font-bold ap-mr-0.5">{{ formatAmount(tx.amount).toFixed(2) }}</span><span
+                class="ap-uppercase ap-text-muted-foreground ap-text-xs">{{ listingParams.currency_ticker }}</span>
             </div>
           </li>
         </ol>
-        <div v-else class="ap-h-[120px] ap-text-md ap-text-muted-foreground/50 ap-text-center ap-flex ap-items-center ap-justify-center ap-gap-1">
+        <div v-else
+             class="ap-h-[120px] ap-text-md ap-text-muted-foreground/50 ap-text-center ap-flex ap-items-center ap-justify-center ap-gap-1">
           <LoaderCircle class="ap-w-5 ap-h-5 ap-text-muted-foreground/50 ap-animate-spin"/>
           No bids yet
         </div>
@@ -124,32 +133,36 @@ onMounted(async () => {
         <span class="ap-text-muted-foreground ap-text-sm">Your bid:</span>
         <NumberField
             id="bidMin"
-            :model-value="bid"
             :format-options="{
               style: 'decimal',
               minimumFractionDigits: 2
             }"
             :min="minbid"
+            :model-value="bid"
             @update:modelValue="(value: number) => bid = value"
         >
           <NumberFieldContent>
-            <NumberFieldDecrement />
+            <NumberFieldDecrement/>
             <NumberFieldInput class="ap-text-lg ap-font-bold ap-h-10"/>
-            <NumberFieldIncrement />
+            <NumberFieldIncrement/>
           </NumberFieldContent>
         </NumberField>
       </div>
     </div>
   </div>
-  <button v-if="listingParams.status === 'active'" class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto" @click="emit('action:buy', parseFloat(bid.toFixed(2)))">
+  <button v-if="listingParams.status === 'active'"
+          class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
+          @click="emit('action:buy', parseFloat(bid.toFixed(2)))">
     <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
     <span class="text ap-flex ap-items-center ap-gap-1">
             Bid
             <div class="ap-flex ap-items-center">
               <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-                <count-up :end-val="bid" :decimalPlaces="2" :duration="1"></count-up>
+                <count-up :decimalPlaces="2" :duration="1" :end-val="bid"></count-up>
               </span>
-              <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{ listingParams.currency_ticker }}</span>
+              <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{
+                  listingParams.currency_ticker
+                }}</span>
             </div>
           </span>
     <span class="circle"></span>

@@ -1,12 +1,13 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {computed, inject, onBeforeUnmount, onMounted, ref} from 'vue'
-import type { ListingParams } from '@/lib/app/reviewListing'
+import type {ListingParams} from '@/lib/app/reviewListing'
 import {useRouter} from "vue-router";
 import {subscribeToAppTransactions} from "@/lib/supabase/transaction";
 import type {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
 import type {Database} from "@/lib/supabase/database.types";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
+
 interface ListingReviewProvider {
   callback: (price: number, error?: Error) => void
   args: {
@@ -15,7 +16,7 @@ interface ListingReviewProvider {
 }
 
 const client = inject<SupabaseClient>('supabase')
-const { callback, args } = inject<{ ListingReview: ListingReviewProvider }>('appProvider')?.['ListingReview'] || {}
+const {callback, args} = inject<{ ListingReview: ListingReviewProvider }>('appProvider')?.['ListingReview'] || {}
 const listingParams = args?.listingParams
 const router = useRouter()
 const realtimeChannel = ref<RealtimeChannel>()
@@ -23,7 +24,7 @@ const presenceTracker = ref<number>(0)
 const transactionsTracker = ref<Transaction[]>([])
 
 const nftNavigatorLink = computed(() => {
-  if(listingParams && listingParams.asset_id?.split('/')?.[1]) {
+  if (listingParams && listingParams.asset_id?.split('/')?.[1]) {
     return `https://nftnavigator.xyz/collection/${listingParams.asset_id.split('/')[0]}/token/${listingParams.asset_id.split('/')[1]}`
   } else {
     return '#'
@@ -57,8 +58,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div id="review-settings" v-if="listingParams">
-    <router-view :listing-params="listingParams" :previewLink="nftNavigatorLink" :presence="presenceTracker" :txs="transactionsTracker" @action:buy="(price: number) => handleBuy(price)"/>
+  <div v-if="listingParams" id="review-settings">
+    <router-view :listing-params="listingParams" :presence="presenceTracker" :previewLink="nftNavigatorLink"
+                 :txs="transactionsTracker" @action:buy="(price: number) => handleBuy(price)"/>
   </div>
 </template>
 

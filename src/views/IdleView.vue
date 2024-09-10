@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import TestView from '@/views/TestView.vue'
 
 const debug = !!import.meta.env.VITE_DEBUG_API_KEY

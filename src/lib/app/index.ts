@@ -5,28 +5,29 @@ import {createListing, type CreateListingOptions, type ListingCreationParams} fr
 import router from '@/router'
 
 export {
-  AppProvider,
-  selectWallet,
-  createListing,
-  type CreateListingOptions,
-  type ListingCreationParams,
+    AppProvider,
+    selectWallet,
+    createListing,
+    type CreateListingOptions,
+    type ListingCreationParams,
 }
 
 export function closeDialog() {
-  router.push('/')
+    router.push('/')
 }
 
 export function load(appProvider: AppProvider, title: string, description: string) {
-  appProvider.provide('Load', ref({title, description}), ()=>{}, true)
-  router.push({name: 'loading'})
+    appProvider.provide('Load', ref({title, description}), () => {
+    }, true)
+    router.push({name: 'loading'})
 }
 
-export function displayError(appProvider: AppProvider, title: string, description: string, callback: ()=>void) {
-  appProvider.provide('Error', {title, description}, callback)
-  router.push({name: 'error'})
+export function displayError(appProvider: AppProvider, title: string, description: string, callback: () => void) {
+    appProvider.provide('Error', {title, description}, callback)
+    router.push({name: 'error'})
 }
 
-export function success(appProvider: AppProvider, title: string, description: string, callback: ()=>void) {
-  appProvider.provide('Success', {title, description}, callback)
-  router.push({name: 'success'})
+export function success(appProvider: AppProvider, title: string, description: string, callback: () => void) {
+    appProvider.provide('Success', {title, description}, callback)
+    router.push({name: 'success'})
 }

@@ -1,6 +1,7 @@
-<script setup lang="ts">
-import { inject } from 'vue'
-import { Button } from '@/components/ui/button'
+<script lang="ts" setup>
+import {inject} from 'vue'
+import {Button} from '@/components/ui/button'
+
 interface SuccessProvider {
   callback: (() => void)
   args: {
@@ -8,32 +9,36 @@ interface SuccessProvider {
     description: string
   }
 }
-const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['Success'] || {}
+
+const {callback, args} = inject<{ Success: SuccessProvider }>('appProvider')?.['Success'] || {}
 </script>
 
 <template>
   <div class="ap-flex ap-flex-col ap-w-[333px] ap-h-[400px] ap-mx-auto">
     <div class="ap-flex-1 ap-flex ap-items-end ap-justify-center ap-pb-4">
       <div style="transform: translate(6px, -5px)">
-        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <svg class="checkmark" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="gradient">
-              <stop offset="0%" stop-color="rgb(65, 88, 208)" />
-              <stop offset="30%" stop-color="rgb(200, 80, 192)" />
-              <stop offset="100%" stop-color="rgb(255, 204, 112)" />
+              <stop offset="0%" stop-color="rgb(65, 88, 208)"/>
+              <stop offset="30%" stop-color="rgb(200, 80, 192)"/>
+              <stop offset="100%" stop-color="rgb(255, 204, 112)"/>
             </linearGradient>
           </defs>
-          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-          <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          <circle class="checkmark__circle" cx="26" cy="26" fill="none" r="25"/>
+          <path class="checkmark__check" d="M14.1 27.2l7.1 7.2 16.7-16.8" fill="none"/>
         </svg>
       </div>
     </div>
-    <div class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between">
+    <div
+        class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between">
       <div class="ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both">
-        <div v-if="args?.title" class="ap-text-md ap-font-semibold ap-text-foreground">{{args.title}}</div>
-        <div v-if="args?.description" class="ap-text-xs ap-text-muted-foreground">{{args.description}}</div>
+        <div v-if="args?.title" class="ap-text-md ap-font-semibold ap-text-foreground">{{ args.title }}</div>
+        <div v-if="args?.description" class="ap-text-xs ap-text-muted-foreground">{{ args.description }}</div>
       </div>
-      <Button @click="callback" variant="default" size="lg" class="ap-mb-8 ap-grow-0 ap-w-24 ap-bg-gradient ap-text-[white]">Close</Button>
+      <Button class="ap-mb-8 ap-grow-0 ap-w-24 ap-bg-gradient ap-text-[white]" size="lg" variant="default"
+              @click="callback">Close
+      </Button>
     </div>
   </div>
 </template>
@@ -48,11 +53,12 @@ const { callback, args } = inject<{Success: SuccessProvider}>('appProvider')?.['
   stroke: url(#gradient);
   stroke-miterlimit: 10;
   animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-  position:relative;
+  position: relative;
   top: 5px;
   right: 5px;
   margin: 0 auto;
 }
+
 .checkmark__circle {
   stroke-dasharray: 166;
   stroke-dashoffset: 166;
