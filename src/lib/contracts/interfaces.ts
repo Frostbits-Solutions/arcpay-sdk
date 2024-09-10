@@ -1010,6 +1010,7 @@ export const interfaces: Interfaces = {
             const accounts = [fromAddress, feesAppAddress, sellerAddress]
             return new Transaction(algod, {fromAddress, appIndex})
                 .preValidate(undefined, [appIndex, feesAppId], foreignAssets)
+                .preValidate(undefined, [appIndex], foreignAssets)
                 .call('close', [], accounts, [appIndex, feesAppId], foreignAssets)
                 .send(signer)
         },

@@ -26,7 +26,7 @@ const emit = defineEmits<{ 'action:buy': [price: number] }>()
 const bid = ref<number>(props.listingParams.auction_start_price || 1)
 const minbid = ref<number>(props.listingParams.auction_start_price || 1)
 const transactions = ref<Transaction[]>([])
-const status = ref<HTMLDivElement | undefined>()
+const status = ref<typeof ListingStatusChip | undefined>()
 const statusOverride = ref<string | undefined>()
 
 const bids = computed(() => {

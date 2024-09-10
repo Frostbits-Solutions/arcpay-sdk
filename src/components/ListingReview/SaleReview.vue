@@ -13,7 +13,7 @@ const emit = defineEmits<{
   'action:buy': [price: number]
 }>()
 
-const status = ref<HTMLDivElement | undefined>()
+const status = ref<typeof ListingStatusChip | undefined>()
 const statusOverride = ref<string | undefined>()
 
 watch(() => props.txs, (value) => {
@@ -57,7 +57,7 @@ watch(() => props.txs, (value) => {
         />
       </a>
     </div>
-    <button v-if="status.status === 'active'"
+    <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
             @click="emit('action:buy', listingParams?.sale_price || 0)">
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>

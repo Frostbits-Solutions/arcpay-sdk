@@ -14,7 +14,7 @@ const emit = defineEmits<{
 }>()
 const price = ref<number>(0)
 const previousPrice = ref<number>(0)
-const status = ref<HTMLDivElement | undefined>()
+const status = ref<typeof ListingStatusChip | undefined>()
 const statusOverride = ref<string | undefined>()
 
 function getLatestPrice() {
