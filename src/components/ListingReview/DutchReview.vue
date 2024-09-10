@@ -1,16 +1,21 @@
 <script lang="ts" setup>
 import CountUp from "vue-countup-v3";
 import type {ListingParams} from "@/lib/app/reviewListing";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {ArrowRight, Users} from "lucide-vue-next";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
+import type {Database} from "@/lib/supabase/database.types";
 
-const props = defineProps<{ listingParams: ListingParams, previewLink: string, presence: number }>()
+type Transaction = Database['public']['Tables']['transactions']['Row']
+
+const props = defineProps<{ listingParams: ListingParams, previewLink: string, presence: number, txs: Transaction[] }>()
 const emit = defineEmits<{
   'action:buy': [price: number]
 }>()
 const price = ref<number>(0)
 const previousPrice = ref<number>(0)
+const status = ref<HTMLDivElement | undefined>()
+const statusOverride = ref<string | undefined>()
 
 function getLatestPrice() {
   if (props.listingParams && props.listingParams.created_at && props.listingParams.dutch_duration && props.listingParams.dutch_max_price && props.listingParams.dutch_min_price !== null) {
@@ -25,6 +30,14 @@ function getLatestPrice() {
   }
   return 0
 }
+
+watch(() => props.txs, (value) => {
+    value.map(tx => {
+        if (tx.type === 'buy') statusOverride.value = 'closed'
+        if (tx.type === 'close') statusOverride.value = 'closed'
+        if (tx.type === 'cancel') statusOverride.value = 'cancelled'
+    })
+}, {deep: true})
 
 onMounted(() => {
   price.value = getLatestPrice()
@@ -43,7 +56,7 @@ onMounted(() => {
     </h1>
     <div class="ap-flex ap-justify-between ap-items-center">
       <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
-        <ListingStatusChip :listing-params="listingParams"/>
+        <ListingStatusChip ref="status" :listing-params="listingParams" :override="statusOverride"/>
         <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">
           {{ listingParams.type }}
         </div>
@@ -68,7 +81,7 @@ onMounted(() => {
         />
       </a>
     </div>
-    <button v-if="listingParams.status === 'active'"
+    <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
             @click="emit('action:buy', parseFloat(price.toFixed(2)))">
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>

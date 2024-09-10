@@ -3,16 +3,22 @@ import type {ListingParams} from "@/lib/app/reviewListing";
 import {computed} from "vue";
 
 const props = defineProps<{
-  listingParams: ListingParams
+    listingParams: ListingParams,
+    override?: string
 }>()
 
 const status = computed(() => {
-  if (props.listingParams.created_at && props.listingParams.auction_duration && props.listingParams.status) {
+  if (props.override) return props.override
+  if (props.listingParams.created_at && props.listingParams.auction_duration && props.listingParams.status && props.listingParams.status !== 'closed') {
     const now = Date.now()
     const endTime = new Date(props.listingParams.created_at).getTime() + new Date().getTimezoneOffset() * 60_000 + (props.listingParams.auction_duration * 3_600_000)
     return now < endTime ? props.listingParams.status : 'ended'
   }
   return props.listingParams.status || 'pending'
+})
+
+defineExpose({
+  status
 })
 </script>
 

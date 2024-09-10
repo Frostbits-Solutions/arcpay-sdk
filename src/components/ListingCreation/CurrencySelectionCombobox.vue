@@ -23,6 +23,7 @@ const selectedCurrency = computed(() => {
 const open = ref(false)
 const value = ref<string | undefined>(network?.chain)
 const loading = ref(true)
+const debug = !!import.meta.env.VITE_DEBUG_API_KEY
 
 function fetchCurrencies() {
   if (!supabase) throw new Error('Unexpected error: supabase is undefined')
@@ -84,10 +85,10 @@ onMounted(() => {
         <CommandList>
           <CommandGroup class="ap-w-[327px]">
             <CommandItem
-                v-for="currency in currencies.filter((c:Currency) => c.visible)"
+                v-for="currency in currencies.filter((c:Currency) => c.visible || debug)"
                 :key="currency.id"
                 :value="currency.ticker"
-                @select="(e) => {
+                @select="(e: CustomEvent) => {
                 if (typeof e.detail.value === 'string') {
                   value = e.detail.value
                 }

@@ -3,11 +3,26 @@ import CountUp from "vue-countup-v3";
 import type {ListingParams} from "@/lib/app/reviewListing";
 import {ArrowRight, Users} from "lucide-vue-next";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
+import type {Database} from "@/lib/supabase/database.types";
+import {ref, watch} from "vue";
 
-defineProps<{ listingParams: ListingParams, previewLink: string, presence: number }>()
+type Transaction = Database['public']['Tables']['transactions']['Row']
+
+const props = defineProps<{ listingParams: ListingParams, previewLink: string, presence: number, txs: Transaction[] }>()
 const emit = defineEmits<{
   'action:buy': [price: number]
 }>()
+
+const status = ref<HTMLDivElement | undefined>()
+const statusOverride = ref<string | undefined>()
+
+watch(() => props.txs, (value) => {
+    value.map(tx => {
+        if (tx.type === 'buy') statusOverride.value = 'closed'
+        if (tx.type === 'close') statusOverride.value = 'closed'
+        if (tx.type === 'cancel') statusOverride.value = 'cancelled'
+    })
+}, {deep: true})
 </script>
 
 <template>
@@ -17,7 +32,7 @@ const emit = defineEmits<{
     </h1>
     <div class="ap-flex ap-justify-between ap-items-center">
       <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
-        <ListingStatusChip :listing-params="listingParams"/>
+          <ListingStatusChip ref="status" :listing-params="listingParams" :override="statusOverride"/>
         <div class="ap-text-xs ap-text-foreground ap-bg-background/70 ap-rounded-full ap-px-2.5 ap-py-1.5">
           {{ listingParams.type }}
         </div>
@@ -42,7 +57,7 @@ const emit = defineEmits<{
         />
       </a>
     </div>
-    <button v-if="listingParams.status === 'active'"
+    <button v-if="status.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
             @click="emit('action:buy', listingParams?.sale_price || 0)">
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
