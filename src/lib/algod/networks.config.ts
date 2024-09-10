@@ -13,7 +13,6 @@ export type NetworksConfig = {
     key: PublicNetwork
     chain: Chain
     networkId: NetworkId
-    feesAppId: number
     blockchainId: string
     nodeBaseURL: string
     walletProviders: SupportedWallet[]
@@ -31,7 +30,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'voi:testnet',
         chain: 'voi',
         networkId: NetworkId.TESTNET,
-        feesAppId: 87414541,
         blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
         nodeBaseURL: 'https://voitest-api.algorpc.pro/',
         walletProviders: [
@@ -52,7 +50,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'voi:mainnet',
         chain: 'voi',
         networkId: NetworkId.MAINNET,
-        feesAppId: 87414541,
         blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
         nodeBaseURL: 'https://voitest-api.algorpc.pro/',
         walletProviders: [
@@ -73,7 +70,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'algo:testnet',
         chain: 'algo',
         networkId: NetworkId.TESTNET,
-        feesAppId: 718742597,
         blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
         nodeBaseURL: 'https://testnet-api.algonode.cloud',
         walletProviders: [
@@ -97,7 +93,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'algo:mainnet',
         chain: 'algo',
         networkId: NetworkId.MAINNET,
-        feesAppId: 718742597,
         blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
         nodeBaseURL: 'https://mainnet-api.algonode.cloud',
         walletProviders: [
