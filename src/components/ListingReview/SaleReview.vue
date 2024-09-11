@@ -18,6 +18,7 @@ const statusOverride = ref<string | undefined>()
 
 watch(() => props.txs, (value) => {
     value.map(tx => {
+        if (tx.type === 'create') statusOverride.value = 'active'
         if (tx.type === 'buy') statusOverride.value = 'closed'
         if (tx.type === 'close') statusOverride.value = 'closed'
         if (tx.type === 'cancel') statusOverride.value = 'cancelled'

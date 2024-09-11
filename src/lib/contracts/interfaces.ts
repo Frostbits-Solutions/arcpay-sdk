@@ -514,10 +514,10 @@ export const interfaces: Interfaces = {
                         nftAppID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .pay(28500 / 1_000_000, arc200AppAddress)
-                        .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
+                        .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [Math.ceil(price)])
                         .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
                         .preValidate()
-                        .call('buy', [longToByteArray(price, 8)], [feesAppAddress], [feesAppId])
+                        .call('buy', [longToByteArray(Math.ceil(price), 8)], [feesAppAddress], [feesAppId])
                         .send(signer)
                 }
             },

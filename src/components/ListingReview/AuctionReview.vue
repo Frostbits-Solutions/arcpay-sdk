@@ -34,7 +34,7 @@ const bids = computed(() => {
 })
 
 const highestBid = computed(() => {
-    return formatAmount(bids.value[0]?.amount) || props.listingParams.auction_start_price || 1
+    return formatAmount(bids.value[0]?.amount) || 0
 })
 
 function formatAmount(amount: number | null | undefined) {
@@ -51,6 +51,7 @@ watch(() => highestBid.value, (value) => {
 watch(() => props.txs, (value) => {
     transactions.value.splice(transactions.value.length - (value.length - 1), value.length, ...value)
     value.map(tx => {
+        if (tx.type === 'create') statusOverride.value = 'active'
         if (tx.type === 'close') statusOverride.value = 'closed'
         if (tx.type === 'cancel') statusOverride.value = 'cancelled'
     })
@@ -61,7 +62,9 @@ onMounted(async () => {
         const {data, error} = await getTransactions(client, props.listingParams.app_id)
         if (data) {
             transactions.value = data
-            minbid.value = bid.value = highestBid.value + (props.listingParams.auction_increment || 1)
+            if (bids.value.length) {
+                minbid.value = bid.value = highestBid.value + (props.listingParams.auction_increment || 1)
+            }
         } else {
             console.error(error)
         }
@@ -106,20 +109,11 @@ onMounted(async () => {
         </div>
         <div class="ap-mt-2 ap-w-72">
             <div class="ap-flex ap-items-baseline ap-justify-between ap-px-2">
-                <span class="ap-text-muted-foreground ap-text-sm">Latest bids:</span>
-                <div class="ap-flex ap-items-center">
-          <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-            <count-up :decimalPlaces="2" :duration="1" :end-val="highestBid?.toString()"></count-up>
-          </span>
-                    <span class="ap-ms-1 ap-text-xl ap-font-normal ap-text-gray-500 dark:ap-text-gray-400 ap-uppercase">{{
-                            listingParams.currency_ticker
-                        }}</span>
-                </div>
+                <span class="ap-text-muted-foreground ap-text-sm">History</span>
             </div>
-            <ScrollArea class="ap-h-[136px] ap-bg-background/50 ap-rounded-md ap-p-2 ap-mt-1 ap-mb-2">
-                <ol v-if="bids.length">
-                    <li v-for="tx in bids" :key="tx.id"
-                        class="ap-w-full ap-p-2 ap-flex ap-items-center ap-justify-between">
+            <ScrollArea class="ap-h-[136px] ap-px-2 ap-py-1 ap-mb-2">
+                <ol v-if="bids.length" class="ap-ml-4 ap-border-l-2 ap-border-border">
+                    <li v-for="(tx, index) in bids" :key="tx.id" class="ap-w-full ap-p-2 ap-flex ap-items-center ap-justify-between -ap-ml-[18px]">
                         <div class="ap-flex ap-items-center ap-w-full ap-text-xs ap-font-semibold">
                             <Jazzicon :address="`0x${tx.from_address}`" :diameter="20"
                                       class="ap-w-[20px] ap-h-[20px] ap-mr-2 ap-shadow ap-rounded-full"/>
@@ -128,7 +122,8 @@ onMounted(async () => {
                             </div>
                         </div>
                         <div class="ap-shrink-0">
-                            <span class="ap-font-bold ap-mr-0.5">{{ formatAmount(tx.amount).toFixed(2) }}</span><span
+                            <span class="ap-font-bold ap-mr-0.5">{{ formatAmount(tx.amount).toFixed(2) }}</span>
+                            <span
                                 class="ap-uppercase ap-text-muted-foreground ap-text-xs">{{
                                 listingParams.currency_ticker
                             }}</span>
@@ -142,7 +137,7 @@ onMounted(async () => {
                 </div>
             </ScrollArea>
             <div v-if="status?.status === 'active'">
-                <span class="ap-text-muted-foreground ap-text-sm">Your bid:</span>
+                <span class="ap-text-muted-foreground ap-text-sm">Your bid</span>
                 <NumberField
                         id="bidMin"
                         :format-options="{
