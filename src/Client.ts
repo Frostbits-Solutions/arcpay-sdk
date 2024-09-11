@@ -145,7 +145,7 @@ export class ArcpayClient {
                     options?.tags?.join(', ') || null,
                     params.duration,
                     params.price,
-                    1,
+                    Math.max(params.price * 0.1, 1),
                 )
                 if (error) throw new Error(`Error creating auction: ${error.message}`)
                 listingId = data?.[0]?.listing_id
