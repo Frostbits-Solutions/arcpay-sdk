@@ -164,7 +164,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(nftID, 32),
                             longToByteArray(price * 1_000_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -215,7 +214,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(startPrice * 1_000_000, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -263,7 +261,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(priceMin * 1_000_000, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -314,7 +311,6 @@ export const interfaces: Interfaces = {
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -364,9 +360,7 @@ export const interfaces: Interfaces = {
                             longToByteArray(nftID, 32),
                             longToByteArray(price, 8),
                             longToByteArray(arc200AppID, 8),
-                            algosdk.decodeAddress(arc200AppAddress).publicKey,
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -424,9 +418,7 @@ export const interfaces: Interfaces = {
                             longToByteArray(startPrice, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             longToByteArray(arc200AppID, 8),
-                            algosdk.decodeAddress(arc200AppAddress).publicKey,
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram, 9, 9)
                         .send(signer),
                     fund: (
@@ -481,9 +473,7 @@ export const interfaces: Interfaces = {
                             longToByteArray(priceMin, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             longToByteArray(arc200AppID, 8),
-                            algosdk.decodeAddress(arc200AppAddress).publicKey,
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram, 9, 9)
                         .send(signer),
                     fund: (
@@ -542,7 +532,6 @@ export const interfaces: Interfaces = {
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
                             longToByteArray(arc200AppID, 8),
-                            algosdk.decodeAddress(arc200AppAddress).publicKey,
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram)
@@ -596,7 +585,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(nftID, 8),
                             longToByteArray(price * 1_000_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -645,7 +633,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(startPrice * 1_000_000, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -690,7 +677,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(priceMin * 1_000_000, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -741,7 +727,6 @@ export const interfaces: Interfaces = {
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
@@ -790,7 +775,6 @@ export const interfaces: Interfaces = {
                                 longToByteArray(nftID, 8),
                                 longToByteArray(price * asaDecimals, 8),
                                 algosdk.decodeAddress(accountFeesAddress).publicKey,
-                                longToByteArray(accountFees, 8),
                                 longToByteArray(asaID, 8),
                             ], approvalProgram, clearProgram)
                             .send(signer)
@@ -847,7 +831,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(startPrice * asaDecimals, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                             longToByteArray(asaID, 8),
                         ], approvalProgram, clearProgram, 9)
                         .send(signer),
@@ -899,7 +882,6 @@ export const interfaces: Interfaces = {
                             longToByteArray(priceMin * asaDecimals, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                             longToByteArray(asaID, 8),
                         ], approvalProgram, clearProgram, 9)
                         .send(signer),
@@ -956,9 +938,8 @@ export const interfaces: Interfaces = {
                             longToByteArray(price * asaDecimals, 8),
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
-                            algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                             longToByteArray(asaID, 8),
+                            algosdk.decodeAddress(accountFeesAddress).publicKey,
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
