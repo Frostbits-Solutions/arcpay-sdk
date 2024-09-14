@@ -773,8 +773,8 @@ export const interfaces: Interfaces = {
                             .createApp([
                                 longToByteArray(nftID, 8),
                                 longToByteArray(price * asaDecimals, 8),
-                                algosdk.decodeAddress(accountFeesAddress).publicKey,
                                 longToByteArray(asaID, 8),
+                                algosdk.decodeAddress(accountFeesAddress).publicKey,
                             ], approvalProgram, clearProgram)
                             .send(signer)
                     },
@@ -829,8 +829,8 @@ export const interfaces: Interfaces = {
                             longToByteArray(nftID, 8),
                             longToByteArray(startPrice * asaDecimals, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
-                            algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(asaID, 8),
+                            algosdk.decodeAddress(accountFeesAddress).publicKey,
                         ], approvalProgram, clearProgram, 9)
                         .send(signer),
                     fund: (
@@ -880,8 +880,8 @@ export const interfaces: Interfaces = {
                             longToByteArray(priceMax * asaDecimals, 8),
                             longToByteArray(priceMin * asaDecimals, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
-                            algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(asaID, 8),
+                            algosdk.decodeAddress(accountFeesAddress).publicKey,
                         ], approvalProgram, clearProgram, 9)
                         .send(signer),
                     fund: (
