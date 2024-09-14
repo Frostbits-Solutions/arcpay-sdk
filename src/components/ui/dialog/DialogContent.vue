@@ -13,6 +13,7 @@ import {Cross2Icon} from '@radix-icons/vue'
 import {cn} from '@/lib/utils'
 import {useRoute} from 'vue-router'
 import type {NetworksConfig} from "@/lib/algod/networks.config";
+import {GlobeLock} from "lucide-vue-next";
 
 const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<DialogContentEmits>()
@@ -32,8 +33,9 @@ const network: NetworksConfig | undefined = inject('network')
     <DialogOverlay
         class="ap-fixed ap-inset-0 ap-z-50 ap-bg-slate-100/60 dark:ap-bg-slate-900/80 ap-backdrop-blur-sm data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
     >
-      <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4">
-        Connected to {{ network?.key }}
+      <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-items-center ap-gap-1">
+        <GlobeLock class="ap-w-4 ap-h-4"/>
+        {{ network?.key }}
       </div>
       <div
           class="ap-absolute ap-bottom-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-justify-center ap-w-full">

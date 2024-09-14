@@ -10,13 +10,14 @@ import {
 } from "@/components/ui/number-field";
 import {computed, inject, onMounted, ref, watch} from "vue";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
-import {ArrowRight, LoaderCircle, Users} from "lucide-vue-next";
+import {ArrowRight, LoaderCircle, Users, Crown} from "lucide-vue-next";
 import type {Database} from "@/lib/supabase/database.types";
 import {getTransactions} from "@/lib/supabase/transaction";
 import type {SupabaseClient} from "@supabase/supabase-js";
-import {getShortAddress} from "@/lib/utils";
+import {formatAmountFromDecimals, getShortAddress} from "@/lib/utils";
 import Jazzicon from "@/components/Jazzicon.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import AssetThumbnail from "@/components/ListingReview/AssetThumbnail.vue";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -39,9 +40,7 @@ const highestBid = computed(() => {
 
 function formatAmount(amount: number | null | undefined) {
     if (!amount) return 0
-    if (props.listingParams.currency_type === 'arc200') return amount
-    if (props.listingParams.currency_type === 'asa') return amount / (props.listingParams?.currency_decimals || 1)
-    return amount / 1_000_000
+    return parseFloat(formatAmountFromDecimals(amount, props.listingParams.currency_decimals || 6).toFixed(2))
 }
 
 watch(() => highestBid.value, (value) => {
@@ -87,7 +86,7 @@ onMounted(async () => {
                     {{ listingParams.asset_type }}
                 </div>
             </div>
-            <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm">
+            <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm ap-mr-1">
                 {{ presence }}
                 <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
             </div>
@@ -96,16 +95,7 @@ onMounted(async () => {
     <div
             class="ap-mt-6 ap-flex ap-flex-col ap-justify-between ap-items-center sm:ap-flex-row sm:ap-items-stretch ap-mb-10 ap-gap-4">
         <div class="ap-flex ap-items-center">
-            <a :href="previewLink"
-               class="ap-block ap-max-w-[275px] ap-max-h-[275px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border"
-               target="_blank">
-                <img
-                        v-if="listingParams.asset_thumbnail"
-                        :alt="listingParams.asset_id || 'Asset'"
-                        :src="listingParams.asset_thumbnail"
-                        class="ap-object-cover"
-                />
-            </a>
+            <AssetThumbnail :listing-params="listingParams" :preview-link="previewLink"/>
         </div>
         <div class="ap-mt-2 ap-w-72">
             <div class="ap-flex ap-items-baseline ap-justify-between ap-px-2">
@@ -113,20 +103,21 @@ onMounted(async () => {
             </div>
             <ScrollArea class="ap-h-[136px] ap-px-2 ap-py-1 ap-mb-2">
                 <ol v-if="bids.length" class="ap-ml-4 ap-border-l-2 ap-border-border">
-                    <li v-for="(tx, index) in bids" :key="tx.id" class="ap-w-full ap-p-2 ap-flex ap-items-center ap-justify-between -ap-ml-[18px]">
-                        <div class="ap-flex ap-items-center ap-w-full ap-text-xs ap-font-semibold">
+                    <li v-for="(tx, index) in bids" :key="tx.id" class="ap-py-2 ap-flex ap-items-center ap-justify-between -ap-ml-[11px] ap-mr-0.5" v-motion-fade-visible-once>
+                        <div class="ap-flex ap-items-center ap-w-full ap-text-xs ap-font-semibold ap-gap-2">
                             <Jazzicon :address="`0x${tx.from_address}`" :diameter="20"
-                                      class="ap-w-[20px] ap-h-[20px] ap-mr-2 ap-shadow ap-rounded-full"/>
+                                      class="ap-w-[20px] ap-h-[20px] ap-shadow ap-rounded-full"/>
                             <div class="ap-truncate ap-text-muted-foreground">
                                 <div class="ap-text-xs ap-font-bold">{{ getShortAddress(tx.from_address) }}</div>
                             </div>
+                            <Crown v-if="!index" class="ap-w-4 ap-h-4 ap-text-muted-foreground/50"/>
                         </div>
                         <div class="ap-shrink-0">
-                            <span class="ap-font-bold ap-mr-0.5">{{ formatAmount(tx.amount).toFixed(2) }}</span>
+                            <span class="ap-font-bold ap-mr-0.5">{{ formatAmount(tx.amount) }}</span>
                             <span
-                                class="ap-uppercase ap-text-muted-foreground ap-text-xs">{{
-                                listingParams.currency_ticker
-                            }}</span>
+                                class="ap-uppercase ap-text-muted-foreground ap-text-xs">
+                                {{ listingParams.currency_ticker }}
+                            </span>
                         </div>
                     </li>
                 </ol>
@@ -158,7 +149,9 @@ onMounted(async () => {
     </div>
     <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
-            @click="emit('action:buy', parseFloat(bid.toFixed(2)))">
+            @click="emit('action:buy', parseFloat(bid.toFixed(2)))"
+            v-motion-slide-bottom
+    >
         <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
         <span class="text ap-flex ap-items-center ap-gap-1">
             Bid
@@ -176,7 +169,9 @@ onMounted(async () => {
     </button>
     <button v-if="status?.status === 'ended'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
-            @click="emit('action:buy', -1)">
+            @click="emit('action:buy', -1)"
+            v-motion-slide-bottom
+    >
         <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
         <span class="text ap-flex ap-items-center ap-gap-1">
             <span class="ap-text-lg ap-tracking-tight">

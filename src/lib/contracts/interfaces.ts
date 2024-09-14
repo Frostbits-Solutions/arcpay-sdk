@@ -162,7 +162,7 @@ export const interfaces: Interfaces = {
                         .createApp([
                             longToByteArray(nftAppID, 8),
                             longToByteArray(nftID, 32),
-                            longToByteArray(price * 1_000_000, 8),
+                            longToByteArray(price, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
@@ -212,7 +212,7 @@ export const interfaces: Interfaces = {
                         .createApp([
                             longToByteArray(nftAppID, 8),
                             longToByteArray(nftID, 32),
-                            longToByteArray(startPrice * 1_000_000, 8),
+                            longToByteArray(startPrice, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8)
@@ -259,8 +259,8 @@ export const interfaces: Interfaces = {
                         .createApp([
                             longToByteArray(nftAppID, 8),
                             longToByteArray(nftID, 32),
-                            longToByteArray(priceMax * 1_000_000, 8),
-                            longToByteArray(priceMin * 1_000_000, 8),
+                            longToByteArray(priceMax, 8),
+                            longToByteArray(priceMin, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8)
@@ -310,7 +310,7 @@ export const interfaces: Interfaces = {
                         price: number
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
-                            longToByteArray(price * 1_000_000, 8),
+                            longToByteArray(price, 8),
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
@@ -396,7 +396,7 @@ export const interfaces: Interfaces = {
                         arc200AppAddress: string,
                         nftAppID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .pay(28500 / 1_000_000, arc200AppAddress)
+                        .pay(28500, arc200AppAddress)
                         .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
                         .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
                         .call('buy', [], [feesAppAddress], [feesAppId])
@@ -452,7 +452,7 @@ export const interfaces: Interfaces = {
                         arc200AppID: number,
                         arc200AppAddress: string
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .pay(28500 / 1_000_000, arc200AppAddress)
+                        .pay(28500, arc200AppAddress)
                         .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
                         .call('bid', [longToByteArray(price, 8)])
                         .send(signer)
@@ -513,7 +513,7 @@ export const interfaces: Interfaces = {
                         arc200AppAddress: string,
                         nftAppID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .pay(28500 / 1_000_000, arc200AppAddress)
+                        .pay(28500, arc200AppAddress)
                         .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [Math.ceil(price)])
                         .preValidate([sellerAddress], [nftAppID, arc200AppID, appIndex])
                         .preValidate()
@@ -568,7 +568,7 @@ export const interfaces: Interfaces = {
                         arc200AppID: number,
                         arc200AppAddress: string
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .pay(28500 / 1_000_000, arc200AppAddress)
+                        .pay(28500, arc200AppAddress)
                         .approve(arc200Schema as ABI, 'arc200_transfer', arc200AppID, [arc200AppID], [price])
                         .call('buy', [], [feesAppAddress], [feesAppId])
                         .send(signer)
@@ -594,7 +594,7 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
                             longToByteArray(nftID, 8),
-                            longToByteArray(price * 1_000_000, 8),
+                            longToByteArray(price, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8)
                         ], approvalProgram, clearProgram)
@@ -642,7 +642,7 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
                             longToByteArray(nftID, 8),
-                            longToByteArray(startPrice * 1_000_000, 8),
+                            longToByteArray(startPrice, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8)
@@ -686,8 +686,8 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
                             longToByteArray(nftID, 8),
-                            longToByteArray(priceMax * 1_000_000, 8),
-                            longToByteArray(priceMin * 1_000_000, 8),
+                            longToByteArray(priceMax, 8),
+                            longToByteArray(priceMin, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8)
@@ -737,7 +737,7 @@ export const interfaces: Interfaces = {
                         price: number
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
-                            longToByteArray(price * 1_000_000, 8),
+                            longToByteArray(price, 8),
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
@@ -781,14 +781,13 @@ export const interfaces: Interfaces = {
                         accountFeesAddress: string,
                         accountFees: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number,
                         price: number
                     ) => {
                         return new Transaction(algod, {fromAddress})
                             .createApp([
                                 longToByteArray(nftID, 8),
-                                longToByteArray(price * asaDecimals, 8),
+                                longToByteArray(price, 8),
                                 algosdk.decodeAddress(accountFeesAddress).publicKey,
                                 longToByteArray(accountFees, 8),
                                 longToByteArray(asaID, 8),
@@ -801,7 +800,6 @@ export const interfaces: Interfaces = {
                         fromAddress: string,
                         appIndex: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund(500_000)
@@ -818,12 +816,11 @@ export const interfaces: Interfaces = {
                         feesAppId: number,
                         price: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .preValidate([sellerAddress], [], [asaID, nftID])
                         .optIn(nftID)
-                        .transferAsset(asaID, price * asaDecimals)
+                        .transferAsset(asaID, price)
                         .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
                         .send(signer)
                 },
@@ -837,14 +834,13 @@ export const interfaces: Interfaces = {
                         accountFeesAddress: string,
                         accountFees: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number,
                         startPrice: number,
                         duration: number
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
                             longToByteArray(nftID, 8),
-                            longToByteArray(startPrice * asaDecimals, 8),
+                            longToByteArray(startPrice, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8),
@@ -857,7 +853,6 @@ export const interfaces: Interfaces = {
                         fromAddress: string,
                         asaID: number,
                         appIndex: number,
-                        asaDecimals: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
@@ -871,9 +866,8 @@ export const interfaces: Interfaces = {
                         fromAddress: string,
                         price: number,
                         asaID: number,
-                        asaDecimals: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .transferAsset(asaID, price * asaDecimals)
+                        .transferAsset(asaID, price)
                         .call('bid', [])
                         .send(signer)
                 },
@@ -887,7 +881,6 @@ export const interfaces: Interfaces = {
                         accountFeesAddress: string,
                         accountFees: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number,
                         priceMin: number,
                         priceMax: number,
@@ -895,8 +888,8 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
                             longToByteArray(nftID, 8),
-                            longToByteArray(priceMax * asaDecimals, 8),
-                            longToByteArray(priceMin * asaDecimals, 8),
+                            longToByteArray(priceMax, 8),
+                            longToByteArray(priceMin, 8),
                             longToByteArray((Date.now() + duration * 3_600_000) / 1_000, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
                             longToByteArray(accountFees, 8),
@@ -909,7 +902,6 @@ export const interfaces: Interfaces = {
                         fromAddress: string,
                         appIndex: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
@@ -926,12 +918,11 @@ export const interfaces: Interfaces = {
                         feesAppId: number,
                         price: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .preValidate([sellerAddress], [], [asaID, nftID])
                         .optIn(nftID)
-                        .transferAsset(asaID, price * asaDecimals)
+                        .transferAsset(asaID, price)
                         .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID, nftID])
                         .send(signer)
                 }
@@ -947,13 +938,12 @@ export const interfaces: Interfaces = {
                         accountFeesAddress: string,
                         accountFees: number,
                         asaID: number,
-                        asaDecimals: number,
                         offchainAssetId: string,
                         offchainAssetName: string,
                         price: number
                     ) => new Transaction(algod, {fromAddress})
                         .createApp([
-                            longToByteArray(price * asaDecimals, 8),
+                            longToByteArray(price, 8),
                             new TextEncoder().encode(offchainAssetId),
                             new TextEncoder().encode(offchainAssetName),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
@@ -967,7 +957,6 @@ export const interfaces: Interfaces = {
                         fromAddress: string,
                         appIndex: number,
                         asaID: number,
-                        asaDecimals: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
@@ -982,10 +971,9 @@ export const interfaces: Interfaces = {
                         feesAppAddress: string,
                         feesAppId: number,
                         price: number,
-                        asaID: number,
-                        asaDecimals: number
+                        asaID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .transferAsset(asaID, price * asaDecimals)
+                        .transferAsset(asaID, price)
                         .call('buy', [], [sellerAddress, feesAppAddress], [feesAppId], [asaID])
                         .send(signer),
                 }

@@ -5,7 +5,7 @@ import type {TransactionConfirmation} from "@/lib/transaction/Transaction";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {Database} from "@/lib/supabase/database.types";
 import algosdk from "algosdk";
-import {getFeesAppIdFromState} from "@/lib/utils";
+import {getFeesAppIdFromState, formatAmountToDecimals} from "@/lib/utils";
 
 type ListingParams = Database['public']['Functions']['get_listing_by_id']['Returns']
 
@@ -21,6 +21,7 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
     if (!params.app_id) throw new Error(`Unexpected error: App index is null`)
     const feesAppId = await getFeesAppIdFromState(walletManager.algodClient, params.app_id)
     if (!params.seller_address) throw new Error(`Unexpected error: App index is null`)
+    if (params.currency_decimals === null) throw new Error(`Unexpected error: Currency decimals is null`)
     load(appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction.')
     // Buy
     if (params.type === 'sale' || params.type === 'dutch') {
@@ -33,7 +34,7 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
             params.seller_address,
             algosdk.getApplicationAddress(feesAppId),
             feesAppId,
-            price,
+            formatAmountToDecimals(price, params.currency_decimals),
             ...formatCurrency(params),
             ...formatNftID(params)
         )
@@ -49,7 +50,7 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
             walletManager.transactionSigner,
             params.app_id,
             account.address,
-            price,
+            formatAmountToDecimals(price, params.currency_decimals),
             ...formatCurrency(params)
         )
         if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Bidding on listing failed.')
@@ -64,7 +65,6 @@ function formatCurrency(params: ListingParams): (number | string)[] {
     try {
         if (params.currency_type === 'asa') {
             args.push(parseInt(params.currency || '0'))
-            args.push(params.currency_decimals || 1_000_000)
         }
         if (params.currency_type === 'arc200') {
             if (params.currency === null) throw new Error(`Arc200 ID cannot be null`)

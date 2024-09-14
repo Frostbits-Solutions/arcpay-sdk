@@ -5,6 +5,7 @@ import {useRouter} from "vue-router";
 import {subscribeToAppTransactions} from "@/lib/supabase/transaction";
 import type {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
 import type {Database} from "@/lib/supabase/database.types";
+import ListingIdTooltip from "@/components/ListingReview/ListingIdTooltip.vue";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -59,8 +60,13 @@ onBeforeUnmount(() => {
 
 <template>
   <div v-if="listingParams" id="review-settings">
-    <router-view :listing-params="listingParams" :presence="presenceTracker" :previewLink="nftNavigatorLink"
-                 :txs="transactionsTracker" @action:buy="(price: number) => handleBuy(price)"/>
+    <router-view
+            :listing-params="listingParams"
+            :presence="presenceTracker"
+            :previewLink="nftNavigatorLink"
+            :txs="transactionsTracker"
+            @action:buy="(price: number) => handleBuy(price)"/>
+    <ListingIdTooltip :listing-params="listingParams"/>
   </div>
 </template>
 
