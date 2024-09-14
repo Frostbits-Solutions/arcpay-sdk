@@ -35,12 +35,12 @@ defineExpose({
       <NumberField
           id="price"
           :format-options="{
-        style: 'decimal',
-        minimumFractionDigits: 2
-      }"
+            style: 'decimal',
+            minimumFractionDigits: 2
+          }"
           :model-value="price"
           class="ap-flex-1"
-          @update:modelValue="(value) => price = value"
+          @update:modelValue="(value: number) => price = value"
       >
         <NumberFieldContent>
           <NumberFieldDecrement/>

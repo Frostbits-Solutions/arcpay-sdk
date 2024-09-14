@@ -5,6 +5,7 @@ import {onMounted, ref, watch} from "vue";
 import {ArrowRight, Users} from "lucide-vue-next";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
 import type {Database} from "@/lib/supabase/database.types";
+import AssetThumbnail from "@/components/ListingReview/AssetThumbnail.vue";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -53,7 +54,7 @@ onMounted(() => {
 <template>
   <div class="ap-w-full sm:ap-w-96">
     <h1 class="ap-text-2xl ap-text-foreground ap-mr-1 ap-truncate ap-max-w-72 ap-pl-2">
-      {{ listingParams.name }}
+        {{ listingParams.name }}
     </h1>
     <div class="ap-flex ap-justify-between ap-items-center">
       <div class="ap-flex ap-items-center ap-gap-1 ap-mt-1">
@@ -71,20 +72,13 @@ onMounted(() => {
       </div>
     </div>
     <div class="ap-flex ap-justify-center ap-mt-10 ap-mb-16">
-      <a :href="previewLink"
-         class="ap-block ap-max-w-[250px] ap-max-h-[250px] ap-relative ap-rounded-2xl ap-overflow-hidden ap-shadow-2xl ap-border ap-border-border"
-         target="_blank">
-        <img
-            v-if="listingParams.asset_thumbnail"
-            :alt="listingParams.asset_id || 'Asset'"
-            :src="listingParams.asset_thumbnail"
-            class="ap-object-contain ap-w-full ap-h-full"
-        />
-      </a>
+        <AssetThumbnail :listing-params="listingParams" :preview-link="previewLink"/>
     </div>
     <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
-            @click="emit('action:buy', parseFloat(price.toFixed(2)))">
+            @click="emit('action:buy', parseFloat(price.toFixed(2)))"
+            v-motion-slide-bottom
+    >
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
       <span class="text ap-flex ap-items-center ap-gap-1">
           Pay

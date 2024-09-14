@@ -5,6 +5,8 @@ import App from './App.vue'
 import router from './router'
 import {ArcpayClient, type ArcpayClientOptions} from '@/Client'
 import type {PublicNetwork} from "@/lib/algod/networks.config";
+import { MotionPlugin } from '@vueuse/motion'
+
 
 type Clients = Partial<Record<PublicNetwork, ArcpayClient>>
 
@@ -14,6 +16,7 @@ export const createClient = (network: PublicNetwork, options: ArcpayClientOption
         if (!clients[network]) {
             const app = createApp(App)
             app.use(router)
+            app.use(MotionPlugin)
 
             const id = uuidv4();
             document.body.insertAdjacentHTML('beforeend', `<div id="arcpay-${id}"></div>`);
