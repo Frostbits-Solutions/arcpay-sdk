@@ -533,7 +533,6 @@ export const interfaces: Interfaces = {
                             new TextEncoder().encode(offchainAssetName),
                             longToByteArray(arc200AppID, 8),
                             algosdk.decodeAddress(accountFeesAddress).publicKey,
-                            longToByteArray(accountFees, 8),
                         ], approvalProgram, clearProgram)
                         .send(signer),
                     fund: (
