@@ -89,7 +89,7 @@ onMounted(async () => {
                 v-for="asset in assets"
                 :key="asset.id"
                 :value="asset.id"
-                @select="(ev) => {
+                @select="(ev: CustomEvent) => {
                 if (typeof ev.detail.value === 'string') {
                   value = ev.detail.value
                 }
@@ -99,7 +99,7 @@ onMounted(async () => {
                 <img
                     :alt="asset.id"
                     :src="asset.thumbnail"
-                    class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border"
+                    class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border ap-bg-muted-foreground"
                 />
                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
                   <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ asset.name }}</div>

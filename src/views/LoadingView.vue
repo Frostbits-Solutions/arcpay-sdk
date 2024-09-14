@@ -32,7 +32,7 @@ const description = computed(() => loadProvider?.value.args?.description || 'Sit
     <div
         class="ap-w-full ap-flex-1 ap-pt-4 ap-text-center ap-flex ap-flex-col ap-items-center ap-gap-2 ap-justify-between ap-animate-in ap-slide-in-from-bottom-2 ap-fade-in ap-delay-75 ap-fill-mode-both ap-animate-out ap-slide-out-to-top-2">
       <div>
-        <div v-if="title" class="ap-text-md ap-font-semibold ap-text-foreground">{{ title }}</div>
+        <div v-if="title" v-motion-slide-bottom class="ap-text-md ap-font-semibold ap-text-foreground" :key="title">{{ title }}</div>
         <div v-if="description" class="ap-text-xs ap-text-muted-foreground ap-whitespace-pre-line">{{ description }}
         </div>
       </div>

@@ -53,7 +53,7 @@ type CreateAppArgs = [appArgs: Uint8Array[], approvalProgram: string, clearProgr
 type FundArgs = [amount?: number]
 type ApproveArgs = [contractAbi: ABI, methodName: string, appIndex: number, foreignApps: number[], args: (string | number)[]]
 type PreValidateArgs = [accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
-type PayArgs = [amount: number, to?: string, decimals?: number]
+type PayArgs = [amount: number, to?: string]
 type CallArgs = [functionName: string, args: Uint8Array[], accounts?: string[], foreignApps?: number[], foreignAssets?: number[]]
 type DeleteArgs = [foreignAssets?: number[]]
 type TransferAssetsArgs = [assetIndex: number, amount: number, to?: string]
@@ -114,8 +114,8 @@ export class Transaction {
         return this
     }
 
-    public pay(amount: number, to?: string, decimals?: number) {
-        this._queue.push({method: '_pay', args: [amount, to, decimals]})
+    public pay(amount: number, to?: string) {
+        this._queue.push({method: '_pay', args: [amount, to]})
         return this
     }
 
@@ -268,22 +268,18 @@ export class Transaction {
         this._objs.push(preValidateObj)
     }
 
-    private async _pay(amount: number, to?: string, decimals?: number) {
+    private async _pay(amount: number, to?: string) {
         if (!to) {
             if (!this._appIndex) throw new TransactionError('Unable to pay: App index not set.')
             to = algosdk.getApplicationAddress(this._appIndex)
         }
-        if (!decimals) {
-            decimals = 1_000_000
-        }
         if (!this._fromAddress) throw new TransactionError('Unable to pay: From address not set.')
         const suggestedParams = await this._getSuggestedParams()
-        const microAlgoAmount = amount * decimals
         const payObj: PaymentObject = {
             type: TransactionType.pay,
             from: this._fromAddress,
             to,
-            amount: microAlgoAmount,
+            amount,
             suggestedParams
         }
         this._objs.push(payObj)

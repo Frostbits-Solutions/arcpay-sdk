@@ -6,6 +6,7 @@ import getContract from "@/lib/supabase/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {SupabaseClient} from "@supabase/supabase-js";
 import algosdk from "algosdk";
+import {formatAmountToDecimals} from "@/lib/utils";
 
 export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, account: WalletAccount, params: ListingCreationParams): Promise<number> {
     const chain = networkConfig.chain
@@ -59,7 +60,6 @@ function formatCurrency(params: ListingCreationParams) {
     try {
         if (params.currency?.type === 'asa') {
             args.push(parseInt(params.currency.id))
-            args.push(params.currency.decimals || 1_000_000)
         }
         if (params.currency?.type === 'arc200') {
             args.push(parseInt(params.currency.id))
@@ -93,18 +93,25 @@ function formatNftID(networkConfig: NetworksConfig, params: ListingCreationParam
 
 function formatSaleArgs(params: ListingCreationParams): number[] {
     if (!('price' in params)) throw new Error(`Missing parameter price for creating a sale`)
-    return [params.price]
+    if (params.currency?.decimals === null) throw new Error(`Unexpected error: Currency decimals is null`)
+    return [formatAmountToDecimals(params.price, params.currency?.decimals)]
 }
 
 function formatAuctionArgs(params: ListingCreationParams): number[] {
     if (!('price' in params)) throw new Error(`Missing parameter price for creating an auction`)
     if (!('duration' in params)) throw new Error(`Missing parameter duration for creating an auction`)
-    return [params.price, params.duration]
+    if (params.currency?.decimals === null) throw new Error(`Unexpected error: Currency decimals is null`)
+    return [formatAmountToDecimals(params.price, params.currency?.decimals), params.duration]
 }
 
 function formatDutchArgs(params: ListingCreationParams): number[] {
     if (!('priceMin' in params)) throw new Error(`Missing parameter priceMin for creating a dutch auction`)
     if (!('priceMax' in params)) throw new Error(`Missing parameter priceMax for creating a dutch auction`)
     if (!('duration' in params)) throw new Error(`Missing parameter duration for creating a dutch auction`)
-    return [params.priceMin, params.priceMax, params.duration]
+    if (params.currency?.decimals === null) throw new Error(`Unexpected error: Currency decimals is null`)
+    return [
+        formatAmountToDecimals(params.priceMin, params.currency?.decimals),
+        formatAmountToDecimals(params.priceMax, params.currency?.decimals),
+        params.duration
+    ]
 }

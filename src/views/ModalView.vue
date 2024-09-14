@@ -15,9 +15,8 @@ function handleClose(open: boolean) {
 
 <template>
   <Dialog :default-open="true" @update:open="handleClose">
-    <DialogContent @interact-outside="event => {
+    <DialogContent @interact-outside="(event: CustomEvent) => {
       const target = event.target as HTMLElement;
-      console.log(target)
       if (!route.meta.closeable || target?.closest('wcm-modal')) return event.preventDefault()
     }">
       <DialogHeader>
