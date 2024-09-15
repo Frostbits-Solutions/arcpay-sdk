@@ -40,7 +40,8 @@ const highestBid = computed(() => {
 
 function formatAmount(amount: number | null | undefined) {
     if (!amount) return 0
-    return parseFloat(formatAmountFromDecimals(amount, props.listingParams.currency_decimals || 6).toFixed(2))
+    if (props.listingParams.currency_decimals === null) return amount
+    return parseFloat(formatAmountFromDecimals(amount, props.listingParams.currency_decimals).toFixed(2))
 }
 
 watch(() => highestBid.value, (value) => {
