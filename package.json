@@ -57,6 +57,7 @@
     "clsx": "^2.1.1",
     "color": "^4.2.3",
     "lucide-vue-next": "^0.429.0",
+    "lute-connect": "^1.4.0",
     "mersenne-twister": "^1.1.0",
     "pinia": "^2.1.7",
     "radix-vue": "^1.9.2",
