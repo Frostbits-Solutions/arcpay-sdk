@@ -13,6 +13,8 @@ import SaleReview from '@/components/ListingReview/SaleReview.vue'
 import IdleView from '@/views/IdleView.vue'
 import AuctionReview from "@/components/ListingReview/AuctionReview.vue";
 import DutchReview from "@/components/ListingReview/DutchReview.vue";
+import OffchainCreation from "@/components/ListingCreation/OffchainCreation.vue";
+import OnchainCreation from "@/components/ListingCreation/OnchainCreation.vue";
 
 const router = createRouter({
     history: createMemoryHistory(),
@@ -65,25 +67,42 @@ const router = createRouter({
                     component: ListingCreationView,
                     meta: {
                         title: 'Create listing',
-                        description: 'Create a new listing for digital and real-world assets',
                         closeable: true
                     },
                     redirect: {name: 'sale-creation'},
                     children: [
                         {
-                            path: '/sale',
-                            name: 'sale-creation',
-                            component: SaleCreation
+                            path: '/onchain',
+                            name: 'onchain-creation',
+                            meta: {
+                                description: 'Create a new digital on-chain asset listing',
+                            },
+                            component: OnchainCreation,
+                            children: [
+                                {
+                                    path: '/sale',
+                                    name: 'sale-creation',
+                                    component: SaleCreation
+                                },
+                                {
+                                    path: '/auction',
+                                    name: 'auction-creation',
+                                    component: AuctionCreation
+                                },
+                                {
+                                    path: '/dutch',
+                                    name: 'dutch-creation',
+                                    component: DutchCreation
+                                }
+                            ]
                         },
                         {
-                            path: '/auction',
-                            name: 'auction-creation',
-                            component: AuctionCreation
-                        },
-                        {
-                            path: '/dutch',
-                            name: 'dutch-creation',
-                            component: DutchCreation
+                            path: '/offchain',
+                            name: 'offchain-creation',
+                            component: OffchainCreation,
+                            meta: {
+                                description: 'Create a new off-chain asset listing',
+                            },
                         }
                     ]
                 },

@@ -5,7 +5,7 @@ import {ref} from 'vue'
 
 const listingId = ref('')
 
-const arcpay = useArcpay('voi:testnet')
+const arcpay = useArcpay('algo:testnet')
 
 function create() {
   arcpay.create({assetId: '29105406/583'}).then((data) => {
@@ -13,6 +13,19 @@ function create() {
   }).catch((error) => {
     console.error(error)
   })
+}
+
+function createOffchain() {
+    arcpay.create({
+        assetId: '123456',
+        listingName: 'Test Listing Meow',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        listingType: 'offchain'
+    }).then((data) => {
+        console.log('Listing created', data)
+    }).catch((error) => {
+        console.error(error)
+    })
 }
 
 function buy() {
@@ -51,6 +64,7 @@ async function cancel() {
   <div>
     <div class="ap-flex ap-gap-4 ap-p-4">
       <Button variant="default" @click="create">create</Button>
+        <Button variant="default" @click="createOffchain()">create offchain</Button>
       <Button variant="default" @click="buy">buy</Button>
       <Button variant="default" @click="cancel">cancel</Button>
       <Button variant="default" @click="close">close</Button>
