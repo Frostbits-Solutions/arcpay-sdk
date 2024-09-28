@@ -82,7 +82,11 @@ onMounted(async () => {
     <PopoverContent :side-offset="-333" class="ap-p-0 ap-w-[333px] ap-h-[333px]" side="right">
       <Command>
         <CommandInput class="ap-h-9" placeholder="Search by asset id"/>
-        <CommandEmpty>No asset found.</CommandEmpty>
+        <CommandEmpty>
+            <div class="ap-text-muted-foreground ap-mt-8">
+                Wow, very empty.
+            </div>
+        </CommandEmpty>
         <CommandList>
           <CommandGroup class="ap-w-[326px]">
             <CommandItem
@@ -99,7 +103,7 @@ onMounted(async () => {
                 <img
                     :alt="asset.id"
                     :src="asset.thumbnail"
-                    class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border ap-bg-muted-foreground"
+                    class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border ap-bg-muted"
                 />
                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
                   <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ asset.name }}</div>

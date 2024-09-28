@@ -16,7 +16,8 @@ export default defineConfig({
         cssInjectedByJsPlugin(),
         dts({
             insertTypesEntry: true,
-            rollupTypes: true
+            rollupTypes: true,
+            tsConfigFilePath: './tsconfig.app.json'
         })
     ],
     resolve: {

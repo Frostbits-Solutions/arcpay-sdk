@@ -28,8 +28,8 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     const transactionConfirmation: TransactionConfirmation = await assetInterface[params.type].create(
         walletManager.algodClient,
         walletManager.transactionSigner,
-        await getContract(client, `${networkConfig.key}:${currency}_${params.asset.type}_${params.type}_approval:latest`),
-        await getContract(client,`${networkConfig.key}:clear:latest`),
+        await getContract(client, networkConfig.key, `${currency}_${params.asset.type}_${params.type}_approval`),
+        "CoEBQw==",
         account.address,
         '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
         0,
