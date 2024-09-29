@@ -24,6 +24,15 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
     if (params.currency_decimals === null) throw new Error(`Unexpected error: Currency decimals is null`)
     load(appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction.')
     // Buy
+    console.log(
+        params.app_id,
+        account.address,
+        params.seller_address,
+        algosdk.getApplicationAddress(feesAppId),
+        feesAppId,
+        formatAmountToDecimals(price, params.currency_decimals),
+        ...formatCurrency(params),
+        ...formatNftID(params))
     if (params.type === 'sale' || params.type === 'dutch') {
         //@ts-ignore
         const transactionConfirmation: TransactionConfirmation = await assetInterface[params.type].buy(
@@ -84,7 +93,7 @@ function formatNftID(params: ListingParams): (number | string)[] {
         if (params.asset_type === 'arc72') {
             const [nftAppId, _] = params.asset_id.split('/')
             args.push(parseInt(nftAppId))
-        } else if (params.asset_type !== 'offchain') args.push(params.asset_id)
+        } else if (params.asset_type !== 'offchain') args.push(parseInt(params.asset_id))
     } catch (e) {
         throw new Error(`Invalid asset id ${params.asset_id}. ${e}`)
     }
