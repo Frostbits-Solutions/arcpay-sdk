@@ -24,15 +24,6 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
     if (params.currency_decimals === null) throw new Error(`Unexpected error: Currency decimals is null`)
     load(appProvider, 'Awaiting transaction confirmation', 'Please check your wallet and sign the transaction.')
     // Buy
-    console.log(
-        params.app_id,
-        account.address,
-        params.seller_address,
-        algosdk.getApplicationAddress(feesAppId),
-        feesAppId,
-        formatAmountToDecimals(price, params.currency_decimals),
-        ...formatCurrency(params),
-        ...formatNftID(params))
     if (params.type === 'sale' || params.type === 'dutch') {
         //@ts-ignore
         const transactionConfirmation: TransactionConfirmation = await assetInterface[params.type].buy(
