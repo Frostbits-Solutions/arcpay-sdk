@@ -84,7 +84,7 @@ function formatNftID(params: ListingParams): (number | string)[] {
         if (params.asset_type === 'arc72') {
             const [nftAppId, _] = params.asset_id.split('/')
             args.push(parseInt(nftAppId))
-        } else if (params.asset_type !== 'offchain') args.push(params.asset_id)
+        } else if (params.asset_type !== 'offchain') args.push(parseInt(params.asset_id))
     } catch (e) {
         throw new Error(`Invalid asset id ${params.asset_id}. ${e}`)
     }
