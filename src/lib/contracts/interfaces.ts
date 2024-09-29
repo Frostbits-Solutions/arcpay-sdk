@@ -833,8 +833,8 @@ export const interfaces: Interfaces = {
                         algod: Algodv2,
                         signer: TransactionSigner,
                         fromAddress: string,
-                        asaID: number,
                         appIndex: number,
+                        asaID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
