@@ -6,10 +6,12 @@ import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {Database} from "@/lib/supabase/database.types";
 import algosdk from "algosdk";
 import {getFeesAppIdFromState, formatAmountToDecimals} from "@/lib/utils";
+import type {SupabaseClient} from "@supabase/supabase-js";
+import {getLastBidTx} from "@/lib/supabase/transaction";
 
 type ListingParams = Database['public']['Functions']['get_listing_by_id']['Returns']
 
-export async function buy(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, account: WalletAccount, params: ListingParams, price: number): Promise<TransactionConfirmation> {
+export async function buy(networkConfig: NetworksConfig, client: SupabaseClient, appProvider: AppProvider, walletManager: WalletManager, account: WalletAccount, params: ListingParams, price: number): Promise<TransactionConfirmation> {
     const chainInterface = interfaces[networkConfig.chain]
     if (!params.currency_type) throw new Error(`Unexpected error: Invalid currency ${params.currency_name}`)
     // @ts-expect-error
@@ -35,7 +37,7 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
             algosdk.getApplicationAddress(feesAppId),
             feesAppId,
             formatAmountToDecimals(price, params.currency_decimals),
-            ...formatCurrency(params),
+            ...await formatCurrency(params),
             ...formatNftID(params)
         )
         if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Buying listing failed.')
@@ -51,7 +53,7 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
             params.app_id,
             account.address,
             formatAmountToDecimals(price, params.currency_decimals),
-            ...formatCurrency(params)
+            ...await formatCurrency(params, client)
         )
         if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Bidding on listing failed.')
         return transactionConfirmation
@@ -60,11 +62,17 @@ export async function buy(networkConfig: NetworksConfig, appProvider: AppProvide
     throw new Error(`Unexpected error: Invalid listing type ${params.type}`)
 }
 
-function formatCurrency(params: ListingParams): (number | string)[] {
+async function formatCurrency(params: ListingParams, client?: SupabaseClient): Promise<(number | string)[]> {
     const args: (number | string)[] = []
     try {
         if (params.currency_type === 'asa') {
             args.push(parseInt(params.currency || '0'))
+
+            if (params.app_id && params.type === 'auction' && client) {
+                const { data: lastBidTx, error } = await getLastBidTx(client, params.app_id)
+                if (error) throw new Error(error.message)
+                if (lastBidTx && lastBidTx[0]) args.push(lastBidTx[0].from_address)
+            }
         }
         if (params.currency_type === 'arc200') {
             if (params.currency === null) throw new Error(`Arc200 ID cannot be null`)

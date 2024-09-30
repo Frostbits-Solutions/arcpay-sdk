@@ -9,6 +9,11 @@ export async function getTransactions(supabase: SupabaseClient, app_id: number) 
     return {data, error}
 }
 
+export async function getLastBidTx(supabase: SupabaseClient, app_id: number) {
+    const {data, error} = await supabase.from('transactions').select('*').eq('app_id', app_id).eq('type', 'bid').order('created_at', {ascending: false}).limit(1).returns<Database['public']['Tables']['transactions']['Row'][]>()
+    return {data, error}
+}
+
 export function subscribeToAppTransactions(
     supabase: SupabaseClient,
     app_id: number,

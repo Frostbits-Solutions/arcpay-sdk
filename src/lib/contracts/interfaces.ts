@@ -848,9 +848,10 @@ export const interfaces: Interfaces = {
                         fromAddress: string,
                         price: number,
                         asaID: number,
+                        lastBidAddress?: string
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .transferAsset(asaID, price)
-                        .call('bid', [])
+                        .call('bid', [], lastBidAddress?[lastBidAddress]:[], [], [asaID])
                         .send(signer)
                 },
                 dutch: {
