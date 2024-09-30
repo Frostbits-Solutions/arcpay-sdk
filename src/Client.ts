@@ -198,7 +198,7 @@ export class ArcpayClient {
                 const account: WalletAccount = await selectWallet(this._appProvider)
                 let transactionConfirmation: TransactionConfirmation | undefined
                 if (listingParams.type === 'auction' && price === -1) transactionConfirmation = await close(this._appProvider, this._walletManager, account, listingParams)
-                else transactionConfirmation = await buy(this._networkConfig, this._appProvider, this._walletManager, account, listingParams, price)
+                else transactionConfirmation = await buy(this._networkConfig, this._client, this._appProvider, this._walletManager, account, listingParams, price)
                 if (!transactionConfirmation) throw new Error('Unexpected error: Transaction confirmation is undefined')
                 success(this._appProvider, 'Success!', 'Transaction confirmed, check your wallet!', () => {
                     closeDialog()
