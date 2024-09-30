@@ -6,6 +6,7 @@ import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue"
 import type {Database} from "@/lib/supabase/database.types";
 import {ref, watch} from "vue";
 import AssetThumbnail from "@/components/ListingReview/AssetThumbnail.vue";
+import {formatPrice} from "@/lib/utils";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -52,7 +53,7 @@ watch(() => props.txs, (value) => {
     </div>
     <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
-            @click="emit('action:buy', listingParams?.sale_price || 0)"
+            @click="emit('action:buy', formatPrice(listingParams?.sale_price, listingParams.currency_decimals))"
             v-motion-slide-bottom
     >
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
@@ -60,7 +61,7 @@ watch(() => props.txs, (value) => {
         Pay
         <div class="ap-flex ap-items-center">
           <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-            <count-up :decimalPlaces="2" :duration="1" :end-val="listingParams.sale_price?.toString() || 0"></count-up>
+            <count-up :decimalPlaces="2" :duration="1" :end-val="formatPrice(listingParams?.sale_price, listingParams.currency_decimals)"></count-up>
           </span>
           <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{
               listingParams.currency_ticker

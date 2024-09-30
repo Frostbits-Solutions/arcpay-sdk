@@ -14,7 +14,7 @@ import {ArrowRight, LoaderCircle, Users, Crown} from "lucide-vue-next";
 import type {Database} from "@/lib/supabase/database.types";
 import {getTransactions} from "@/lib/supabase/transaction";
 import type {SupabaseClient} from "@supabase/supabase-js";
-import {formatAmountFromDecimals, getShortAddress} from "@/lib/utils";
+import {formatAmountFromDecimals, formatPrice, getShortAddress} from "@/lib/utils";
 import Jazzicon from "@/components/Jazzicon.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import AssetThumbnail from "@/components/ListingReview/AssetThumbnail.vue";
@@ -150,7 +150,7 @@ onMounted(async () => {
     </div>
     <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
-            @click="emit('action:buy', parseFloat(bid.toFixed(2)))"
+            @click="emit('action:buy', formatPrice(bid, listingParams.currency_decimals))"
             v-motion-slide-bottom
     >
         <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
@@ -158,7 +158,7 @@ onMounted(async () => {
             Bid
             <div class="ap-flex ap-items-center">
               <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-                <count-up :decimalPlaces="2" :duration="1" :end-val="bid"></count-up>
+                <count-up :decimalPlaces="2" :duration="1" :end-val="formatPrice(bid, listingParams.currency_decimals)"></count-up>
               </span>
               <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">
                   {{ listingParams.currency_ticker }}

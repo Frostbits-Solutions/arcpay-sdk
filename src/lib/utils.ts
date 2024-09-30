@@ -64,3 +64,7 @@ export function formatAmountToDecimals(amount: number, decimals: number = 6) {
 export function formatAmountFromDecimals(amount: number, decimals: number = 6) {
     return amount / (10 ** decimals)
 }
+
+export function formatPrice(price: number = 0, decimals: number = 0) {
+    return parseFloat(price.toFixed(decimals))
+}
