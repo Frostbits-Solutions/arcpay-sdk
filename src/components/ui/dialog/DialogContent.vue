@@ -46,12 +46,12 @@ const network: NetworksConfig | undefined = inject('network')
         <DialogContent
                 :class="
         cn(
-          'ap-w-dvw sm:ap-w-auto ap-border ap-border-border ap-bg-background/35 ap-backdrop-blur-lg ap-shadow-2xl ap-z-50 ap-table ap-duration-200 data-[state=open]:ap-animate-in data-[state=open]:ap-slide-in-from-bottom data-[state=closed]:ap-animate-out data-[state=closed]:ap-slide-out-to-bottom data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0 data-[state=closed]:sm:ap-zoom-out-95 data-[state=open]:sm:ap-zoom-in-95 data-[state=open]:sm:ap-slide-in-from-bottom-16 ap-rounded-2xl ap-transition-all',
+          'ap-w-dvw sm:ap-w-auto ap-border ap-border-border ap-bg-background/35 ap-backdrop-blur-lg ap-shadow-2xl ap-z-50 ap-flex ap-max-h-[80dvh] ap-items-stretch ap-justify-stretch ap-duration-200 data-[state=open]:ap-animate-in data-[state=open]:ap-slide-in-from-bottom data-[state=closed]:ap-animate-out data-[state=closed]:ap-slide-out-to-bottom data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0 data-[state=closed]:sm:ap-zoom-out-95 data-[state=open]:sm:ap-zoom-in-95 data-[state=open]:sm:ap-slide-in-from-bottom-16 ap-rounded-2xl ap-transition-all',
           props.class,
         )"
                 v-bind="forwarded"
         >
-            <ScrollArea class="ap-h-[500px] sm:ap-h-auto">
+            <ScrollArea class="ap-flex-1">
                 <div class="ap-py-6 ap-px-4 sm:ap-px-6">
                     <slot/>
                 </div>

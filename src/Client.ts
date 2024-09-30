@@ -33,6 +33,7 @@ export interface CreateOptions {
     assetId?: string
     listingType?: ListingType
     listingName?: string
+    thumbnailUrl?: string
     accountId?: number
     tags?: string[]
 }

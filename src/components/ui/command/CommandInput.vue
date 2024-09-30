@@ -26,7 +26,6 @@ const forwardedProps = useForwardProps(delegatedProps)
     <MagnifyingGlassIcon class="ap-mr-2 ap-h-4 ap-w-4 ap-shrink-0 ap-opacity-50"/>
     <ComboboxInput
         :class="cn('ap-flex ap-h-10 ap-w-full ap-rounded-md ap-bg-transparent ap-py-3 ap-text-sm ap-outline-none placeholder:ap-text-muted-foreground disabled:ap-cursor-not-allowed disabled:ap-opacity-50', props.class)"
-        auto-focus
         v-bind="{ ...forwardedProps, ...$attrs }"
     />
   </div>
