@@ -31,8 +31,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
     // @ts-ignore
     const assets = account.assets.filter((asset) => asset.amount > 0).map(async (asset) => {
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
-
-        if (info.params.url.includes('ipfs://')) {
+        if (info.params.url?.includes('ipfs://')) {
             info.params.url = info.params.url.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/')
         }
 
