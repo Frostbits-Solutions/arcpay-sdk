@@ -37,6 +37,10 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
                 id: WalletId.WALLETCONNECT,
                 options: {projectId: import.meta.env.VITE_WC_PROJECT_ID}
             },
+            {
+                id: WalletId.LUTE,
+                options: { siteName: 'ArcPay' }
+            },
             WalletId.KIBISIS],
         services: {
             getAssetMetadata: (assetId: string) => voi.getAssetMetadata(assetId, 'voi:testnet'),
@@ -56,6 +60,10 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             {
                 id: WalletId.WALLETCONNECT,
                 options: {projectId: import.meta.env.VITE_WC_PROJECT_ID}
+            },
+            {
+                id: WalletId.LUTE,
+                options: { siteName: 'ArcPay' }
             },
             WalletId.KIBISIS],
         services: {
