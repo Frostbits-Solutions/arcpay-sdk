@@ -10,6 +10,7 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
     define: {
         "global.WebSocket": "globalThis.WebSocket",
+        global: 'globalThis',
     },
     plugins: [
         vue(),
