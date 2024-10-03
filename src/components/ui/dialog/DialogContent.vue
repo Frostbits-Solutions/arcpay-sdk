@@ -33,7 +33,7 @@ const network: NetworksConfig | undefined = inject('network')
 <template>
   <DialogPortal disabled>
     <DialogOverlay
-        class="ap-fixed ap-flex ap-items-end sm:ap-items-center ap-justify-center ap-h-dvh ap-w-dvw ap-z-50 ap-bg-slate-100/60 dark:ap-bg-slate-900/80 ap-backdrop-blur-sm data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
+        class="ap-fixed ap-top-0 ap-left-0 ap-flex ap-items-end sm:ap-items-center ap-justify-center ap-h-dvh ap-w-dvw ap-z-50 ap-bg-slate-100/55 dark:ap-bg-slate-900/80 ap-backdrop-blur-sm data-[state=open]:ap-animate-in data-[state=closed]:ap-animate-out data-[state=closed]:ap-fade-out-0 data-[state=open]:ap-fade-in-0"
     >
       <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-items-center ap-gap-1">
         <GlobeLock class="ap-w-4 ap-h-4"/>

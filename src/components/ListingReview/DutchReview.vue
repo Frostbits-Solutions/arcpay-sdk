@@ -77,7 +77,7 @@ onMounted(() => {
     </div>
     <button v-if="status?.status === 'active'"
             class="animated-button hover:ap-shadow-[#e99796] hover:ap-shadow-2xl ap-mx-auto"
-            @click="emit('action:buy', formatPrice(price, listingParams.currency_decimals))"
+            @click="emit('action:buy', formatPrice(price, listingParams.currency_decimals || undefined))"
             v-motion-slide-bottom
     >
       <ArrowRight class="ap-w-6 ap-h-6 arr-2"/>
@@ -85,7 +85,7 @@ onMounted(() => {
           Pay
           <div class="ap-flex ap-items-center">
             <span class="ap-text-3xl ap-font-extrabold ap-tracking-tight">
-              <count-up :decimalPlaces="2" :duration="1" :end-val="formatPrice(price, listingParams.currency_decimals)" :start-val="formatPrice(previousPrice, listingParams.currency_decimals)"></count-up>
+              <count-up :decimalPlaces="2" :duration="1" :end-val="formatPrice(price, listingParams.currency_decimals || undefined)" :start-val="formatPrice(previousPrice, listingParams.currency_decimals || undefined)"></count-up>
             </span>
             <span class="ap-ms-1 ap-text-xl ap-font-normal ap-uppercase ap-opacity-70">{{
                 listingParams.currency_ticker

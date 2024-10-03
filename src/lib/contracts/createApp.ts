@@ -32,7 +32,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         "CoEBQw==",
         account.address,
         '5ETIOFVHFK6ENLN4X2S6IC3NJOM7CYYHHTODGEFSIDPUW3TSA4MJ3RYSDQ',
-        0,
+        1,
         ...formatCurrency(params),
         ...formatNftID(networkConfig, params),
         ...args
