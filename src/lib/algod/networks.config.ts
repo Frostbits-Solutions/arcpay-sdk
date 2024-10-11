@@ -97,7 +97,7 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'algo:mainnet',
         chain: 'algo',
         networkId: NetworkId.MAINNET,
-        blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
+        blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=',
         nodeBaseURL: 'https://mainnet-api.algonode.cloud',
         walletProviders: [
             WalletId.DEFLY,

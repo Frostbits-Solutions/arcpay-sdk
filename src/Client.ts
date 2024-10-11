@@ -56,13 +56,13 @@ export class ArcpayClient {
         this._networkConfig = networksConfig[network]
         this._walletManager = new WalletManager({
             wallets: networksConfig[network].walletProviders as SupportedWallet[],
-            network: networksConfig[network].networkId,
             algod: {
                 token: '',
                 baseServer: networksConfig[network].nodeBaseURL,
                 port: networksConfig[network].nodePort
             }
         })
+        this._walletManager.setActiveNetwork(networksConfig[network].networkId)
 
         if (options.client) {
             this._client = options.client
