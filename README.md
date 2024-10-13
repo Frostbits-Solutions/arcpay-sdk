@@ -1,7 +1,7 @@
 # arcpay-sdk
 
-arcpay is a web3 payment processor, facilitating the use of royalty points to purchase digital and real-world assets.
-The sdk provides a plug and play interface with arcpay contracts and enable users to create and purchase listings.
+arcpay is a web3 payment processor, facilitating the use of AVM tokens including loyalty points to purchase digital and real-world assets.
+The SDK provides a plug and play interface with arcpay contracts and enable users to create and purchase listings.
 
 ## Features
 
