@@ -3,6 +3,12 @@ import type {PublicNetwork} from '@/lib/algod/networks.config'
 import type {AssetMetadata} from '@/lib/types'
 import algosdk from "algosdk";
 
+interface Asset {
+    amount: number
+    "asset-id": number
+    "is-frozen": false
+}
+
 async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
     let url
     if (network === 'algo:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -26,10 +32,12 @@ async function getAssetMetadata(assetId: string, network: PublicNetwork): Promis
     }
 }
 
-async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
+async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, page: number = 0, size: number = 25): Promise<AssetMetadata[]> {
     const account = await algodClient.accountInformation(address).do()
-    // @ts-ignore
-    const assets = account.assets.filter((asset) => asset.amount > 0).map(async (asset) => {
+    const assets = account.assets.filter((asset: Asset) => asset.amount > 0)
+    const paginatedAssets = assets.slice(page * size, (page + 1) * size)
+
+    const promises = paginatedAssets.map(async (asset: Asset) => {
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
         if (info.params.url?.includes('ipfs://')) {
             info.params.url = info.params.url.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/')
@@ -46,7 +54,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, n
         }
     })
 
-    return Promise.all(assets)
+    return Promise.all(promises)
 }
 
 async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {
