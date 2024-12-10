@@ -38,9 +38,20 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, p
     const paginatedAssets = assets.slice(page * size, (page + 1) * size)
 
     const promises = paginatedAssets.map(async (asset: Asset) => {
+        let thumbnailUrl = ''
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
-        if (info.params.url?.includes('ipfs://')) {
-            info.params.url = info.params.url.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/')
+        console.log(info)
+        if (info.params.url?.includes('#arc3')) {
+            const metadata = await axios.get(info.params.url?.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/'))
+            thumbnailUrl = metadata.data?.image
+        } else {
+            thumbnailUrl = info.params.url
+        }
+
+        if (thumbnailUrl) {
+            thumbnailUrl = thumbnailUrl.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/')
+        } else {
+            console.error(`Unable to load thumbnail for asset ${info.index}`)
         }
 
         return {
@@ -48,7 +59,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, p
             id: asset['asset-id'].toString(),
             name: info.params.name,
             description: info.params.name,
-            thumbnail: info.params.url,
+            thumbnail: thumbnailUrl,
             thumbnailMIMEType: 'image/png',
             properties: {}
         }
