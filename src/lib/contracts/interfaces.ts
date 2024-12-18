@@ -980,6 +980,7 @@ export const interfaces: Interfaces = {
             return new Transaction(algod, {fromAddress, appIndex})
                 .preValidate(undefined, [appIndex, feesAppId], foreignAssets)
                 .preValidate(undefined, [appIndex], foreignAssets)
+                .pay(1000)
                 .call('close', [], accounts, [appIndex, feesAppId], foreignAssets)
                 .send(signer)
         },
@@ -995,6 +996,7 @@ export const interfaces: Interfaces = {
             if (nftID) foreignAssets.push(nftID)
             if (asaID) foreignAssets.push(asaID)
             return new Transaction(algod, {fromAddress, appIndex})
+                .pay(1000)
                 .delete(foreignAssets)
                 .send(signer)
         },
