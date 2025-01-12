@@ -8,17 +8,13 @@ import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    define: {
-        "global.WebSocket": "globalThis.WebSocket",
-        global: 'globalThis',
-    },
     plugins: [
         vue(),
         cssInjectedByJsPlugin(),
         dts({
             insertTypesEntry: true,
             rollupTypes: true,
-            tsConfigFilePath: './tsconfig.app.json'
+            tsconfigPath: './tsconfig.app.json'
         })
     ],
     resolve: {

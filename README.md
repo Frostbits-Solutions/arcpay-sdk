@@ -5,7 +5,7 @@ The sdk provides a plug and play interface with arcpay contracts and enable user
 
 ## Features
 
-- Supported chain: `voi:testnet`, `voi:mainnet (soon)`, `algorand:testnet (soon)`, `algorand:mainnet (soon)`
+- Supported chain: `algorand:testnet`, `algorand:mainnet`, `voi:testnet`, `voi:mainnet (soon)`
 
 ## Installation
 
@@ -19,12 +19,12 @@ npm install arcpay-sdk
 import { createClient, useArcpay } from 'arcpay-sdk';
 
 // Instantiate the arcpay client singleton for a given network. Calling this method twice with the same network will return the same instance.
-const arcpayClient = createClient('voi:testnet', {
+const arcpayClient = createClient('algo:testnet', {
   apiKey: '<your-api-key>', // API key can be obtained from the arcpay dashboard
 });
 
 // You can use the useArcpay helper to get the client instance after instantiating it.
-const arcpayClient = useArcpay('voi:testnet');
+const arcpayClient = useArcpay('algo:testnet');
 
 // Create a VOI -> ARC-72 sale
 const listingId: string = await arcpayClient.create({listingType: 'sale'});
@@ -47,7 +47,7 @@ the same instance.
 
 ##### Parameters
 
-- `network: PublicNetwork`: The network to use. Use `'voi:testnet'` for VOI testnet. `REQUIRED`
+- `network: PublicNetwork`: The network to use. Use `'algo:testnet'` for Algorand testnet. `REQUIRED`
 - `options: ArcpayClientOptions`: Options to instantiate the client `REQUIRED`
     - `apiKey?: string`: Account API key. Can be obtained from the arcpay dashboard. The API key origin must match the
       request's origin. API key is required in most cases unless client is provided.
@@ -68,7 +68,7 @@ instantiating the client using `createClient`.
 
 ##### Parameters
 
-- `network: PublicNetwork`: The network to use. Use `'voi:testnet'` for VOI testnet. `REQUIRED`
+- `network: PublicNetwork`: The network to use. Use `'algo:testnet'` for Algorand testnet. `REQUIRED`
 
 ##### Returns
 

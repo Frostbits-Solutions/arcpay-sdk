@@ -40,8 +40,8 @@ const network: NetworksConfig | undefined = inject('network')
         {{ network?.key }}
       </div>
       <div
-          class="ap-absolute ap-hidden sm:ap-flex ap-bottom-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-justify-start sm:ap-justify-center ap-w-full">
-        Powered by<img alt="Arcpay logo" class="ap-w-4 ap-h-4 ap-ml-1 ap-mr-0.5" src="@/assets/logo.png"/>arcpay v{{ version }}
+          class="ap-absolute ap-hidden sm:ap-flex ap-bottom-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-justify-start sm:ap-justify-center ap-items-center ap-w-full">
+        Powered by<img alt="Arcpay logo" class="ap-h-5 ap-ml-1 ap-mr-0.5" src="@/assets/logo.png"/>arcpay v{{ version }}
       </div>
         <DialogContent
                 :class="
