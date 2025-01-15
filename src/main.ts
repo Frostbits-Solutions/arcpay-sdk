@@ -8,8 +8,9 @@ import {ArcpayClient, type ArcpayClientOptions} from '@/Client'
 import type {PublicNetwork} from "@/lib/algod/networks.config";
 import { MotionPlugin } from '@vueuse/motion'
 
-
-type Clients = Partial<Record<PublicNetwork, ArcpayClient>>
+export {ArcpayClient, type ArcpayClientOptions} from '@/Client'
+export type {PublicNetwork} from "@/lib/algod/networks.config";
+export type Clients = Partial<Record<PublicNetwork, ArcpayClient>>
 
 const clients: Clients = {}
 export const createClient = (network: PublicNetwork, options: ArcpayClientOptions): ArcpayClient => {
