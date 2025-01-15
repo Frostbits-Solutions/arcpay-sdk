@@ -17,7 +17,6 @@ export type NetworksConfig = {
     nodeBaseURL: string
     walletProviders: SupportedWallet[]
     services: {
-        getAssetMetadata: (assetId: string) => Promise<AssetMetadata>
         getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => Promise<AssetMetadata[]>
         getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => Promise<number>
     }
@@ -39,7 +38,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             WalletId.KIBISIS],
         services: {
-            getAssetMetadata: (assetId: string) => voi.getAssetMetadata(assetId, 'voi:testnet'),
             getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => voi.getAddressAssets(address, 'voi:testnet'),
             getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => voi.getCreatedAppId(algodClient, txId, 'voi:testnet')
         },
@@ -59,7 +57,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             WalletId.KIBISIS],
         services: {
-            getAssetMetadata: (assetId: string) => voi.getAssetMetadata(assetId, 'voi:mainnet'),
             getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => voi.getAddressAssets(address, 'voi:mainnet'),
             getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => voi.getCreatedAppId(algodClient, txId, 'voi:mainnet')
         },
@@ -86,7 +83,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             WalletId.KIBISIS],
         services: {
-            getAssetMetadata: (assetId: string) => algo.getAssetMetadata(assetId, 'algo:testnet'),
             getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => algo.getAddressAssets(algodClient, address, page, size),
             getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => algo.getCreatedAppId(algodClient, txId, 'algo:testnet')
         },
@@ -113,7 +109,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             WalletId.KIBISIS],
         services: {
-            getAssetMetadata: (assetId: string) => algo.getAssetMetadata(assetId, 'algo:mainnet'),
             getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => algo.getAddressAssets(algodClient, address, page, size),
             getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => algo.getCreatedAppId(algodClient, txId, 'algo:mainnet')
         },

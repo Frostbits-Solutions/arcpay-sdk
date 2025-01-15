@@ -1,62 +1,69 @@
 import axios from 'axios'
 import type {PublicNetwork} from '@/lib/algod/networks.config'
-import type {AssetMetadata} from '@/lib/types'
+import type { Asset, AssetMetadata } from '@/lib/types'
 import algosdk from "algosdk";
-
-interface Asset {
-    amount: number
-    "asset-id": number
-    "is-frozen": false
-}
-
-async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
-    let url
-    if (network === 'algo:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
-    if (network === 'algo:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
-    if (!url) throw new Error('Invalid network')
-
-    const [contractId, tokenId] = assetId.split('/')
-    const response = await axios.get(url, {params: {contractId, tokenId}});
-    if (!response.data) throw new Error(`Failed to fetch asset metadata for ${assetId}`)
-
-    const metadata = JSON.parse(response.data.tokens[0].metadata)
-
-    return {
-        type: 'asa',
-        id: assetId,
-        name: metadata.name,
-        description: metadata.description,
-        thumbnail: metadata.image,
-        thumbnailMIMEType: metadata.image_mimetype,
-        properties: metadata.properties
-    }
-}
+import { CID, type Version } from 'multiformats/cid'
+import {create as createDigest} from 'multiformats/hashes/digest'
+import * as dagPB from '@ipld/dag-pb'
 
 async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, page: number = 0, size: number = 25): Promise<AssetMetadata[]> {
+    const ipfsGateway = 'https://ipfs.algonode.xyz/ipfs/'
     const account = await algodClient.accountInformation(address).do()
     const assets = account.assets.filter((asset: Asset) => asset.amount > 0)
     const paginatedAssets = assets.slice(page * size, (page + 1) * size)
 
     const promises = paginatedAssets.map(async (asset: Asset) => {
+        let subtype
         let thumbnailUrl = ''
         const info = await algodClient.getAssetByID(asset['asset-id']).do()
-        console.log(info)
-        if (info.params.url?.includes('#arc3')) {
-            const metadata = await axios.get(info.params.url?.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/'))
-            thumbnailUrl = metadata.data?.image
-        } else {
-            thumbnailUrl = info.params.url
-        }
 
-        if (thumbnailUrl) {
-            thumbnailUrl = thumbnailUrl.replace('ipfs://', 'https://ipfs.algonode.xyz/ipfs/')
+        const arc19Regex = /template-ipfs:\/\/{ipfscid:(\d):([a-z0-9-]+):reserve:([a-z0-9-]+)}/;
+        const arc19Match = info.params.url?.match(arc19Regex);
+
+        if(arc19Match) {
+            const reserveAddress = info.params.reserve
+            const version = parseInt(arc19Match[1]);
+            const codecName = arc19Match[2];
+            const hashName = arc19Match[3];
+
+            if (codecName !== 'dag-pb') throw new Error(`Invalid codec for CID v0: ${codecName}. Expected: dag-pb`)
+            if (hashName !== 'sha2-256') throw new Error(`Invalid hash type for CID v0: ${hashName}. Expected: sha2-256`)
+            if (version < 0 || version > 1) throw new Error(`Unsupported CID version: ${version}`)
+
+            const reserveBytes = algosdk.decodeAddress(reserveAddress).publicKey;
+            const digest = createDigest(18, reserveBytes)
+            const cid = CID.create(version as Version, dagPB.code, digest)
+
+            const metadata = await axios.get(`${ipfsGateway}${cid.toString()}`)
+            if (metadata.data?.image) thumbnailUrl = metadata.data.image.replace('ipfs://', ipfsGateway)
+            subtype = 'arc19'
+
+        } else if (info.params.url?.includes('#arc3')) {
+            const metadataUrl = info.params.url.replace('ipfs://', ipfsGateway)
+            const metadata = await axios.get(metadataUrl)
+            thumbnailUrl = metadata.data?.image
+            subtype = 'arc3'
+        } else if (info.params.url?.includes('ipfs://')) {
+            thumbnailUrl = info.params.url.replace('ipfs://', ipfsGateway)
+            subtype = 'arc69'
         } else {
-            console.error(`Unable to load thumbnail for asset ${info.index}`)
+            try {
+                const response = await axios.get(`https://asa-list.tinyman.org/assets/${info.index}/icon.png`)
+                if (response.data.includes('<!DOCTYPE html>')) throw new Error('Invalid image')
+                thumbnailUrl = `https://asa-list.tinyman.org/assets/${info.index}/icon.png`
+                subtype = 'token'
+            } catch (e) {
+                console.error(`Unable to load thumbnail for asset ${info.index}`)
+                thumbnailUrl = info.params.url
+            }
         }
 
         return {
             type: 'asa',
-            id: asset['asset-id'].toString(),
+            subtype,
+            amount: asset.amount,
+            decimals: info.params.decimals,
+            id: info.index,
             name: info.params.name,
             description: info.params.name,
             thumbnail: thumbnailUrl,
@@ -65,7 +72,11 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, p
         }
     })
 
-    return Promise.all(promises)
+    return Promise.allSettled(promises).then((results) => results.map((result) => {
+        if (result.status === 'fulfilled') {
+            return result.value
+        }
+    }).filter(asset => asset))
 }
 
 async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, network: PublicNetwork): Promise<number> {
@@ -107,7 +118,6 @@ async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, netwo
 }
 
 export default {
-    getAssetMetadata,
     getAddressAssets,
     getCreatedAppId
 }

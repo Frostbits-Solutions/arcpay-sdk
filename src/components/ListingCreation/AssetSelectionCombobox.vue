@@ -2,7 +2,7 @@
 import {computed, inject, onMounted, ref} from 'vue'
 import {CheckIcon} from '@radix-icons/vue'
 import {LoaderCircle} from "lucide-vue-next";
-import {cn} from '@/lib/utils'
+import { cn, formatAmountFromDecimals } from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from '@/components/ui/command'
 import {Popover, PopoverContent, PopoverTrigger,} from '@/components/ui/popover'
@@ -106,8 +106,9 @@ onMounted(async () => {
                             <div class="ap-flex ap-items-center ap-gap-2 ap-min-w-0">
                                 <img :alt="asset.id" :src="asset.thumbnail" class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border ap-bg-muted"/>
                                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
-                                    <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ asset.name }}</div>
-                                    {{ asset.id }}
+                                    <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ asset.name }} <span v-if="asset.subtype" class="ap-text-muted-foreground ap-font-normal">({{asset.subtype}})</span></div>
+                                    ID: {{asset.id}}<br>
+                                    Amount: {{formatAmountFromDecimals(asset.amount, asset.decimals)}}
                                 </div>
                             </div>
                             <CheckIcon :class="cn('ap-ml-auto ap-h-4 ap-w-4',value === asset.id ? 'ap-opacity-100' : 'ap-opacity-0',)"/>

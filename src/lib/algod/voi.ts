@@ -3,29 +3,6 @@ import type {PublicNetwork} from '@/lib/algod/networks.config'
 import type {AssetMetadata} from '@/lib/types'
 import algosdk from "algosdk";
 
-async function getAssetMetadata(assetId: string, network: PublicNetwork): Promise<AssetMetadata> {
-    let url
-    if (network === 'voi:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
-    if (network === 'voi:mainnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
-    if (!url) throw new Error('Invalid network')
-
-    const [contractId, tokenId] = assetId.split('/')
-    const response = await axios.get(url, {params: {contractId, tokenId}});
-    if (!response.data) throw new Error(`Failed to fetch asset metadata for ${assetId}`)
-
-    const metadata = JSON.parse(response.data.tokens[0].metadata)
-
-    return {
-        id: assetId,
-        name: metadata.name,
-        type: 'arc72',
-        description: metadata.description,
-        thumbnail: metadata.image,
-        thumbnailMIMEType: metadata.image_mimetype,
-        properties: metadata.properties
-    }
-}
-
 async function getAddressAssets(address: string, network: PublicNetwork): Promise<AssetMetadata[]> {
     let url
     if (network === 'voi:testnet') url = `https://arc72-idx.nftnavigator.xyz/nft-indexer/v1/tokens`
@@ -88,7 +65,6 @@ async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, netwo
 }
 
 export default {
-    getAssetMetadata,
     getAddressAssets,
     getCreatedAppId
 }
