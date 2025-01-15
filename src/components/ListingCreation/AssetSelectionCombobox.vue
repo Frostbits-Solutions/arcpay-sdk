@@ -104,7 +104,7 @@ onMounted(async () => {
                                          open = false
                                      }">
                             <div class="ap-flex ap-items-center ap-gap-2 ap-min-w-0">
-                                <img :alt="asset.id" :src="asset.thumbnail" class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border ap-bg-muted"/>
+                                <img :alt="asset.id" :src="asset.thumbnail" class="ap-w-12 ap-h-12 ap-mr-2 ap-rounded ap-object-cover ap-border ap-border-border ap-bg-muted"/>
                                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
                                     <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ asset.name }} <span v-if="asset.subtype" class="ap-text-muted-foreground ap-font-normal">({{asset.subtype}})</span></div>
                                     ID: {{asset.id}}<br>
