@@ -44,8 +44,10 @@ async function load(state: any) {
   try {
       const len = await getAssets(page)
       if (len < 25) state.complete()
-      else state.loaded()
-      page++
+      else {
+        state.loaded()
+        page++
+      }
   } catch(e) {
       console.error(e)
       state.error()
