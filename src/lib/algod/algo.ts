@@ -35,7 +35,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, p
             const cid = CID.create(version as Version, dagPB.code, digest)
 
             const metadata = await axios.get(`${ipfsGateway}${cid.toString()}`)
-            if (metadata.data?.image) thumbnailUrl = metadata.data.image.replace('ipfs://', ipfsGateway)
+            if (metadata.data?.image) thumbnailUrl = metadata.data.image
             subtype = 'arc19'
 
         } else if (info.params.url?.includes('#arc3')) {
@@ -44,7 +44,7 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, p
             thumbnailUrl = metadata.data?.image
             subtype = 'arc3'
         } else if (info.params.url?.includes('ipfs://')) {
-            thumbnailUrl = info.params.url.replace('ipfs://', ipfsGateway)
+            thumbnailUrl = info.params.url
             subtype = 'arc69'
         } else {
             try {
@@ -58,12 +58,14 @@ async function getAddressAssets(algodClient: algosdk.Algodv2, address: string, p
             }
         }
 
+        thumbnailUrl = thumbnailUrl.replace('ipfs://', ipfsGateway)
+
         return {
             type: 'asa',
             subtype,
             amount: asset.amount,
             decimals: info.params.decimals,
-            id: info.index,
+            id: `${info.index}`,
             name: info.params.name,
             description: info.params.name,
             thumbnail: thumbnailUrl,
