@@ -42,7 +42,6 @@ const walletManager = inject<WalletManager>('walletManager')
         {{ network?.key }}
       </div>
       <div class="ap-absolute ap-top-0 ap-left-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-items-center ap-gap-1" v-if="walletManager?.activeWallet?.isConnected">
-        <button @click.prevent.stop="async () => {await walletManager?.disconnect()}">logout</button>
         <img class="ap-w-4 ap-h-4 ap-rounded-full" :src="walletManager?.activeWallet?.metadata.icon" :alt="walletManager?.activeWallet?.metadata.name">
         {{ getShortAddress(walletManager?.activeAddress) }}
       </div>

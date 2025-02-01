@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, inject, onBeforeMount, ref} from 'vue'
+import {computed, inject, onBeforeMount, onMounted, ref} from 'vue'
 import {Button} from '@/components/ui/button'
 import {ChevronDown, ChevronRight, CircleHelp, LoaderCircle, OctagonAlert} from 'lucide-vue-next'
 import {getShortAddress} from '@/lib/utils'
@@ -64,11 +64,11 @@ const getConnectArgs = (wallet: Wallet) => {
 }
 
 async function selectWallet(wallet: Wallet) {
+  wallet.setActive()
   activeWallet.value = wallet
   accountLoading.value = true
-  console.log(manager)
-  if (wallet.isConnected) {
-    activeWallet.value.accounts = wallet.accounts
+  if (wallet.isConnected && manager?.activeWallet !== undefined) {
+    activeWallet.value.accounts = manager?.activeWallet.accounts || []
   } else {
     activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   }
@@ -90,26 +90,16 @@ async function selectAccount(account: WalletAccount) {
     manager?.activeWallet?.setActiveAccount(account.address)
     console.log(manager?.activeWalletAccounts)
     console.log(manager?.activeAddress)
-    const rekeyedAddress = await manager?.algodClient.accountInformation(account.address).do()
-    console.log(rekeyedAddress)
-    if (rekeyedAddress) {
-      console.log()
-    }
-    console.log(manager?.transactionSigner)
     callback(account)
   } else {
     throw {message: 'Unexpected error: WalletSelectionCallback not provided'}
   }
 }
 
-onBeforeMount(async () => {
-  // await manager?.resumeSessions()
-  // if (manager?.activeAccount) {
-  //   await selectAccount(manager.activeAccount)
-  // } else if (manager?.activeWallet) {
-  //   console.log(manager?.activeWallet)
-  //   await selectWallet(manager.activeWallet)
-  // }
+onMounted(async () => {
+  if (manager?.activeWallet?.activeAccount) {
+    callback(manager?.activeWallet?.activeAccount)
+  }
 })
 </script>
 

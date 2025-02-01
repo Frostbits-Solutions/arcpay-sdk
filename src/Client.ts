@@ -62,7 +62,9 @@ export class ArcpayClient {
                 port: networksConfig[network].nodePort
             }
         })
-        this._walletManager.setActiveNetwork(networksConfig[network].networkId)
+        this._walletManager.setActiveNetwork(networksConfig[network].networkId).then(() => {
+            this._walletManager.resumeSessions()
+        })
 
         if (options.client) {
             this._client = options.client
