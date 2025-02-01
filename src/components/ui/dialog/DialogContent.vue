@@ -10,12 +10,13 @@ import {
   useForwardPropsEmits,
 } from 'radix-vue'
 import {Cross2Icon} from '@radix-icons/vue'
-import {cn} from '@/lib/utils'
+import {cn, getShortAddress} from '@/lib/utils'
 import {useRoute} from 'vue-router'
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import {GlobeLock} from "lucide-vue-next";
 import {version} from '@/../package.json';
 import {ScrollArea} from "@/components/ui/scroll-area";
+import type {WalletManager} from "@txnlab/use-wallet";
 
 const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<DialogContentEmits>()
@@ -28,6 +29,7 @@ const delegatedProps = computed(() => {
 const route = useRoute()
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 const network: NetworksConfig | undefined = inject('network')
+const walletManager = inject<WalletManager>('walletManager')
 </script>
 
 <template>
@@ -38,6 +40,11 @@ const network: NetworksConfig | undefined = inject('network')
       <div class="ap-absolute ap-top-0 ap-right-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-items-center ap-gap-1">
         <GlobeLock class="ap-w-4 ap-h-4"/>
         {{ network?.key }}
+      </div>
+      <div class="ap-absolute ap-top-0 ap-left-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-flex ap-items-center ap-gap-1" v-if="walletManager?.activeWallet?.isConnected">
+        <button @click.prevent.stop="async () => {await walletManager?.disconnect()}">logout</button>
+        <img class="ap-w-4 ap-h-4 ap-rounded-full" :src="walletManager?.activeWallet?.metadata.icon" :alt="walletManager?.activeWallet?.metadata.name">
+        {{ getShortAddress(walletManager?.activeAddress) }}
       </div>
       <div
           class="ap-absolute ap-hidden sm:ap-flex ap-bottom-0 ap-text-muted-foreground ap-text-xs ap-p-4 ap-justify-start sm:ap-justify-center ap-items-center ap-w-full">
