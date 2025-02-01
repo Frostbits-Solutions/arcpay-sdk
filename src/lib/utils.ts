@@ -57,6 +57,10 @@ export async function getFeesAppIdFromState(algod: AlgodClient, appId: number): 
     return -1
 }
 
+export async function getRekeyAddress(algod: AlgodClient, address: string): Promise<string|undefined> {
+    return (await algod.accountInformation(address).do())["auth-addr"]
+}
+
 export function formatAmountToDecimals(amount: number, decimals: number = 6) {
     return amount * (10 ** decimals)
 }
