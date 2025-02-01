@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, inject, ref} from 'vue'
+import {computed, inject, onBeforeMount, ref} from 'vue'
 import {Button} from '@/components/ui/button'
 import {ChevronDown, ChevronRight, CircleHelp, LoaderCircle, OctagonAlert} from 'lucide-vue-next'
 import {getShortAddress} from '@/lib/utils'
@@ -66,10 +66,12 @@ const getConnectArgs = (wallet: Wallet) => {
 async function selectWallet(wallet: Wallet) {
   activeWallet.value = wallet
   accountLoading.value = true
+  console.log(manager)
   if (wallet.isConnected) {
-    await wallet.resumeSession()
+    activeWallet.value.accounts = wallet.accounts
+  } else {
+    activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   }
-  activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   accountLoading.value = false
   if (activeWallet.value?.accounts.length === 0) {
     error.value = 'Wallet does not have any accounts. Please select another wallet.'
@@ -85,11 +87,30 @@ function disconnectWallet() {
 
 async function selectAccount(account: WalletAccount) {
   if (callback && account) {
+    manager?.activeWallet?.setActiveAccount(account.address)
+    console.log(manager?.activeWalletAccounts)
+    console.log(manager?.activeAddress)
+    const rekeyedAddress = await manager?.algodClient.accountInformation(account.address).do()
+    console.log(rekeyedAddress)
+    if (rekeyedAddress) {
+      console.log()
+    }
+    console.log(manager?.transactionSigner)
     callback(account)
   } else {
     throw {message: 'Unexpected error: WalletSelectionCallback not provided'}
   }
 }
+
+onBeforeMount(async () => {
+  // await manager?.resumeSessions()
+  // if (manager?.activeAccount) {
+  //   await selectAccount(manager.activeAccount)
+  // } else if (manager?.activeWallet) {
+  //   console.log(manager?.activeWallet)
+  //   await selectWallet(manager.activeWallet)
+  // }
+})
 </script>
 
 <template>
