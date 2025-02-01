@@ -37,7 +37,7 @@ export function base64ToArrayBuffer(base64: string) {
 }
 
 export function getShortAddress(address: string): string {
-    return `${address.slice(0, 4)}...${address.slice(address.length - 5, address.length - 1)}`
+    return `${address.slice(0, 4)}...${address.slice(address.length - 5, address.length)}`
 }
 
 export function encodeAppArgs(abiMethod: ABIMethod, args: any[]) {
