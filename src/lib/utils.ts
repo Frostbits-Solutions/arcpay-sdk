@@ -1,4 +1,4 @@
-import {ABIMethod} from 'algosdk'
+import algosdk, {ABIMethod, type TransactionSigner} from 'algosdk'
 import {type ClassValue, clsx} from 'clsx'
 import {extendTailwindMerge} from "tailwind-merge";
 import type AlgodClient from "algosdk/dist/types/client/v2/algod/algod";
@@ -59,6 +59,24 @@ export async function getFeesAppIdFromState(algod: AlgodClient, appId: number): 
 
 export async function getRekeyAddress(algod: AlgodClient, address: string): Promise<string|undefined> {
     return (await algod.accountInformation(address).do())["auth-addr"]
+}
+
+export const makeEmptyTransactionSigner = (authAddr?: string): TransactionSigner => {
+    return async (txns: algosdk.Transaction[], indexesToSign: number[]) => {
+        const emptySigTxns: Uint8Array[] = []
+
+        indexesToSign.forEach(i => {
+            const encodedStxn: algosdk.EncodedSignedTransaction = {
+                txn: txns[i].get_obj_for_encoding(),
+            };
+
+            if (authAddr) encodedStxn.sgnr = Buffer.from(algosdk.decodeAddress(authAddr).publicKey);
+
+            emptySigTxns.push((algosdk.encodeObj(encodedStxn)));
+        });
+
+        return emptySigTxns
+    }
 }
 
 export function formatAmountToDecimals(amount: number, decimals: number = 6) {
