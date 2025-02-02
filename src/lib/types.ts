@@ -1,7 +1,7 @@
 export interface AssetMetadata {
     id: string
     name: string,
-    amount: number,
+    amount?: number,
     decimals: number,
     description: string
     thumbnail: string

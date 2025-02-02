@@ -6,6 +6,7 @@ import {subscribeToAppTransactions} from "@/lib/supabase/transaction";
 import type {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
 import type {Database} from "@/lib/supabase/database.types";
 import ListingIdTooltip from "@/components/ListingReview/ListingIdTooltip.vue";
+import type { NetworksConfig } from '@/lib/algod/networks.config.ts'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -17,6 +18,7 @@ interface ListingReviewProvider {
 }
 
 const client = inject<SupabaseClient>('supabase')
+const network = inject<NetworksConfig>('network')
 const {callback, args} = inject<{ ListingReview: ListingReviewProvider }>('appProvider')?.['ListingReview'] || {}
 const listingParams = args?.listingParams
 const router = useRouter()
@@ -24,12 +26,9 @@ const realtimeChannel = ref<RealtimeChannel>()
 const presenceTracker = ref<number>(0)
 const transactionsTracker = ref<Transaction[]>([])
 
-const nftNavigatorLink = computed(() => {
-  if (listingParams && listingParams.asset_id?.split('/')?.[1]) {
-    return `https://nftnavigator.xyz/collection/${listingParams.asset_id.split('/')[0]}/token/${listingParams.asset_id.split('/')[1]}`
-  } else {
-    return '#'
-  }
+const explorerLink = computed(() => {
+  if (network && listingParams?.asset_id) return network?.services.getExplorerLink(listingParams.asset_id)
+  else return '#'
 })
 
 function handleBuy(price: number) {
@@ -63,7 +62,7 @@ onBeforeUnmount(() => {
     <router-view
             :listing-params="listingParams"
             :presence="presenceTracker"
-            :previewLink="nftNavigatorLink"
+            :previewLink="explorerLink"
             :txs="transactionsTracker"
             @action:buy="(price: number) => handleBuy(price)"/>
     <ListingIdTooltip :listing-params="listingParams"/>
