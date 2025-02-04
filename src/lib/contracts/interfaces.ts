@@ -21,6 +21,7 @@ type FundApp = (
     signer: TransactionSigner,
     fromAddress: string,
     appIndex: number,
+    feesAppId: number,
     ...args: any[]
 ) => Promise<TransactionConfirmation>;
 
@@ -171,12 +172,13 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         nftAppID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
                         .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -221,12 +223,13 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         nftAppID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
                         .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     bid: (
                         algod: Algodv2,
@@ -268,12 +271,13 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         nftAppID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
                         .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -317,10 +321,11 @@ export const interfaces: Interfaces = {
                         algod: Algodv2,
                         signer: TransactionSigner,
                         fromAddress: string,
-                        appIndex: number
+                        appIndex: number,
+                        feesAppId: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -368,6 +373,7 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         arc200AppID: number,
                         arc200AppAddress: string,
                         nftAppID: number,
@@ -375,7 +381,7 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
                         .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -426,6 +432,7 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         arc200AppID: number,
                         arc200AppAddress: string,
                         nftAppID: number,
@@ -433,7 +440,7 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
                         .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     bid: (
                         algod: Algodv2,
@@ -481,6 +488,7 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         arc200AppID: number,
                         arc200AppAddress: string,
                         nftAppID: number,
@@ -488,7 +496,7 @@ export const interfaces: Interfaces = {
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
                         .approve(arc72Schema as ABI, 'arc72_approve', nftAppID, [nftAppID], [nftID])
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -539,10 +547,11 @@ export const interfaces: Interfaces = {
                         algod: Algodv2,
                         signer: TransactionSigner,
                         fromAddress: string,
-                        appIndex: number
+                        appIndex: number,
+                        feesAppId: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -591,10 +600,11 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .fund(500_000)
-                        .call('fund', [])
+                        .fund()
+                        .call('fund', [], [], [feesAppId])
                         .transferAsset(nftID, 1)
                         .send(signer),
                     buy: (
@@ -639,10 +649,11 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .transferAsset(nftID, 1)
                         .send(signer),
                     bid: (
@@ -683,10 +694,11 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .transferAsset(nftID, 1)
                         .send(signer),
                     buy: (
@@ -732,10 +744,11 @@ export const interfaces: Interfaces = {
                         algod: Algodv2,
                         signer: TransactionSigner,
                         fromAddress: string,
-                        appIndex: number
+                        appIndex: number,
+                        feesAppId: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [])
+                        .call('fund', [], [], [feesAppId])
                         .send(signer),
                     buy: (
                         algod: Algodv2,
@@ -782,11 +795,12 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         asaID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
-                        .fund(500_000)
-                        .call('fund', [], [], [], [asaID])
+                        .fund()
+                        .call('fund', [], [], [feesAppId], [asaID])
                         .transferAsset(nftID, 1)
                         .send(signer),
                     buy: (
@@ -834,11 +848,12 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         asaID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [], [], [], [asaID])
+                        .call('fund', [], [], [feesAppId], [asaID])
                         .transferAsset(nftID, 1)
                         .send(signer),
                     bid: (
@@ -883,11 +898,12 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         asaID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [], [], [], [asaID])
+                        .call('fund', [], [], [feesAppId], [asaID])
                         .transferAsset(nftID, 1)
                         .send(signer),
                     buy: (
@@ -937,11 +953,12 @@ export const interfaces: Interfaces = {
                         signer: TransactionSigner,
                         fromAddress: string,
                         appIndex: number,
+                        feesAppId: number,
                         asaID: number,
                         nftID: number
                     ) => new Transaction(algod, {fromAddress, appIndex})
                         .fund()
-                        .call('fund', [], [], [], [asaID])
+                        .call('fund', [], [], [feesAppId], [asaID])
                         .send(signer),
                     buy: (
                         algod: Algodv2,

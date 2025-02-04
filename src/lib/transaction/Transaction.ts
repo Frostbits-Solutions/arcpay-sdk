@@ -216,7 +216,7 @@ export class Transaction {
         if (!this._appIndex) throw new TransactionError('Unable to fund app: App index not set.')
         if (!this._fromAddress) throw new TransactionError('Unable to fund app: From address not set.')
         const appAddr = algosdk.getApplicationAddress(this._appIndex)
-        const fundingAmount = amount || 700_000
+        const fundingAmount = amount || 2_700_000
         const fundAppObj: PaymentObject = {
             type: TransactionType.pay,
             from: this._fromAddress,

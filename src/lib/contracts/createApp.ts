@@ -6,7 +6,7 @@ import getContract from "@/lib/supabase/contracts";
 import type {NetworksConfig} from "@/lib/algod/networks.config";
 import type {SupabaseClient} from "@supabase/supabase-js";
 import algosdk from "algosdk";
-import {formatAmountToDecimals} from "@/lib/utils";
+import { formatAmountToDecimals, getFeesAppIdFromState } from '@/lib/utils'
 
 export async function createApp(networkConfig: NetworksConfig, appProvider: AppProvider, walletManager: WalletManager, client: SupabaseClient, account: WalletAccount, params: ListingCreationParams): Promise<number> {
     const chain = networkConfig.chain
@@ -41,6 +41,8 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
     // Get created app index
     if (transactionConfirmation.txIDs.length === 0) throw new Error('Unexpected error: Application creation failed.')
     const appIndex = await networkConfig.services.getCreatedAppId(walletManager.algodClient, transactionConfirmation.txIDs[0])
+    if (!appIndex) throw new Error(`Unexpected error: Created appIndex is null`)
+    const feesAppId = await getFeesAppIdFromState(walletManager.algodClient, appIndex)
     load(appProvider, 'Funding app', 'Transaction 2 of 2\n\nPlease check your wallet\nand sign the transaction to create the listing.')
 
     // Fund created app
@@ -49,6 +51,7 @@ export async function createApp(networkConfig: NetworksConfig, appProvider: AppP
         walletManager.transactionSigner,
         account.address,
         appIndex,
+        feesAppId,
         ...formatCurrency(params),
         ...formatNftID(networkConfig, params)
     )
