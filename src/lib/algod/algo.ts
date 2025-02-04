@@ -119,7 +119,13 @@ async function getCreatedAppId(algodClient: algosdk.Algodv2, txId: string, netwo
     return await getTxExponentialBackOff()
 }
 
+function getExplorerLink(assetId: string, network: PublicNetwork) {
+    if (network === 'algo:mainnet') return `https://explorer.perawallet.app/asset/${assetId}/`
+    else return `https://testnet.explorer.perawallet.app/asset/${assetId}/`
+}
+
 export default {
     getAddressAssets,
-    getCreatedAppId
+    getCreatedAppId,
+    getExplorerLink
 }

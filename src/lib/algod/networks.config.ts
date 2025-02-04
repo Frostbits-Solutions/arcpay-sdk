@@ -13,12 +13,12 @@ export type NetworksConfig = {
     key: PublicNetwork
     chain: Chain
     networkId: NetworkId
-    blockchainId: string
     nodeBaseURL: string
     walletProviders: SupportedWallet[]
     services: {
         getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => Promise<AssetMetadata[]>
         getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => Promise<number>
+        getExplorerLink: (assetId: string) => string
     }
     nodeToken: string
     nodePort: number
@@ -29,7 +29,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'voi:testnet',
         chain: 'voi',
         networkId: NetworkId.TESTNET,
-        blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
         nodeBaseURL: 'https://voitest-api.algorpc.pro/',
         walletProviders: [
             {
@@ -38,8 +37,9 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             WalletId.KIBISIS],
         services: {
-            getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => voi.getAddressAssets(address, 'voi:testnet'),
-            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => voi.getCreatedAppId(algodClient, txId, 'voi:testnet')
+            getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => voi.getAddressAssets(algodClient, address, 'voi:testnet', page, size),
+            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => voi.getCreatedAppId(algodClient, txId, 'voi:testnet'),
+            getExplorerLink: (assetId: string) => voi.getExplorerLink(assetId, 'voi:testnet')
         },
         nodeToken: '',
         nodePort: 443
@@ -47,9 +47,8 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
     'voi:mainnet': {
         key: 'voi:mainnet',
         chain: 'voi',
-        networkId: NetworkId.MAINNET,
-        blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k',
-        nodeBaseURL: 'https://voitest-api.algorpc.pro/',
+        networkId: NetworkId.VOIMAIN,
+        nodeBaseURL: 'https://mainnet-api.voi.nodely.dev/',
         walletProviders: [
             {
                 id: WalletId.WALLETCONNECT,
@@ -57,8 +56,9 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             WalletId.KIBISIS],
         services: {
-            getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => voi.getAddressAssets(address, 'voi:mainnet'),
-            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => voi.getCreatedAppId(algodClient, txId, 'voi:mainnet')
+            getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => voi.getAddressAssets(algodClient, address, 'voi:mainnet', page, size),
+            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => voi.getCreatedAppId(algodClient, txId, 'voi:mainnet'),
+            getExplorerLink: (assetId: string) => voi.getExplorerLink(assetId, 'voi:mainnet')
         },
         nodeToken: '',
         nodePort: 443
@@ -67,7 +67,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'algo:testnet',
         chain: 'algo',
         networkId: NetworkId.TESTNET,
-        blockchainId: 'algorand:IXnoWtviVVJW5LGivNFc0Dq14V3kqaXu',
         nodeBaseURL: 'https://testnet-api.algonode.cloud',
         walletProviders: [
             WalletId.DEFLY,
@@ -79,12 +78,13 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             {
               id: WalletId.LUTE,
-              options: { siteName: 'ArcPay' }
+              options: { siteName: 'Arcpay' }
             },
             WalletId.KIBISIS],
         services: {
             getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => algo.getAddressAssets(algodClient, address, page, size),
-            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => algo.getCreatedAppId(algodClient, txId, 'algo:testnet')
+            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => algo.getCreatedAppId(algodClient, txId, 'algo:testnet'),
+            getExplorerLink: (assetId: string) => algo.getExplorerLink(assetId, 'algo:testnet')
         },
         nodeToken: '',
         nodePort: 443
@@ -93,7 +93,6 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
         key: 'algo:mainnet',
         chain: 'algo',
         networkId: NetworkId.MAINNET,
-        blockchainId: 'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=',
         nodeBaseURL: 'https://mainnet-api.algonode.cloud',
         walletProviders: [
             WalletId.DEFLY,
@@ -105,12 +104,13 @@ export const networksConfig: { [key in PublicNetwork]: NetworksConfig } = {
             },
             {
               id: WalletId.LUTE,
-              options: { siteName: 'ArcPay' }
+              options: { siteName: 'Arcpay' }
             },
             WalletId.KIBISIS],
         services: {
             getAddressAssets: (algodClient: algosdk.Algodv2, address: string, page?: number, size?: number) => algo.getAddressAssets(algodClient, address, page, size),
-            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => algo.getCreatedAppId(algodClient, txId, 'algo:mainnet')
+            getCreatedAppId: (algodClient: algosdk.Algodv2, txId: string) => algo.getCreatedAppId(algodClient, txId, 'algo:mainnet'),
+            getExplorerLink: (assetId: string) => algo.getExplorerLink(assetId, 'algo:mainnet')
         },
         nodeToken: '',
         nodePort: 443

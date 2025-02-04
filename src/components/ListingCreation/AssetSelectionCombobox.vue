@@ -110,7 +110,7 @@ onMounted(async () => {
                                 <div class="ap-text-xs ap-text-muted-foreground ap-min-w-0">
                                     <div class="ap-font-semibold ap-text-foreground ap-truncate">{{ asset.name }} <span v-if="asset.subtype" class="ap-text-muted-foreground ap-font-normal">({{asset.subtype}})</span></div>
                                     ID: {{asset.id}}<br>
-                                    Amount: {{formatAmountFromDecimals(asset.amount, asset.decimals)}}
+                                  <template v-if="asset.amount">Amount: {{formatAmountFromDecimals(asset.amount, asset.decimals)}}</template>
                                 </div>
                             </div>
                             <CheckIcon :class="cn('ap-ml-auto ap-h-4 ap-w-4',value === asset.id ? 'ap-opacity-100' : 'ap-opacity-0',)"/>
