@@ -9,7 +9,7 @@ import type {
 } from './types'
 import type {SuggestedParams} from 'algosdk'
 import algosdk, {type BoxReference, OnApplicationComplete, type TransactionSigner, TransactionType} from 'algosdk'
-import {base64ToArrayBuffer, encodeAppArgs} from '@/lib/utils'
+import {base64ToArrayBuffer, encodeAppArgs, getRekeyAddress, makeEmptyTransactionSigner} from '@/lib/utils'
 import type {ABI} from '@/lib/contracts/abi/types'
 
 export interface TransactionParameters {
@@ -433,26 +433,24 @@ export class Transaction {
     }
 
     private async _simulateTxn() {
-        const txns = this._objs.map(this._getTxn)
-        algosdk.assignGroupID(txns);
-        // Sign the transaction
-        const stxns = txns.map(algosdk.encodeUnsignedSimulateTransaction)
-        // Construct the simulation request
-        const request = new algosdk.modelsv2.SimulateRequest({
-            txnGroups: [
-                new algosdk.modelsv2.SimulateRequestTransactionGroup({
-                    //@ts-ignore
-                    txns: stxns.map(algosdk.decodeObj)
-                })
-            ],
+
+
+        const atc = new algosdk.AtomicTransactionComposer()
+        for (const obj of this._objs) {
+            const r = await getRekeyAddress(this._algod, obj.from)
+            const txn = this._getTxn(obj)
+            atc.addTransaction({txn,  signer: makeEmptyTransactionSigner(r)})
+        }
+        const simreq = new algosdk.modelsv2.SimulateRequest({
+            txnGroups: [],
+            allowEmptySignatures: true,
             allowUnnamedResources: true,
-            allowEmptySignatures: true
+            fixSigners: true,
         })
 
-        // Simulate the transaction group
-        return await this._algod
-            .simulateTransactions(request)
-            .do()
+        const res = (await atc.simulate(this._algod, simreq))
+        console.log(res)
+        return res.simulateResponse
     }
 
     private _getTxn(obj: TransactionObject) {

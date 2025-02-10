@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, inject, ref} from 'vue'
+import {computed, inject, onBeforeMount, onMounted, ref} from 'vue'
 import {Button} from '@/components/ui/button'
 import {ChevronDown, ChevronRight, CircleHelp, LoaderCircle, OctagonAlert} from 'lucide-vue-next'
 import {getShortAddress} from '@/lib/utils'
@@ -64,12 +64,14 @@ const getConnectArgs = (wallet: Wallet) => {
 }
 
 async function selectWallet(wallet: Wallet) {
+  wallet.setActive()
   activeWallet.value = wallet
   accountLoading.value = true
-  if (wallet.isConnected) {
-    await wallet.resumeSession()
+  if (wallet.isConnected && manager?.activeWallet !== undefined) {
+    activeWallet.value.accounts = manager?.activeWallet.accounts || []
+  } else {
+    activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   }
-  activeWallet.value.accounts = await wallet.connect(getConnectArgs(wallet))
   accountLoading.value = false
   if (activeWallet.value?.accounts.length === 0) {
     error.value = 'Wallet does not have any accounts. Please select another wallet.'
@@ -85,11 +87,20 @@ function disconnectWallet() {
 
 async function selectAccount(account: WalletAccount) {
   if (callback && account) {
+    manager?.activeWallet?.setActiveAccount(account.address)
+    console.log(manager?.activeWalletAccounts)
+    console.log(manager?.activeAddress)
     callback(account)
   } else {
     throw {message: 'Unexpected error: WalletSelectionCallback not provided'}
   }
 }
+
+onMounted(async () => {
+  if (manager?.activeWallet?.activeAccount) {
+    callback(manager?.activeWallet?.activeAccount)
+  }
+})
 </script>
 
 <template>
