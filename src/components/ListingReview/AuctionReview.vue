@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/number-field";
 import {computed, inject, onMounted, ref, watch} from "vue";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
-import {ArrowRight, LoaderCircle, Users, Crown} from "lucide-vue-next";
+import {ArrowRight, LoaderCircle, Users, Crown, Clock} from "lucide-vue-next";
 import type {Database} from "@/lib/supabase/database.types";
 import {getTransactions} from "@/lib/supabase/transaction";
 import type {SupabaseClient} from "@supabase/supabase-js";
-import {formatAmountFromDecimals, formatPrice, getShortAddress} from "@/lib/utils";
+import {formatAmountFromDecimals, formatPrice, getShortAddress, formatRemainingTime} from "@/lib/utils";
 import Jazzicon from "@/components/Jazzicon.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import AssetThumbnail from "@/components/ListingReview/AssetThumbnail.vue";
@@ -29,6 +29,7 @@ const minbid = ref<number>(props.listingParams.auction_start_price || 1)
 const transactions = ref<Transaction[]>([])
 const status = ref<typeof ListingStatusChip | undefined>()
 const statusOverride = ref<string | undefined>()
+const remainingTimeFormatted = ref<string | undefined>()
 
 const bids = computed(() => {
     return transactions.value.filter(tx => tx.type === 'bid').sort((a, b) => (b.amount || 0) - (a.amount || 0))
@@ -42,6 +43,13 @@ function formatAmount(amount: number | null | undefined) {
     if (!amount) return 0
     if (props.listingParams.currency_decimals === null) return amount
     return parseFloat(formatAmountFromDecimals(amount, props.listingParams.currency_decimals).toFixed(2))
+}
+
+function updateRemainingTime() {
+  remainingTimeFormatted.value = formatRemainingTime(
+    props.listingParams.created_at,
+    props.listingParams.auction_duration
+  )
 }
 
 watch(() => highestBid.value, (value) => {
@@ -65,6 +73,8 @@ onMounted(async () => {
             if (bids.value.length) {
                 minbid.value = bid.value = highestBid.value + (props.listingParams.auction_increment || 1)
             }
+            updateRemainingTime()
+            setInterval(updateRemainingTime, 1000)
         } else {
             console.error(error)
         }
@@ -88,8 +98,14 @@ onMounted(async () => {
                 </div>
             </div>
             <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm ap-mr-1">
+              <div v-if="listingParams.auction_duration" class="ap-flex ap-items-center">
+                {{ remainingTimeFormatted }}
+                <Clock class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1" />
+              </div>
+              <div class="ap-flex ap-items-center">
                 {{ presence }}
                 <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
+              </div>
             </div>
         </div>
     </div>
