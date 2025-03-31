@@ -2,11 +2,11 @@
 import CountUp from "vue-countup-v3";
 import type {ListingParams} from "@/lib/app/reviewListing";
 import {onMounted, ref, watch} from "vue";
-import {ArrowRight, Users} from "lucide-vue-next";
+import {ArrowRight, Users, Clock} from "lucide-vue-next";
 import ListingStatusChip from "@/components/ListingReview/ListingStatusChip.vue";
 import type {Database} from "@/lib/supabase/database.types";
 import AssetThumbnail from "@/components/ListingReview/AssetThumbnail.vue";
-import {formatPrice} from "@/lib/utils";
+import {formatPrice, formatRemainingTime} from "@/lib/utils";
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -18,6 +18,7 @@ const price = ref<number>(0)
 const previousPrice = ref<number>(0)
 const status = ref<typeof ListingStatusChip | undefined>()
 const statusOverride = ref<string | undefined>()
+const remainingTimeFormatted = ref<string | undefined>()
 
 function getLatestPrice() {
   if (props.listingParams && props.listingParams.created_at && props.listingParams.dutch_duration && props.listingParams.dutch_max_price && props.listingParams.dutch_min_price !== null) {
@@ -33,6 +34,13 @@ function getLatestPrice() {
   return 0
 }
 
+function updateRemainingTime() {
+  remainingTimeFormatted.value = formatRemainingTime(
+    props.listingParams.created_at,
+    props.listingParams.dutch_duration
+  )
+}
+
 watch(() => props.txs, (value) => {
     value.map(tx => {
         if (tx.type === 'create') statusOverride.value = 'active'
@@ -44,10 +52,13 @@ watch(() => props.txs, (value) => {
 
 onMounted(() => {
   price.value = getLatestPrice()
+  updateRemainingTime()
+
   setInterval(() => {
     previousPrice.value = price.value
     price.value = getLatestPrice()
   }, 500)
+  setInterval(updateRemainingTime, 1000)
 })
 
 </script>
@@ -68,8 +79,14 @@ onMounted(() => {
         </div>
       </div>
       <div class="ap-flex ap-items-center ap-text-muted-foreground ap-text-sm">
-        {{ presence }}
-        <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
+        <div v-if="listingParams.dutch_duration" class="ap-flex ap-items-center">
+          {{ remainingTimeFormatted }}
+          <Clock class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1" />
+        </div>
+        <div class="ap-flex ap-items-center">
+          {{ presence }}
+          <Users class="ap-w-4 ap-h-4 ap-text-muted-foreground ap-mx-1"/>
+        </div>
       </div>
     </div>
     <div class="ap-flex ap-justify-center ap-mt-10 ap-mb-16">

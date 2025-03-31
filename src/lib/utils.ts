@@ -90,3 +90,32 @@ export function formatAmountFromDecimals(amount: number, decimals: number = 6) {
 export function formatPrice(price: number = 0, decimals: number = 0) {
     return parseFloat(price.toFixed(decimals))
 }
+
+export function formatRemainingTime(creationDate: string | null, durationInHours: number | null) : string {
+
+    if(!creationDate || !durationInHours) {
+        return "";
+    }
+
+    const endDate = new Date(creationDate).getTime() + durationInHours * 3_600_000
+    const now = Date.now() + new Date().getTimezoneOffset() * 60_000
+    const diff = endDate - now
+
+    if (diff < 0) {
+        return 'Expired'
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+    const parts = []
+    if (days > 0) parts.push(`${days}d`)
+    if (hours > 0) parts.push(`${hours}h`) 
+    if (minutes > 0) parts.push(`${minutes}m`)
+    parts.push(`${seconds}s`)
+
+    return parts.join(':')
+
+}
