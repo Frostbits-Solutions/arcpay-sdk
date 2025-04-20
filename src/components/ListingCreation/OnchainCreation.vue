@@ -59,7 +59,7 @@ function createListing() {
                         <RouterLink :to="{name: 'dutch-creation'}"
                                     class="ap-text-center ap-h-[74px] ap-text-xs ap-cursor-pointer ap-flex ap-flex-col ap-items-center ap-justify-center ap-gap-1 ap-rounded-md ap-border-2 ap-border-muted ap-bg-background ap-text-muted-foreground hover:ap-text-foreground">
                             <HandCoins class="ap-h-5 ap-w-5"/>
-                            Reverse
+                            Dutch
                         </RouterLink>
                     </div>
                 </div>
